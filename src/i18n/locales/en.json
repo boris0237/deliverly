@@ -1,0 +1,1042 @@
+{
+  "common": {
+    "appName": "Deliverly",
+    "loading": "Loading...",
+    "save": "Save",
+    "saved": "Settings saved successfully.",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import",
+    "close": "Close",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "view": "View",
+    "actions": "Actions",
+    "status": "Status",
+    "date": "Date",
+    "time": "Time",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "description": "Description",
+    "price": "Price",
+    "quantity": "Quantity",
+    "total": "Total",
+    "yes": "Yes",
+    "no": "No",
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "completed": "Completed",
+    "failed": "Failed",
+    "cancelled": "Cancelled",
+    "delivered": "Delivered",
+    "inProgress": "In Progress",
+    "assigned": "Assigned",
+    "pickedUp": "Picked Up",
+    "inTransit": "In Transit",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "language": "Language",
+    "french": "French",
+    "english": "English",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "forgotPassword": "Forgot Password",
+    "resetPassword": "Reset Password",
+    "verifyEmail": "Verify Email",
+    "dashboard": "Dashboard",
+    "deliveries": "Deliveries",
+    "drivers": "Drivers",
+    "partners": "Partners",
+    "inventory": "Inventory",
+    "expenses": "Expenses",
+    "reports": "Reports",
+    "tracking": "Tracking",
+    "users": "Users",
+    "analytics": "Analytics",
+    "support": "Support",
+    "documentation": "Documentation",
+    "help": "Help",
+    "contact": "Contact",
+    "about": "About",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "cookies": "Cookies"
+  },
+  "landing": {
+    "hero": {
+      "title": "Manage your deliveries like a pro",
+      "subtitle": "Automate and optimize your delivery operations with our all-in-one platform. Real-time tracking, inventory management, and advanced analytics.",
+      "ctaPrimary": "Start Free Trial",
+      "ctaSecondary": "Book a Demo",
+      "stats": {
+        "deliveries": "Deliveries today",
+        "trend": "+12.5%",
+        "activeUsers": "Active users",
+        "satisfaction": "Customer satisfaction"
+      }
+    },
+    "features": {
+      "title": "Powerful Features",
+      "subtitle": "Everything you need to manage your deliveries efficiently",
+      "items": {
+        "delivery": {
+          "title": "Delivery Management",
+          "description": "Create, assign, and track your deliveries in real-time with an intuitive interface."
+        },
+        "tracking": {
+          "title": "Real-time Tracking",
+          "description": "Track your drivers on the map and keep your customers informed in real-time."
+        },
+        "inventory": {
+          "title": "Inventory Management",
+          "description": "Manage your inventory, receive low stock alerts, and optimize your levels."
+        },
+        "partners": {
+          "title": "Partner Management",
+          "description": "Manage your partners, their commissions, and delivery history."
+        },
+        "reports": {
+          "title": "Financial Reports",
+          "description": "Generate detailed reports on your revenue, expenses, and performance."
+        },
+        "analytics": {
+          "title": "Performance Analytics",
+          "description": "Analyze your drivers' performance and optimize your operations."
+        }
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "subtitle": "Get started in three simple steps",
+      "steps": {
+        "1": {
+          "title": "Create a Delivery",
+          "description": "Add delivery details in a few clicks. Customer info, address, items, and more."
+        },
+        "2": {
+          "title": "Assign a Driver",
+          "description": "Choose the nearest available driver or let the system assign automatically."
+        },
+        "3": {
+          "title": "Track in Real-time",
+          "description": "Track delivery progress live and inform your customer at every step."
+        }
+      }
+    },
+    "dashboardPreview": {
+      "title": "A modern and intuitive interface",
+      "subtitle": "Discover our powerful and easy-to-use dashboard"
+    },
+    "benefits": {
+      "title": "Why Choose Deliverly?",
+      "subtitle": "The advantages that make the difference",
+      "items": {
+        "time": {
+          "title": "Save Time",
+          "description": "Automate your processes and save hours every day."
+        },
+        "costs": {
+          "title": "Reduce Costs",
+          "description": "Optimize your routes and reduce operational expenses."
+        },
+        "tracking": {
+          "title": "Live Tracking",
+          "description": "Keep your customers informed and improve their satisfaction."
+        },
+        "performance": {
+          "title": "Improve Performance",
+          "description": "Analyze your data and make informed decisions."
+        }
+      }
+    },
+    "testimonials": {
+      "title": "What Our Customers Say",
+      "subtitle": "Companies that trust us",
+      "items": {
+        "1": {
+          "quote": "Deliverly has transformed how we manage deliveries. We've gained 30% time and reduced costs by 20%.",
+          "author": "Marie Dupont",
+          "role": "Operations Director, FoodExpress"
+        },
+        "2": {
+          "quote": "Real-time tracking is a game-changer. Our customers are more satisfied and we have fewer follow-up calls.",
+          "author": "Jean Martin",
+          "role": "CEO, RapidLivraison"
+        },
+        "3": {
+          "quote": "The interface is intuitive and the support team is excellent. I highly recommend Deliverly.",
+          "author": "Sophie Bernard",
+          "role": "Logistics Manager, PharmaPlus"
+        }
+      }
+    },
+    "pricing": {
+      "title": "Simple and Transparent Pricing",
+      "subtitle": "Choose the plan that fits your needs",
+      "plans": {
+        "starter": {
+          "name": "Starter",
+          "description": "Perfect for small businesses",
+          "price": "$29",
+          "period": "/month",
+          "features": [
+            "Up to 500 deliveries/month",
+            "3 drivers",
+            "Real-time tracking",
+            "Email support"
+          ],
+          "cta": "Get Started"
+        },
+        "professional": {
+          "name": "Professional",
+          "description": "For growing businesses",
+          "price": "$79",
+          "period": "/month",
+          "popular": "Most Popular",
+          "features": [
+            "Unlimited deliveries",
+            "15 drivers",
+            "Real-time tracking",
+            "Advanced reports",
+            "Priority support",
+            "API access"
+          ],
+          "cta": "Free Trial"
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "description": "For large enterprises",
+          "price": "Custom",
+          "features": [
+            "Everything in Professional",
+            "Unlimited drivers",
+            "Multi-location",
+            "Dedicated 24/7 support",
+            "Customization",
+            "Guaranteed SLA"
+          ],
+          "cta": "Contact Us"
+        }
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "items": {
+        "1": {
+          "question": "How does the free trial work?",
+          "answer": "You can try Deliverly free for 14 days. No credit card required."
+        },
+        "2": {
+          "question": "Can I change plans anytime?",
+          "answer": "Yes, you can upgrade or downgrade your plan at any time."
+        },
+        "3": {
+          "question": "Do you offer an API?",
+          "answer": "Yes, our REST API allows you to integrate Deliverly with your existing systems."
+        },
+        "4": {
+          "question": "How does support work?",
+          "answer": "We offer email support for all plans and priority support for Professional and Enterprise plans."
+        }
+      }
+    },
+    "cta": {
+      "title": "Ready to transform your deliveries?",
+      "subtitle": "Join thousands of companies using Deliverly",
+      "button": "Start Free Trial"
+    },
+    "footer": {
+      "product": "Product",
+      "features": "Features",
+      "pricing": "Pricing",
+      "documentation": "Documentation",
+      "company": "Company",
+      "about": "About",
+      "careers": "Careers",
+      "contact": "Contact",
+      "legal": "Legal",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "cookies": "Cookies",
+      "rights": "All rights reserved."
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Login",
+      "subtitle": "Sign in to your account",
+      "email": "Email",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign In",
+      "noAccount": "Don't have an account?",
+      "register": "Sign up",
+      "or": "Or continue with",
+      "google": "Google"
+    },
+    "register": {
+      "title": "Register",
+      "subtitle": "Create your Deliverly account",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "companyName": "Company Name",
+      "acceptTerms": "I agree to the terms of service",
+      "submit": "Sign Up",
+      "hasAccount": "Already have an account?",
+      "login": "Sign in",
+      "or": "Or sign up with",
+      "google": "Google"
+    },
+    "forgotPassword": {
+      "title": "Forgot Password",
+      "subtitle": "Enter your email to reset your password",
+      "email": "Email",
+      "submit": "Send Reset Link",
+      "backToLogin": "Back to login",
+      "success": "Reset email sent successfully"
+    },
+    "verifyEmail": {
+      "title": "Verify Your Email",
+      "subtitle": "Click the link sent to your email to verify your account",
+      "resend": "Resend email",
+      "success": "Email verified successfully"
+    }
+  },
+  "dashboard": {
+    "overview": {
+      "title": "Dashboard",
+      "subtitle": "Overview of your operations",
+      "filters": {
+        "today": "Today",
+        "week": "This week",
+        "month": "This month",
+        "dateFrom": "Start date",
+        "dateTo": "End date"
+      },
+      "stats": {
+        "totalDeliveries": "Total Deliveries",
+        "amountCollected": "Amount Collected",
+        "totalExpenses": "Expenses (excluding partners)",
+        "totalCommissions": "Total Commissions",
+        "activeDeliveries": "Active Deliveries",
+        "completedDeliveries": "Completed Deliveries",
+        "failedDeliveries": "Failed Deliveries",
+        "totalRevenue": "Total Revenue",
+        "driverPerformance": "Driver Performance"
+      },
+      "charts": {
+        "deliveryTrends": "Delivery Trends",
+        "revenue": "Revenue",
+        "driverPerformance": "Driver Performance",
+        "deliveryStatus": "Delivery Status"
+      },
+      "recentDeliveries": "Recent Deliveries",
+      "topDrivers": "Top Drivers",
+      "viewAll": "View All"
+    },
+    "deliveries": {
+      "title": "Deliveries",
+      "subtitle": "Create, assign, and track deliveries in real time",
+      "create": "New Delivery",
+      "edit": "Edit Delivery",
+      "details": "Delivery Details",
+      "empty": "No delivery found",
+      "addItem": "Add product",
+      "unassigned": "Unassigned",
+      "confirmDelete": "Do you really want to delete this delivery?",
+      "fields": {
+        "customerName": "Customer Name",
+        "customerPhone": "Customer Phone",
+        "address": "Address",
+        "deliveryDate": "Delivery date",
+        "neighborhood": "Neighborhood",
+        "gpsLocation": "GPS Location",
+        "items": "Products",
+        "orderValue": "Order Value",
+        "collectFromCustomer": "Collect payment from customer",
+        "paymentMethod": "Payment Method",
+        "deliveryFee": "Delivery Fee",
+        "partnerExtraCharge": "Additional charge",
+        "partner": "Partner",
+        "driver": "Driver",
+        "notes": "Notes",
+        "status": "Status"
+      },
+      "deliveryFeeAutoHint": "Auto-calculated from partner pricing (editable).",
+      "orderValueAutoHint": "Auto-calculated from selected products (editable).",
+      "collectFromCustomerHint": "Enabled: driver collects cash from customer. Disabled: customer already paid at partner.",
+      "placeholders": {
+        "partner": "Select a partner",
+        "driverOptional": "No driver (optional)",
+        "customerName": "Customer name",
+        "customerPhone": "+1 000 000 0000",
+        "address": "Delivery address",
+        "neighborhoodOptional": "No neighborhood (optional)",
+        "product": "Select a product",
+        "noResult": "No result",
+        "notes": "Additional notes..."
+      },
+      "status": {
+        "pending": "Pending",
+        "assigned": "Assigned",
+        "pickedUp": "Picked Up",
+        "inTransit": "In Transit",
+        "delivered": "Delivered",
+        "failed": "Failed",
+        "cancelled": "Cancelled"
+      },
+      "tabs": {
+        "details": "Details",
+        "logs": "Logs"
+      },
+      "logs": {
+        "empty": "No history for this delivery.",
+        "statusChangedTemplate": "Status changed from {{from}} to {{to}}",
+        "messages": {
+          "created": "Delivery created",
+          "updated": "Delivery updated",
+          "assignmentUpdated": "Driver assignment updated",
+          "cancelled": "Delivery cancelled (reason: {{reason}}, new date: {{date}}, note: {{note}})"
+        },
+        "actions": {
+          "created": "Delivery created",
+          "updated": "Delivery updated",
+          "status_changed": "Status changed",
+          "assignment_updated": "Assignment updated",
+          "cancelled": "Delivery cancellation"
+        }
+      },
+      "cancel": {
+        "title": "Cancel delivery",
+        "confirm": "Confirm cancellation",
+        "reason": "Cancellation reason",
+        "reasonPlaceholder": "Select a reason",
+        "note": "Additional note",
+        "notePlaceholder": "Extra details (optional)",
+        "rescheduledDate": "New date",
+        "reasons": {
+          "no_response": "No answer",
+          "postponed_later": "Postponed to a later date",
+          "not_satisfied": "Not satisfied",
+          "phone_off": "Phone switched off",
+          "will_call_back": "Will call back",
+          "call_rejected": "Call rejected",
+          "already_delivered": "Already delivered",
+          "afternoon": "Afternoon",
+          "evening": "Evening",
+          "cancelled_by_customer": "Cancel",
+          "already_delivered_other_driver": "Already delivered by another driver",
+          "item_unavailable": "Item unavailable",
+          "awaiting_payment": "Awaiting payment",
+          "customer_request": "Customer request",
+          "customer_unreachable": "Customer unreachable",
+          "partner_issue": "Partner issue",
+          "postponed": "Postponed to a later date",
+          "other": "Other"
+        },
+        "validation": {
+          "reasonRequired": "Please select a cancellation reason.",
+          "rescheduledDateRequired": "Please select the new date."
+        }
+      },
+      "collection": {
+        "collect": "Collect from customer",
+        "alreadyPaid": "Already paid at partner"
+      },
+      "timeline": "History",
+      "labels": {
+        "rescheduledTo": "Rescheduled to"
+      },
+      "actions": {
+        "accept": "Accept delivery",
+        "start": "Start delivery",
+        "resume": "Resume",
+        "assign": "Assign",
+        "reassign": "Reassign",
+        "cancel": "Cancel",
+        "complete": "Mark as Delivered",
+        "fail": "Mark as Failed"
+      },
+      "filters": {
+        "allStatuses": "All statuses",
+        "status": "Filter by Status",
+        "dateFrom": "Start date",
+        "dateTo": "End date",
+        "dateRange": "Date Range",
+        "driver": "Filter by Driver",
+        "partner": "Filter by Partner"
+      },
+      "card": {
+        "amountShort": "Amount",
+        "feeShort": "Fee"
+      },
+      "validation": {
+        "required": "Please fill in the required fields.",
+        "outOfStockTitle": "Insufficient stock for the following products:",
+        "outOfStockItem": "{{product}} - requested: {{requested}}, available: {{available}}"
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {{page}} / {{totalPages}}",
+        "summary": "{{from}}-{{to}} of {{total}}"
+      }
+    },
+    "drivers": {
+      "title": "Drivers",
+      "subtitle": "Manage your company driver accounts",
+      "create": "Add Driver",
+      "edit": "Edit Driver",
+      "empty": "No driver found",
+      "confirmDelete": "Do you really want to delete this driver?",
+      "fields": {
+        "firstName": "First name",
+        "lastName": "Last name",
+        "phone": "Phone",
+        "email": "Email",
+        "vehicle": "Vehicle",
+        "status": "Status",
+        "password": "Password"
+      },
+      "placeholders": {
+        "firstName": "John",
+        "lastName": "Doe",
+        "phone": "+1 000 000 0000",
+        "email": "driver@example.com",
+        "vehicleOptional": "No vehicle assigned",
+        "password": "Temporary password"
+      },
+      "table": {
+        "driver": "Driver"
+      },
+      "actions": {
+        "resetPassword": "Reset password",
+        "activate": "Activate",
+        "deactivate": "Deactivate"
+      },
+      "credentials": {
+        "title": "Driver Credentials",
+        "user": "User",
+        "copy": "Copy",
+        "share": "Share",
+        "copied": "Credentials copied.",
+        "shareUnavailable": "Share is not available on this device."
+      },
+      "validation": {
+        "required": "Please fill in the required fields."
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {{page}} / {{totalPages}}",
+        "summary": "{{from}}-{{to}} of {{total}}"
+      }
+    },
+    "partners": {
+      "title": "Partners",
+      "subtitle": "Manage your partners and their pricing strategy",
+      "create": "Add Partner",
+      "edit": "Edit Partner",
+      "details": "Partner Details",
+      "empty": "No partner found",
+      "nameRequired": "Partner name is required.",
+      "noActivePricing": "No active pricing strategy found. Configure delivery pricing first.",
+      "uploadLogo": "Upload logo",
+      "invalidLogoFile": "Please select an image file.",
+      "logoSelected": "Logo selected. Click Create to save.",
+      "fields": {
+        "name": "Name",
+        "type": "Type",
+        "logo": "Logo",
+        "email": "Email",
+        "phone": "Phone",
+        "address": "Address",
+        "commissionRate": "Commission Rate",
+        "balance": "Balance"
+      },
+      "placeholders": {
+        "name": "Partner name",
+        "email": "contact@example.com",
+        "phone": "+1 000 000 0000",
+        "address": "Full address"
+      },
+      "types": {
+        "restaurant": "Restaurant",
+        "shop": "Shop",
+        "pharmacy": "Pharmacy",
+        "ecommerce": "E-commerce",
+        "other": "Other"
+      },
+      "pricing": {
+        "strategyLabel": "Pricing",
+        "useDefault": "Use default value",
+        "customFixed": "Custom fixed amount",
+        "customPercentage": "Custom percentage",
+        "packagePlan": "Package plan",
+        "zone": "Pricing zone",
+        "defaultAutoApplied": "The default package or zone defined in your settings will be applied automatically.",
+        "rate": "Rate",
+        "types": {
+          "fixed": "Fixed pricing",
+          "package": "Package pricing",
+          "percentage": "Percentage pricing",
+          "zone": "Zone pricing"
+        }
+      },
+      "deliveryHistory": "Delivery History",
+      "financialReports": "Financial Reports",
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {{page}} / {{totalPages}}",
+        "summary": "{{from}}-{{to}} of {{total}}"
+      }
+    },
+    "inventory": {
+      "title": "Inventory",
+      "subtitle": "Manage your inventory and stock levels",
+      "products": "Products",
+      "create": "Add Product",
+      "edit": "Edit Product",
+      "empty": "No product found",
+      "uploadImage": "Upload image",
+      "invalidImageFile": "Please select a valid image.",
+      "imageSelected": "Image selected. Click Create to save.",
+      "nameRequired": "Product name is required.",
+      "skuAutoGenerated": "SKU will be generated automatically on creation.",
+      "nameAndSkuRequired": "Product name and SKU are required.",
+      "confirmDelete": "Do you really want to delete this product?",
+      "fields": {
+        "name": "Name",
+        "sku": "SKU",
+        "category": "Category",
+        "stockQuantity": "Stock Quantity",
+        "minStock": "Minimum Stock",
+        "partner": "Partner",
+        "warehouseLocation": "Warehouse Location",
+        "price": "Price",
+        "image": "Image"
+      },
+      "placeholders": {
+        "name": "Product name",
+        "sku": "SKU-001",
+        "category": "Category",
+        "partner": "Select a partner",
+        "warehouseLocation": "Location (e.g. Warehouse A)"
+      },
+      "stock": {
+        "entry": "Stock Entry",
+        "exit": "Stock Exit",
+        "transfer": "Stock Transfer",
+        "adjustment": "Adjustment"
+      },
+      "alerts": {
+        "lowStock": "Low Stock",
+        "outOfStock": "Out of Stock",
+        "title": "Stock Alerts",
+        "lowCount": "{{count}} low-stock products",
+        "remaining": "{{count}} remaining"
+      },
+      "table": {
+        "product": "Product",
+        "sku": "SKU",
+        "category": "Category",
+        "stock": "Stock",
+        "price": "Price",
+        "movement": "Movement",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "filters": {
+        "partnerAll": "All partners"
+      },
+      "movement": {
+        "quantity": "Quantity",
+        "quantityRequired": "Quantity must be greater than 0.",
+        "reason": "Reason",
+        "reasonPlaceholder": "Ex: Restock, stock correction..."
+      },
+      "history": {
+        "title": "Stock movement history",
+        "titleForProduct": "Stock movements: {{product}}",
+        "viewMovement": "View movement",
+        "allProducts": "All products",
+        "allTypes": "All types",
+        "entry": "Entry",
+        "exit": "Exit",
+        "date": "Date",
+        "product": "Product",
+        "type": "Type",
+        "quantity": "Quantity",
+        "previous": "Previous stock",
+        "new": "New stock",
+        "reason": "Reason",
+        "reasonTemplates": {
+          "deliveryStockDeduct": "Stock deducted: delivery marked as delivered (#{{deliveryId}})",
+          "deliveryStockRestore": "Stock restored: delivery removed from delivered (#{{deliveryId}})",
+          "deliveryStockAdjust": "Stock adjusted: delivered items updated (#{{deliveryId}})",
+          "deliveryStockRevertDelete": "Stock restored: delivered delivery deleted (#{{deliveryId}})"
+        },
+        "empty": "No stock movements."
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {{page}} / {{totalPages}}",
+        "summary": "{{from}}-{{to}} of {{total}}"
+      },
+      "reports": {
+        "daily": "Daily Report",
+        "weekly": "Weekly Report",
+        "monthly": "Monthly Report"
+      }
+    },
+    "expenses": {
+      "title": "Expenses",
+      "subtitle": "Total on this page:",
+      "create": "Add Expense",
+      "edit": "Edit Expense",
+      "empty": "No expenses found.",
+      "confirmDelete": "Do you really want to delete this expense?",
+      "fields": {
+        "amount": "Amount",
+        "category": "Category",
+        "date": "Date",
+        "targetType": "Target Type",
+        "target": "Target",
+        "driver": "Driver",
+        "partner": "Partner",
+        "description": "Description",
+        "receipt": "Receipt"
+      },
+      "targetTypes": {
+        "partner": "Partner",
+        "user": "User",
+        "vehicle": "Vehicle",
+        "other": "Other"
+      },
+      "filters": {
+        "dateFrom": "Start date",
+        "dateTo": "End date",
+        "allTargets": "All targets"
+      },
+      "placeholders": {
+        "partner": "Select a partner",
+        "user": "Select a user",
+        "vehicle": "Select a vehicle",
+        "otherTarget": "e.g. Office supplies, banking fees...",
+        "description": "Expense details (optional)",
+        "receipt": "Receipt link or reference (optional)"
+      },
+      "validation": {
+        "required": "Please fill in required fields."
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {{page}} / {{totalPages}}",
+        "summary": "{{from}}-{{to}} of {{total}}"
+      },
+      "categories": {
+        "fuel": "Fuel",
+        "maintenance": "Vehicle Maintenance",
+        "salaries": "Salaries",
+        "equipment": "Equipment",
+        "other": "Other"
+      }
+    },
+    "reports": {
+      "title": "Reports",
+      "types": {
+        "deliveries": "Delivery Report",
+        "financial": "Financial Report",
+        "driver": "Driver Report",
+        "inventory": "Inventory Report",
+        "partner": "Partner Report"
+      },
+      "filters": {
+        "dateRange": "Date Range",
+        "driver": "Driver",
+        "partner": "Partner",
+        "status": "Status"
+      },
+      "export": {
+        "pdf": "Export as PDF",
+        "excel": "Export as Excel",
+        "csv": "Export as CSV"
+      },
+      "share": "Share Report"
+    },
+    "tracking": {
+      "title": "Real-time Tracking",
+      "liveMap": "Live Map",
+      "drivers": "Online Drivers",
+      "deliveries": "Active Deliveries",
+      "routes": "Routes",
+      "eta": "Estimated Arrival Time",
+      "refresh": "Refresh"
+    },
+    "users": {
+      "title": "Users",
+      "subtitle": "Manage accounts, roles, and access for your company",
+      "create": "Add User",
+      "edit": "Edit User",
+      "empty": "No user found",
+      "confirmDelete": "Do you really want to delete this user?",
+      "fields": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "name": "Name",
+        "email": "Email",
+        "password": "Password",
+        "role": "Role",
+        "vehicle": "Vehicle",
+        "status": "Status",
+        "phone": "Phone"
+      },
+      "placeholders": {
+        "firstName": "e.g. John",
+        "lastName": "e.g. Doe",
+        "email": "email@company.com",
+        "phone": "+1 000 000 0000",
+        "password": "Temporary password",
+        "vehicleOptional": "No vehicle (optional)"
+      },
+      "table": {
+        "user": "User"
+      },
+      "actions": {
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "resetPassword": "Reset password"
+      },
+      "validation": {
+        "required": "Please fill in the required fields."
+      },
+      "credentials": {
+        "title": "Login credentials",
+        "user": "User",
+        "copy": "Copy",
+        "share": "Share",
+        "copied": "Credentials copied to clipboard.",
+        "shareUnavailable": "Sharing is not available on this device."
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {{page}} / {{totalPages}}",
+        "summary": "{{from}}-{{to}} of {{total}}"
+      },
+      "roles": {
+        "superAdmin": "Super Admin",
+        "admin": "Admin",
+        "manager": "Manager",
+        "stockManager": "Stock Manager",
+        "partnerManager": "Partner Manager",
+        "driver": "Driver",
+        "accountant": "Accountant"
+      }
+    },
+    "settings": {
+      "title": "Settings",
+      "company": {
+        "title": "Company",
+        "name": "Company Name",
+        "logo": "Logo",
+        "uploadLogo": "Upload",
+        "invalidLogoFile": "Please select an image file.",
+        "logoSelected": "Logo selected. Click Save to persist changes.",
+        "address": "Address",
+        "addressPlaceholder": "123 Main Street, New York, NY",
+        "businessHours": "Business Hours",
+        "to": "to"
+      },
+      "delivery": {
+        "title": "Delivery Pricing",
+        "description": "Set up your pricing strategy: fixed, package plans, percentage, or geographic zones. Enable a section to edit it.",
+        "currency": "Currency",
+        "currencies": {
+          "XAF": "CFA Franc (XAF)",
+          "XOF": "West African CFA Franc (XOF)",
+          "NGN": "Naira (NGN)",
+          "GHS": "Cedi (GHS)",
+          "KES": "Kenyan Shilling (KES)",
+          "UGX": "Ugandan Shilling (UGX)",
+          "TZS": "Tanzanian Shilling (TZS)",
+          "MAD": "Moroccan Dirham (MAD)",
+          "DZD": "Algerian Dinar (DZD)",
+          "TND": "Tunisian Dinar (TND)",
+          "ZAR": "Rand (ZAR)",
+          "USD": "Dollar (USD)",
+          "EUR": "Euro (EUR)"
+        },
+        "fixed": {
+          "title": "Fixed pricing",
+          "description": "Single amount applied to every delivery."
+        },
+        "package": {
+          "title": "Package pricing",
+          "description": "Define multiple package plans and their amounts.",
+          "planPlaceholder": "Package name",
+          "addPlan": "Add package"
+        },
+        "percentage": {
+          "title": "Percentage pricing",
+          "description": "Percentage applied to delivery amount."
+        },
+        "zone": {
+          "title": "Zone pricing",
+          "description": "Create zones (ex: Yaounde 1).",
+          "groupsTitle": "Pricing zones",
+          "addZone": "Add zone",
+          "zoneNamePlaceholder": "Ex: Yaounde 1",
+          "emptyNeighborhoods": "No neighborhood added for this zone.",
+          "searchPlaceholderSelected": "Search a neighborhood for the selected zone",
+          "searchPlaceholderDefault": "Select a zone then search a neighborhood",
+          "search": "Search",
+          "searching": "Searching...",
+          "selectZoneFirst": "Select a zone first.",
+          "duplicateNeighborhood": "This neighborhood is already in this zone."
+        }
+      },
+      "vehicles": {
+        "title": "Vehicles",
+        "description": "Manage your company fleet: type, plate number, capacity, and status.",
+        "add": "Add vehicle",
+        "active": "Active vehicle",
+        "namePlaceholder": "Vehicle name (e.g. Bike 1)",
+        "typePlaceholder": "Type (bike, car, van...)",
+        "platePlaceholder": "Plate number",
+        "types": {
+          "motorcycle": "Motorcycle",
+          "car": "Car",
+          "van": "Van",
+          "truck": "Truck",
+          "bicycle": "Bicycle",
+          "other": "Other"
+        },
+        "validationRequired": "Name, type, and plate number are required for each vehicle."
+      },
+      "notifications": {
+        "title": "Notifications",
+        "email": "Email Notifications",
+        "inApp": "In-app Notifications",
+        "whatsapp": "WhatsApp Notifications",
+        "emailDescription": "Receive notifications by email",
+        "inAppDescription": "Receive notifications in the application",
+        "whatsappDescription": "Receive notifications by WhatsApp"
+      },
+      "integrations": {
+        "title": "Integrations",
+        "api": "API Keys",
+        "webhooks": "Webhooks"
+      }
+    }
+  },
+  "notifications": {
+    "newDelivery": "New Delivery",
+    "driverUpdate": "Driver Update",
+    "failedDelivery": "Failed Delivery",
+    "lowInventory": "Low Stock Alert",
+    "markAsRead": "Mark as Read",
+    "viewAll": "View All Notifications"
+  },
+  "errors": {
+    "generic": "An error occurred",
+    "notFound": "Page not found",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Access forbidden",
+    "validation": "Validation error",
+    "network": "Network error",
+    "server": "Server error",
+    "auth": {
+      "INVALID_INPUT": "Invalid input.",
+      "INVALID_EMAIL": "Invalid email address.",
+      "INVALID_CREDENTIALS": "Invalid email or password.",
+      "EMAIL_NOT_VERIFIED": "Please verify your email before logging in.",
+      "EMAIL_ALREADY_IN_USE": "This email is already in use.",
+      "INVALID_OR_EXPIRED_TOKEN": "Invalid or expired link.",
+      "REGISTRATION_FAILED": "Registration failed.",
+      "LOGIN_FAILED": "Login failed.",
+      "PARTNERS_FETCH_FAILED": "Unable to load partners.",
+      "PARTNER_CREATE_FAILED": "Unable to create partner.",
+      "PARTNER_UPDATE_FAILED": "Unable to update partner.",
+      "PARTNER_NOT_FOUND": "Partner not found.",
+      "PARTNER_REQUIRED": "Partner is required.",
+      "USERS_FETCH_FAILED": "Unable to load users.",
+      "USER_CREATE_FAILED": "Unable to create user.",
+      "USER_UPDATE_FAILED": "Unable to update user.",
+      "USER_DELETE_FAILED": "Unable to delete user.",
+      "USER_NOT_FOUND": "User not found.",
+      "CANNOT_DEACTIVATE_SELF": "You cannot deactivate your own account.",
+      "CANNOT_DELETE_SELF": "You cannot delete your own account.",
+      "INVALID_VEHICLE": "Invalid vehicle.",
+      "DELIVERIES_FETCH_FAILED": "Unable to load deliveries.",
+      "DELIVERY_CREATE_FAILED": "Unable to create delivery.",
+      "DELIVERY_FETCH_FAILED": "Unable to load delivery details.",
+      "DELIVERY_UPDATE_FAILED": "Unable to update delivery.",
+      "DELIVERY_DELETE_FAILED": "Unable to delete delivery.",
+      "DELIVERY_NOT_FOUND": "Delivery not found.",
+      "DELIVERY_ITEMS_REQUIRED": "Please select products for this partner.",
+      "DRIVER_NOT_FOUND": "Driver not found.",
+      "INVALID_DELIVERY_ITEMS": "Invalid delivery items.",
+      "INVALID_NEIGHBORHOOD": "Invalid neighborhood.",
+      "ADDRESS_REQUIRED": "Delivery address is required.",
+      "INVALID_DELIVERY_DATE": "Invalid delivery date.",
+      "INVALID_CANCELLATION_REASON": "Invalid cancellation reason.",
+      "RESCHEDULED_DATE_REQUIRED": "Rescheduled date is required for postponement.",
+      "PRODUCTS_FETCH_FAILED": "Unable to load products.",
+      "PRODUCT_CREATE_FAILED": "Unable to create product.",
+      "PRODUCT_UPDATE_FAILED": "Unable to update product.",
+      "PRODUCT_DELETE_FAILED": "Unable to delete product.",
+      "SKU_ALREADY_EXISTS": "This SKU already exists.",
+      "STOCK_MOVEMENT_CREATE_FAILED": "Unable to record stock movement.",
+      "STOCK_MOVEMENTS_FETCH_FAILED": "Unable to load stock movement history.",
+      "INSUFFICIENT_STOCK": "Insufficient stock for this output.",
+      "PRODUCT_NOT_FOUND": "Product not found.",
+      "NO_ACTIVE_DELIVERY_PRICING": "No active delivery pricing strategy. Configure delivery pricing first.",
+      "INVALID_PRICING_TYPE": "Invalid pricing type.",
+      "INVALID_PRICING_VALUE": "Invalid pricing value.",
+      "INVALID_PACKAGE_PLAN": "Invalid package plan.",
+      "INVALID_ZONE": "Invalid zone.",
+      "FORGOT_PASSWORD_FAILED": "Failed to process request.",
+      "RESET_PASSWORD_FAILED": "Failed to reset password.",
+      "VERIFY_EMAIL_FAILED": "Failed to verify email.",
+      "PASSWORDS_DO_NOT_MATCH": "Passwords do not match.",
+      "PASSWORD_TOO_SHORT": "Password must contain at least 8 characters.",
+      "TERMS_NOT_ACCEPTED": "Please accept the terms of service.",
+      "RESET_TOKEN_MISSING": "Reset token is missing.",
+      "VERIFICATION_TOKEN_MISSING": "Verification token is missing.",
+      "VERIFYING_EMAIL": "Verifying your email...",
+      "EMAIL_VERIFIED_SUCCESS": "Email verified successfully.",
+      "PASSWORD_RESET_SUCCESS": "Password updated. You can sign in now.",
+      "LOGOUT_FAILED": "Logout failed. Please try again.",
+      "EXPENSES_FETCH_FAILED": "Unable to load expenses.",
+      "EXPENSE_CREATE_FAILED": "Unable to create expense.",
+      "EXPENSE_UPDATE_FAILED": "Unable to update expense.",
+      "EXPENSE_DELETE_FAILED": "Unable to delete expense.",
+      "EXPENSE_NOT_FOUND": "Expense not found.",
+      "INVALID_TARGET": "Invalid target.",
+      "INVALID_DATE": "Invalid date.",
+      "DASHBOARD_OVERVIEW_FAILED": "Unable to load dashboard indicators."
+    }
+  }
+}
