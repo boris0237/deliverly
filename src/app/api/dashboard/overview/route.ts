@@ -51,6 +51,8 @@ export async function GET(request: Request) {
 
     const dateRange = parseDateRange(request);
     const deliveryDateFilter = { $gte: dateRange.from, $lte: dateRange.to };
+    const dateFromKey = dateRange.from.toISOString().slice(0, 10);
+    const dateToKey = dateRange.to.toISOString().slice(0, 10);
     const effectiveDateStages = [
       { $addFields: { effectiveDate: { $ifNull: ['$accountingDate', '$deliveryDate'] } } },
       { $match: { companyId, effectiveDate: deliveryDateFilter } },
@@ -85,13 +87,15 @@ export async function GET(request: Request) {
         },
       ]),
       ExpenseModel.aggregate([
+        { $match: { companyId, targetType: { $ne: 'partner' } } },
         {
-          $match: {
-            companyId,
-            targetType: { $ne: 'partner' },
-            date: deliveryDateFilter,
+          $addFields: {
+            expenseDay: {
+              $dateToString: { format: '%Y-%m-%d', date: '$date', timezone: 'Africa/Douala' },
+            },
           },
         },
+        { $match: { expenseDay: { $gte: dateFromKey, $lte: dateToKey } } },
         { $group: { _id: null, total: { $sum: '$amount' } } },
       ]),
       DeliveryModel.aggregate([
@@ -110,6 +114,8 @@ export async function GET(request: Request) {
           $group: {
             _id: { $dateToString: { format: '%Y-%m-%d', date: '$effectiveDate' } },
             deliveries: { $sum: 1 },
+            completed: { $sum: { $cond: [{ $eq: ['$status', 'delivered'] }, 1, 0] } },
+            cancelled: { $sum: { $cond: [{ $eq: ['$status', 'cancelled'] }, 1, 0] } },
             commissions: {
               $sum: {
                 $cond: [
@@ -176,6 +182,8 @@ export async function GET(request: Request) {
       trends: trendsRows.map((item) => ({
         date: String(item._id || ''),
         deliveries: Number(item.deliveries || 0),
+        completed: Number(item.completed || 0),
+        cancelled: Number(item.cancelled || 0),
         commissions: Number(item.commissions || 0),
       })),
       topDrivers: topDriversRows.map((item) => ({

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { Coins, Package, PiggyBank, Wallet } from 'lucide-react';
 import {
@@ -37,18 +36,8 @@ type OverviewResponse = {
     failed: number;
     cancelled: number;
   };
-  trends?: Array<{ date: string; deliveries: number; commissions: number }>;
+  trends?: Array<{ date: string; deliveries: number; completed: number; cancelled: number; commissions: number }>;
   topDrivers?: Array<{ driverId: string; name: string; completed: number; failed: number }>;
-  recentDeliveries: Array<{
-    id: string;
-    customerName: string;
-    customerPhone: string;
-    address: string;
-    status: string;
-    deliveryDate: string;
-    orderValue: number;
-    deliveryFee: number;
-  }>;
   currency: string;
 };
 
@@ -99,9 +88,10 @@ const DashboardOverview = () => {
     failed: 0,
     cancelled: 0,
   });
-  const [trends, setTrends] = useState<Array<{ date: string; deliveries: number; commissions: number }>>([]);
+  const [trends, setTrends] = useState<
+    Array<{ date: string; deliveries: number; completed: number; cancelled: number; commissions: number }>
+  >([]);
   const [topDrivers, setTopDrivers] = useState<Array<{ driverId: string; name: string; completed: number; failed: number }>>([]);
-  const [recentDeliveries, setRecentDeliveries] = useState<OverviewResponse['recentDeliveries']>([]);
 
   const formatMoney = useCallback(
     (value: number) => {
@@ -141,7 +131,6 @@ const DashboardOverview = () => {
         totalCommissions: Number(data?.kpis?.totalCommissions || 0),
       });
       setCurrency(String(data?.currency || 'XAF').toUpperCase());
-      setRecentDeliveries(Array.isArray(data?.recentDeliveries) ? data.recentDeliveries : []);
       setStatusBreakdown({
         pending: Number(data?.statusBreakdown?.pending || 0),
         assigned: Number(data?.statusBreakdown?.assigned || 0),
@@ -178,10 +167,34 @@ const DashboardOverview = () => {
   ];
 
   const trendData = trends.map((item) => ({
-    day: new Date(item.date).toLocaleDateString(i18n.language || 'fr', { weekday: 'short' }),
+    label: new Date(item.date).toLocaleDateString(i18n.language || 'fr', {
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit',
+    }),
     deliveries: item.deliveries,
+    completed: item.completed,
+    cancelled: item.cancelled,
     commissions: item.commissions,
   }));
+  const rangeDays = Math.max(
+    1,
+    Math.ceil((new Date(dateTo).getTime() - new Date(dateFrom).getTime()) / (1000 * 60 * 60 * 24)) + 1
+  );
+  const axisInterval = rangeDays <= 10 ? 0 : 'preserveStartEnd';
+  const axisTickFormatter = (value: string) => {
+    const [day, month, year] = String(value || '').split('/');
+    if (rangeDays > 45 && day && month && year) return `${month}/${year}`;
+    return `${day}/${month}`;
+  };
+  const gridStroke = 'hsl(var(--border))';
+  const axisStroke = 'hsl(var(--muted-foreground))';
+  const tooltipStyle = {
+    backgroundColor: 'hsl(var(--card))',
+    border: '1px solid hsl(var(--border))',
+    borderRadius: '8px',
+    color: 'hsl(var(--foreground))',
+  };
 
   return (
     <div className="space-y-6">
@@ -246,7 +259,7 @@ const DashboardOverview = () => {
               <h3 className="text-2xl font-bold text-white">{kpis.totalDeliveries.toLocaleString()}</h3>
             </div>
             <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
-              <Package className="w-6 h-6 text-blue-300" />
+              <Package className="w-6 h-6 text-blue-700" />
             </div>
           </div>
         </div>
@@ -257,7 +270,7 @@ const DashboardOverview = () => {
               <h3 className="text-2xl font-bold text-white">{formatMoney(kpis.amountCollected)}</h3>
             </div>
             <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
-              <Wallet className="w-6 h-6 text-green-300" />
+              <Wallet className="w-6 h-6 text-green-700" />
             </div>
           </div>
         </div>
@@ -268,7 +281,7 @@ const DashboardOverview = () => {
               <h3 className="text-2xl font-bold text-white">{formatMoney(kpis.totalExpenses)}</h3>
             </div>
             <div className="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center">
-              <PiggyBank className="w-6 h-6 text-red-300" />
+              <PiggyBank className="w-6 h-6 text-red-700" />
             </div>
           </div>
         </div>
@@ -279,7 +292,7 @@ const DashboardOverview = () => {
               <h3 className="text-2xl font-bold text-white">{formatMoney(kpis.totalCommissions)}</h3>
             </div>
             <div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center">
-              <Coins className="w-6 h-6 text-orange-300" />
+              <Coins className="w-6 h-6 text-orange-700" />
             </div>
           </div>
         </div>
@@ -293,15 +306,53 @@ const DashboardOverview = () => {
               <AreaChart data={trendData}>
                 <defs>
                   <linearGradient id="colorDeliveries" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#FF6B00" stopOpacity={0.3} />
+                    <stop offset="5%" stopColor="#FF6B00" stopOpacity={0.28} />
                     <stop offset="95%" stopColor="#FF6B00" stopOpacity={0} />
                   </linearGradient>
+                  <linearGradient id="colorCompleted" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.32} />
+                    <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="colorCancelled" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#EF4444" stopOpacity={0.24} />
+                    <stop offset="95%" stopColor="#EF4444" stopOpacity={0} />
+                  </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="day" stroke="rgba(255,255,255,0.3)" fontSize={12} />
-                <YAxis stroke="rgba(255,255,255,0.3)" fontSize={12} />
-                <Tooltip contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
-                <Area type="monotone" dataKey="deliveries" stroke="#FF6B00" fillOpacity={1} fill="url(#colorDeliveries)" />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} strokeOpacity={0.35} />
+                <XAxis
+                  dataKey="label"
+                  stroke={axisStroke}
+                  fontSize={12}
+                  interval={axisInterval}
+                  minTickGap={20}
+                  tickFormatter={axisTickFormatter}
+                />
+                <YAxis stroke={axisStroke} fontSize={12} />
+                <Tooltip contentStyle={tooltipStyle} />
+                <Area
+                  type="monotone"
+                  dataKey="deliveries"
+                  name={t('dashboard.overview.charts.series.deliveries')}
+                  stroke="#FF6B00"
+                  fillOpacity={1}
+                  fill="url(#colorDeliveries)"
+                />
+                <Area
+                  type="monotone"
+                  dataKey="completed"
+                  name={t('dashboard.overview.charts.series.completed')}
+                  stroke="#10B981"
+                  fillOpacity={1}
+                  fill="url(#colorCompleted)"
+                />
+                <Area
+                  type="monotone"
+                  dataKey="cancelled"
+                  name={t('dashboard.overview.charts.series.cancelled')}
+                  stroke="#EF4444"
+                  fillOpacity={1}
+                  fill="url(#colorCancelled)"
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -311,11 +362,23 @@ const DashboardOverview = () => {
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={trendData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="day" stroke="rgba(255,255,255,0.3)" fontSize={12} />
-                <YAxis stroke="rgba(255,255,255,0.3)" fontSize={12} />
-                <Tooltip contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
-                <Bar dataKey="commissions" fill="#8B5CF6" radius={[4, 4, 0, 0]} />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} strokeOpacity={0.35} />
+                <XAxis
+                  dataKey="label"
+                  stroke={axisStroke}
+                  fontSize={12}
+                  interval={axisInterval}
+                  minTickGap={20}
+                  tickFormatter={axisTickFormatter}
+                />
+                <YAxis stroke={axisStroke} fontSize={12} />
+                <Tooltip contentStyle={tooltipStyle} />
+                <Bar
+                  dataKey="commissions"
+                  name={t('dashboard.overview.charts.series.commissions')}
+                  fill="#8B5CF6"
+                  radius={[4, 4, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -328,12 +391,24 @@ const DashboardOverview = () => {
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={topDrivers} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis type="number" stroke="rgba(255,255,255,0.3)" fontSize={12} />
-                <YAxis dataKey="name" type="category" stroke="rgba(255,255,255,0.3)" fontSize={12} width={90} />
-                <Tooltip contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
-                <Bar dataKey="completed" stackId="a" fill="#10B981" radius={[0, 4, 4, 0]} />
-                <Bar dataKey="failed" stackId="a" fill="#EF4444" radius={[0, 4, 4, 0]} />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} strokeOpacity={0.35} />
+                <XAxis type="number" stroke={axisStroke} fontSize={12} />
+                <YAxis dataKey="name" type="category" stroke={axisStroke} fontSize={12} width={90} />
+                <Tooltip contentStyle={tooltipStyle} />
+                <Bar
+                  dataKey="completed"
+                  name={t('dashboard.overview.charts.series.completed')}
+                  stackId="a"
+                  fill="#10B981"
+                  radius={[0, 4, 4, 0]}
+                />
+                <Bar
+                  dataKey="failed"
+                  name={t('dashboard.overview.charts.series.failed')}
+                  stackId="a"
+                  fill="#EF4444"
+                  radius={[0, 4, 4, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -354,33 +429,8 @@ const DashboardOverview = () => {
           </div>
         </div>
       </div>
-
-      <div className="glass-card p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-white">{t('dashboard.overview.recentDeliveries')}</h3>
-          <Link href="/dashboard/deliveries" className="text-sm text-orange-400 hover:text-orange-300">
-            {t('dashboard.overview.viewAll')}
-          </Link>
-        </div>
-        {isLoading ? <p className="text-white/60">{t('common.loading')}</p> : null}
-        {!isLoading && recentDeliveries.length === 0 ? <p className="text-white/50">{t('dashboard.deliveries.empty')}</p> : null}
-        <div className="space-y-3">
-          {recentDeliveries.map((delivery) => (
-            <div key={delivery.id} className="p-4 rounded-xl border border-white/10 bg-white/5">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                <div>
-                  <p className="text-white font-medium">{delivery.customerName || '-'}</p>
-                  <p className="text-sm text-white/60">{delivery.customerPhone} • {delivery.address}</p>
-                </div>
-                <div className="text-sm text-white/70">{new Date(delivery.deliveryDate).toLocaleDateString(i18n.language || 'fr')}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };
 
 export default DashboardOverview;
-

@@ -334,7 +334,7 @@
       "stats": {
         "totalDeliveries": "Total des livraisons",
         "amountCollected": "Montant collecté",
-        "totalExpenses": "Dépenses (hors partenaire)",
+        "totalExpenses": "Dépenses interne",
         "totalCommissions": "Commissions totales",
         "activeDeliveries": "Livraisons actives",
         "completedDeliveries": "Livraisons terminées",
@@ -346,7 +346,14 @@
         "deliveryTrends": "Tendances des livraisons",
         "revenue": "Revenus",
         "driverPerformance": "Performance des livreurs",
-        "deliveryStatus": "Statut des livraisons"
+        "deliveryStatus": "Statut des livraisons",
+        "series": {
+          "deliveries": "Livraisons",
+          "completed": "Terminées",
+          "cancelled": "Annulées",
+          "commissions": "Commissions",
+          "failed": "Échouées"
+        }
       },
       "recentDeliveries": "Dernières livraisons",
       "topDrivers": "Meilleurs livreurs",
@@ -765,6 +772,7 @@
     },
     "reports": {
       "title": "Rapports",
+      "subtitle": "Analyse complète des opérations, finances et performances",
       "types": {
         "deliveries": "Rapport de livraisons",
         "financial": "Rapport financier",
@@ -776,7 +784,106 @@
         "dateRange": "Plage de dates",
         "driver": "Livreur",
         "partner": "Partenaire",
-        "status": "Statut"
+        "status": "Statut",
+        "allPartners": "Tous les partenaires",
+        "allDrivers": "Tous les livreurs",
+        "allStatuses": "Tous les statuts"
+      },
+      "applyFilters": "Appliquer les filtres",
+      "empty": "Aucune donnée disponible pour cette période.",
+      "linkCopied": "Lien du rapport copié.",
+      "charts": {
+        "timeline": "Évolution dans le temps",
+        "distribution": "Répartition"
+      },
+      "series": {
+        "total": "Total",
+        "deliveries": "Livraisons",
+        "delivered": "Livrées",
+        "cancelled": "Annulées",
+        "inTransit": "En cours",
+        "commissions": "Commissions",
+        "collected": "Montant collecté",
+        "internalExpenses": "Dépenses interne",
+        "partnerExpenses": "Dépenses partenaire",
+        "assigned": "Affectées",
+        "entries": "Entrées stock",
+        "exits": "Sorties stock",
+        "adjustments": "Ajustements"
+      },
+      "metrics": {
+        "deliveries": {
+          "total": "Total livraisons",
+          "delivered": "Livrées",
+          "cancelled": "Annulées",
+          "inTransit": "En cours",
+          "successRate": "Taux de succès"
+        },
+        "financial": {
+          "collected": "Montant collecté",
+          "commissions": "Commissions",
+          "internalExpenses": "Dépenses interne",
+          "partnerExpenses": "Dépenses partenaire",
+          "net": "Net"
+        },
+        "driver": {
+          "totalDrivers": "Total livreurs",
+          "activeDrivers": "Livreurs actifs",
+          "totalAssigned": "Courses affectées",
+          "delivered": "Livrées",
+          "successRate": "Taux de succès"
+        },
+        "inventory": {
+          "totalProducts": "Produits",
+          "totalStock": "Stock total",
+          "lowStock": "Stock faible",
+          "outOfStock": "Rupture",
+          "stockValue": "Valeur stock"
+        },
+        "partner": {
+          "totalPartners": "Total partenaires",
+          "activePartners": "Partenaires actifs",
+          "totalDeliveries": "Total livraisons",
+          "delivered": "Livrées",
+          "commissions": "Commissions",
+          "collected": "Montant collecté"
+        }
+      },
+      "columns": {
+        "id": "ID",
+        "date": "Date",
+        "partner": "Partenaire",
+        "driver": "Livreur",
+        "status": "Statut",
+        "orderValue": "Valeur commande",
+        "deliveryFee": "Frais livraison",
+        "collected": "Collecté",
+        "commissions": "Commissions",
+        "internalExpenses": "Dépenses interne",
+        "partnerExpenses": "Dépenses partenaire",
+        "net": "Net",
+        "phone": "Téléphone",
+        "isActive": "Actif",
+        "assigned": "Affectées",
+        "delivered": "Livrées",
+        "cancelled": "Annulées",
+        "failed": "Échouées",
+        "successRate": "Succès %",
+        "sku": "SKU",
+        "name": "Nom",
+        "price": "Prix",
+        "stock": "Stock",
+        "minStock": "Stock min",
+        "stockValue": "Valeur stock",
+        "deliveries": "Livraisons"
+      },
+      "distribution": {
+        "healthy": "Stock normal",
+        "low": "Stock faible",
+        "out": "Rupture"
+      },
+      "table": {
+        "title": "Données détaillées"
       },
       "export": {
         "pdf": "Exporter en PDF",
@@ -1036,7 +1143,8 @@
       "EXPENSE_NOT_FOUND": "Dépense introuvable.",
       "INVALID_TARGET": "Cible invalide.",
       "INVALID_DATE": "Date invalide.",
-      "DASHBOARD_OVERVIEW_FAILED": "Impossible de charger les indicateurs du tableau de bord."
+      "DASHBOARD_OVERVIEW_FAILED": "Impossible de charger les indicateurs du tableau de bord.",
+      "REPORTS_FETCH_FAILED": "Impossible de charger les rapports."
     }
   }
 }
