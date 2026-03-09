@@ -5,6 +5,13 @@ type DeliveryRealtimeEvent = {
   deliveryId?: string;
   type: 'created' | 'updated' | 'deleted' | 'accepted';
 };
+type DriverLocationRealtimeEvent = {
+  companyId: string;
+  driverId: string;
+  latitude: number;
+  longitude: number;
+  updatedAt: string;
+};
 type NotificationRealtimeEvent = {
   companyId: string;
   userId: string;
@@ -44,4 +51,10 @@ export function emitNotificationRealtimeEvent(event: NotificationRealtimeEvent) 
   const io = getSocketServer();
   if (!io) return;
   io.emit('notifications:new', event);
+}
+
+export function emitDriverLocationRealtimeEvent(event: DriverLocationRealtimeEvent) {
+  const io = getSocketServer();
+  if (!io) return;
+  io.emit('drivers:location', event);
 }

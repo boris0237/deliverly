@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BarChart3, Calendar, Download, FileText, Filter, PieChart as PieChartIcon, Share2, Store, Truck, Users } from 'lucide-react';
+import { BarChart3, Calendar, Download, FileText, PieChart as PieChartIcon, Share2, Store, Truck, Users } from 'lucide-react';
 import {
   Area,
   AreaChart,
@@ -16,8 +16,9 @@ import {
   YAxis,
 } from 'recharts';
 import { Button } from '@/components/ui/button';
-import { useUIStore } from '@/store';
+import { useAuthStore, useUIStore } from '@/store';
 import { getLocalizedApiError } from '@/lib/auth/error-message';
+import { buildSimplePdf } from '@/lib/pdf/simple-pdf';
 
 type ReportType = 'deliveries' | 'financial' | 'driver' | 'inventory' | 'partner';
 
@@ -51,7 +52,10 @@ const reportTypes: Array<{ key: ReportType; icon: any }> = [
 
 const ReportsPage = () => {
   const { t, i18n } = useTranslation();
+  const { user } = useAuthStore();
   const { showToast } = useUIStore();
+  const isDriver = user?.role === 'driver';
+  const currentUserId = String(user?.id || '');
   const [selectedReport, setSelectedReport] = useState<ReportType>('deliveries');
   const [dateFrom, setDateFrom] = useState(monthRange().from);
   const [dateTo, setDateTo] = useState(monthRange().to);
@@ -60,6 +64,9 @@ const ReportsPage = () => {
   const [status, setStatus] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<ReportResponse | null>(null);
+  const currentReportType: ReportType = isDriver ? 'deliveries' : selectedReport;
+  const currentDriverFilter = isDriver ? currentUserId : driverId;
+  const visibleReportTypes = isDriver ? reportTypes.filter((report) => report.key === 'deliveries') : reportTypes;
 
   const formatMoney = useCallback(
     (value: number) => {
@@ -85,11 +92,11 @@ const ReportsPage = () => {
     setIsLoading(true);
     try {
       const params = new URLSearchParams();
-      params.set('type', selectedReport);
+      params.set('type', currentReportType);
       params.set('dateFrom', dateFrom);
       params.set('dateTo', dateTo);
-      if (partnerId) params.set('partnerId', partnerId);
-      if (driverId) params.set('driverId', driverId);
+      if (!isDriver && partnerId) params.set('partnerId', partnerId);
+      if (currentDriverFilter) params.set('driverId', currentDriverFilter);
       if (status) params.set('status', status);
 
       const response = await fetch(`/api/dashboard/reports?${params.toString()}`, { cache: 'no-store' });
@@ -104,43 +111,49 @@ const ReportsPage = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [dateFrom, dateTo, driverId, partnerId, selectedReport, showToast, status, t]);
+  }, [currentDriverFilter, currentReportType, dateFrom, dateTo, isDriver, partnerId, showToast, status, t]);
 
   useEffect(() => {
     void loadReport();
   }, [loadReport]);
 
+  useEffect(() => {
+    if (isDriver && selectedReport !== 'deliveries') {
+      setSelectedReport('deliveries');
+    }
+  }, [isDriver, selectedReport]);
+
   const summaryConfig = useMemo(() => {
-    if (selectedReport === 'deliveries') {
+    if (currentReportType === 'deliveries') {
       return ['total', 'delivered', 'cancelled', 'inTransit', 'successRate'];
     }
-    if (selectedReport === 'financial') {
+    if (currentReportType === 'financial') {
       return ['collected', 'commissions', 'internalExpenses', 'partnerExpenses', 'net'];
     }
-    if (selectedReport === 'driver') {
+    if (currentReportType === 'driver') {
       return ['totalDrivers', 'activeDrivers', 'totalAssigned', 'delivered', 'successRate'];
     }
-    if (selectedReport === 'inventory') {
+    if (currentReportType === 'inventory') {
       return ['totalProducts', 'totalStock', 'lowStock', 'outOfStock', 'stockValue'];
     }
-    return ['totalPartners', 'activePartners', 'totalDeliveries', 'delivered', 'commissions', 'collected'];
-  }, [selectedReport]);
+    return ['totalPartners', 'activePartners', 'totalDeliveries', 'delivered', 'commissions', 'extraCharges', 'partnerExpenses', 'collected'];
+  }, [currentReportType]);
 
   const seriesConfig = useMemo(() => {
-    if (selectedReport === 'deliveries') return ['total', 'delivered', 'cancelled'];
-    if (selectedReport === 'financial') return ['collected', 'commissions', 'internalExpenses', 'partnerExpenses'];
-    if (selectedReport === 'driver') return ['assigned', 'delivered', 'cancelled'];
-    if (selectedReport === 'inventory') return ['entries', 'exits', 'adjustments'];
-    return ['deliveries', 'delivered', 'commissions'];
-  }, [selectedReport]);
+    if (currentReportType === 'deliveries') return ['total', 'delivered', 'cancelled'];
+    if (currentReportType === 'financial') return ['collected', 'commissions', 'internalExpenses', 'partnerExpenses'];
+    if (currentReportType === 'driver') return ['assigned', 'delivered', 'cancelled'];
+    if (currentReportType === 'inventory') return ['entries', 'exits', 'adjustments'];
+    return ['deliveries', 'delivered', 'commissions', 'extraCharges', 'partnerExpenses'];
+  }, [currentReportType]);
 
   const tableColumns = useMemo(() => {
-    if (selectedReport === 'deliveries') return ['id', 'date', 'partner', 'driver', 'status', 'orderValue', 'deliveryFee'];
-    if (selectedReport === 'financial') return ['date', 'collected', 'commissions', 'internalExpenses', 'partnerExpenses', 'net'];
-    if (selectedReport === 'driver') return ['driver', 'phone', 'isActive', 'assigned', 'delivered', 'cancelled', 'failed', 'successRate', 'commissions'];
-    if (selectedReport === 'inventory') return ['sku', 'name', 'partner', 'price', 'stock', 'minStock', 'status', 'stockValue'];
-    return ['partner', 'deliveries', 'delivered', 'cancelled', 'commissions', 'collected', 'successRate'];
-  }, [selectedReport]);
+    if (currentReportType === 'deliveries') return ['id', 'date', 'partner', 'driver', 'status', 'orderValue', 'deliveryFee'];
+    if (currentReportType === 'financial') return ['date', 'collected', 'commissions', 'internalExpenses', 'partnerExpenses', 'net'];
+    if (currentReportType === 'driver') return ['driver', 'phone', 'isActive', 'assigned', 'delivered', 'cancelled', 'failed', 'successRate', 'commissions'];
+    if (currentReportType === 'inventory') return ['sku', 'name', 'partner', 'price', 'entries', 'exits', 'stock', 'status'];
+    return ['partner', 'deliveries', 'delivered', 'cancelled', 'commissions', 'extraCharges', 'partnerExpenses', 'collected', 'successRate'];
+  }, [currentReportType]);
 
   const colorBySeries: Record<string, string> = {
     total: '#F97316',
@@ -152,6 +165,7 @@ const ReportsPage = () => {
     collected: '#22C55E',
     internalExpenses: '#EF4444',
     partnerExpenses: '#F59E0B',
+    extraCharges: '#06B6D4',
     assigned: '#3B82F6',
     entries: '#10B981',
     exits: '#EF4444',
@@ -190,7 +204,7 @@ const ReportsPage = () => {
 
   const formatMetricValue = (key: string, value: number) => {
     if (['successRate'].includes(key)) return `${Number(value || 0).toFixed(1)}%`;
-    if (['collected', 'commissions', 'internalExpenses', 'partnerExpenses', 'net', 'stockValue', 'price', 'orderValue', 'deliveryFee'].includes(key)) {
+    if (['collected', 'commissions', 'internalExpenses', 'partnerExpenses', 'extraCharges', 'net', 'stockValue', 'price', 'orderValue', 'deliveryFee'].includes(key)) {
       return formatMoney(value);
     }
     return Number(value || 0).toLocaleString(i18n.language || 'fr');
@@ -198,10 +212,29 @@ const ReportsPage = () => {
 
   const formatCell = (column: string, value: unknown) => {
     if (value === null || value === undefined) return '-';
-    if (column === 'status') return t(`dashboard.deliveries.status.${String(value)}`);
+    if (column === 'status') {
+      if (currentReportType === 'inventory') return t(`dashboard.reports.distribution.${String(value)}`);
+      return t(`dashboard.deliveries.status.${String(value)}`);
+    }
     if (column === 'isActive') return value ? t('common.yes') : t('common.no');
     if (column === 'successRate') return `${Number(value || 0).toFixed(1)}%`;
-    if (['collected', 'commissions', 'internalExpenses', 'partnerExpenses', 'net', 'stockValue', 'price', 'orderValue', 'deliveryFee'].includes(column)) {
+    if (
+      [
+        'collected',
+        'commissions',
+        'internalExpenses',
+        'partnerExpenses',
+        'extraCharges',
+        'net',
+        'stockValue',
+        'price',
+        'orderValue',
+        'deliveryFee',
+        'partnerExtraCharge',
+        'totalAmount',
+        'remitAmount',
+      ].includes(column)
+    ) {
       return formatMoney(Number(value || 0));
     }
     if (column === 'date') return new Date(String(value)).toLocaleDateString(i18n.language || 'fr');
@@ -209,9 +242,9 @@ const ReportsPage = () => {
   };
 
   const getDistributionLabel = (key: string) => {
-    if (selectedReport === 'deliveries') return t(`dashboard.deliveries.status.${key}`);
-    if (selectedReport === 'financial') return t(`dashboard.expenses.categories.${key}`);
-    if (selectedReport === 'inventory') return t(`dashboard.reports.distribution.${key}`);
+    if (currentReportType === 'deliveries') return t(`dashboard.deliveries.status.${key}`);
+    if (currentReportType === 'financial') return t(`dashboard.expenses.categories.${key}`);
+    if (currentReportType === 'inventory') return t(`dashboard.reports.distribution.${key}`);
     return key;
   };
 
@@ -229,23 +262,299 @@ const ReportsPage = () => {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     anchor.href = url;
-    anchor.download = `report-${selectedReport}-${dateFrom}-${dateTo}.${extension}`;
+    anchor.download = `report-${currentReportType}-${dateFrom}-${dateTo}.${extension}`;
     anchor.click();
     URL.revokeObjectURL(url);
   };
 
-  const handleShare = async () => {
-    const shareUrl = `${window.location.origin}/dashboard/reports?type=${selectedReport}&dateFrom=${dateFrom}&dateTo=${dateTo}`;
-    if (navigator.share) {
-      await navigator.share({
-        title: t('dashboard.reports.title'),
-        text: t('dashboard.reports.subtitle'),
-        url: shareUrl,
-      });
+  const handleExportPdf = async () => {
+    if (!data) {
+      showToast(t('dashboard.reports.empty'), 'warning');
       return;
     }
-    await navigator.clipboard.writeText(shareUrl);
-    showToast(t('dashboard.reports.linkCopied'), 'success');
+    try {
+      const settingsRes = await fetch('/api/dashboard/settings/company', { cache: 'no-store' });
+      const settingsData = await settingsRes.json();
+      const company = settingsData?.company || {};
+      const companyName = String(company?.name || 'Deliverly');
+      const companyAddress = String(company?.address || '');
+
+      const escapeHtml = (value: unknown) =>
+        String(value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+
+      const detailsRows = (data.rows as Array<Record<string, unknown>>).map((row) => {
+        if (currentReportType === 'deliveries') {
+          const cancellationReasonKey = String(row.cancellationReason || '').trim();
+          const cancellationReasonTranslated =
+            cancellationReasonKey && cancellationReasonKey !== '-'
+              ? (() => {
+                  const key = `dashboard.deliveries.cancel.reasons.${cancellationReasonKey}`;
+                  const translated = t(key);
+                  return translated !== key ? translated : cancellationReasonKey;
+                })()
+              : '-';
+          const rescheduledDateText = row.rescheduledDate
+            ? `${t('dashboard.deliveries.cancel.rescheduledDate')}: ${new Date(String(row.rescheduledDate)).toLocaleDateString(
+                i18n.language || 'fr'
+              )}`
+            : '';
+          const cancellationDisplay =
+            cancellationReasonTranslated === '-'
+              ? rescheduledDateText
+                ? `(${rescheduledDateText})`
+                : '-'
+              : rescheduledDateText
+              ? `${cancellationReasonTranslated} (${rescheduledDateText})`
+              : cancellationReasonTranslated;
+          return `
+            <tr>
+              <td>${escapeHtml(formatCell('date', row.date))}</td>
+              <td>${escapeHtml(row.partner)}</td>
+              <td>${escapeHtml(formatCell('status', row.status))}</td>
+              <td>${escapeHtml(formatCell('orderValue', row.orderValue))}</td>
+              <td>${escapeHtml(formatCell('deliveryFee', row.deliveryFee))}</td>
+              <td>${escapeHtml(formatCell('partnerExtraCharge', row.partnerExtraCharge))}</td>
+              <td>${escapeHtml(formatCell('remitAmount', row.remitAmount))}</td>
+              <td>${escapeHtml(row.collectFromCustomer ? t('common.yes') : t('common.no'))}</td>
+              <td>${escapeHtml(cancellationDisplay)}</td>
+              <td>${escapeHtml(row.cancellationNote || '-')}</td>
+            </tr>
+          `;
+        }
+        return `
+          <tr>
+            ${tableColumns.map((column) => `<td>${escapeHtml(formatCell(column, row[column]))}</td>`).join('')}
+          </tr>
+        `;
+      });
+
+      const deliveryHeader = currentReportType === 'deliveries'
+        ? `
+          <th>${escapeHtml(t('dashboard.reports.columns.date'))}</th>
+          <th>${escapeHtml(t('dashboard.reports.columns.partner'))}</th>
+          <th>${escapeHtml(t('dashboard.reports.columns.status'))}</th>
+          <th>${escapeHtml(t('dashboard.reports.columns.orderValue'))}</th>
+          <th>${escapeHtml(t('dashboard.reports.columns.deliveryFee'))}</th>
+          <th>${escapeHtml(t('dashboard.reports.columns.partnerExtraCharge'))}</th>
+          <th>${escapeHtml(t('dashboard.reports.pdf.amountToRemit'))}</th>
+          <th>${escapeHtml(t('dashboard.reports.pdf.collectFromCustomer'))}</th>
+          <th>${escapeHtml(t('dashboard.reports.pdf.cancellationReason'))}</th>
+          <th>${escapeHtml(t('dashboard.deliveries.cancel.note'))}</th>
+        `
+        : tableColumns.map((column) => `<th>${escapeHtml(t(`dashboard.reports.columns.${column}`))}</th>`).join('');
+
+      const deliveryTotals:
+        | {
+            orderValue: number;
+            deliveryFee: number;
+            partnerExtraCharge: number;
+            remitAmount: number;
+          }
+        | null =
+        currentReportType === 'deliveries'
+          ? (data.rows as Array<Record<string, unknown>>).reduce<{
+              orderValue: number;
+              deliveryFee: number;
+              partnerExtraCharge: number;
+              remitAmount: number;
+            }>(
+              (acc, row) => ({
+                orderValue: acc.orderValue + Number(row.orderValue || 0),
+                deliveryFee: acc.deliveryFee + Number(row.deliveryFee || 0),
+                partnerExtraCharge: acc.partnerExtraCharge + Number(row.partnerExtraCharge || 0),
+                remitAmount: acc.remitAmount + Number(row.remitAmount || 0),
+              }),
+              { orderValue: 0, deliveryFee: 0, partnerExtraCharge: 0, remitAmount: 0 }
+            )
+          : null;
+
+      const deliveryFooter =
+        currentReportType === 'deliveries' && deliveryTotals
+          ? `
+            <tr>
+              <td colspan="3" style="font-weight:700; background:#fff7ed;">${escapeHtml(t('dashboard.reports.pdf.totals'))}</td>
+              <td style="font-weight:700; background:#fff7ed;">${escapeHtml(formatMoney(deliveryTotals.orderValue))}</td>
+              <td style="font-weight:700; background:#fff7ed;">${escapeHtml(formatMoney(deliveryTotals.deliveryFee))}</td>
+              <td style="font-weight:700; background:#fff7ed;">${escapeHtml(formatMoney(deliveryTotals.partnerExtraCharge))}</td>
+              <td style="font-weight:700; background:#fff7ed;">${escapeHtml(formatMoney(deliveryTotals.remitAmount))}</td>
+              <td colspan="3" style="background:#fff7ed;"></td>
+            </tr>
+          `
+          : '';
+
+      const html = `<!doctype html>
+<html lang="${escapeHtml(i18n.language || 'fr')}">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${escapeHtml(t('dashboard.reports.title'))}</title>
+  <style>
+    @page { size: A4 landscape; margin: 16mm; }
+    * { box-sizing: border-box; }
+    body { font-family: "Segoe UI", Arial, sans-serif; color: #0f172a; margin: 0; background: #f8fafc; }
+    .sheet { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; }
+    .header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
+    .brand { display: flex; gap: 12px; align-items: center; }
+    .logo { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; border: 1px solid #e2e8f0; background: #fff; }
+    .logo-placeholder { width: 52px; height: 52px; border-radius: 10px; background: linear-gradient(135deg, #fb923c, #f97316); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+    .h1 { margin: 0; font-size: 20px; font-weight: 700; color: #111827; }
+    .muted { margin: 2px 0; color: #64748b; font-size: 12px; }
+    .badge { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    th, td { border: 1px solid #e5e7eb; padding: 7px 8px; font-size: 11px; vertical-align: top; word-wrap: break-word; }
+    th { background: #f1f5f9; color: #334155; text-transform: uppercase; font-size: 10px; letter-spacing: .03em; }
+    tbody tr:nth-child(even) { background: #f8fafc; }
+    .empty { padding: 24px; text-align: center; color: #64748b; border: 1px dashed #cbd5e1; border-radius: 10px; }
+    .foot { margin-top: 12px; color: #94a3b8; font-size: 10px; text-align: right; }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+    <div class="header">
+      <div class="brand">
+        ${
+          company?.logo
+            ? `<img class="logo" src="${escapeHtml(company.logo)}" alt="logo" />`
+            : `<div class="logo-placeholder">${escapeHtml((companyName || 'D').slice(0, 1).toUpperCase())}</div>`
+        }
+        <div>
+          <h1 class="h1">${escapeHtml(companyName)}</h1>
+          ${companyAddress ? `<p class="muted">${escapeHtml(companyAddress)}</p>` : ''}
+          <p class="muted">${escapeHtml(t('dashboard.reports.pdf.period'))}: ${escapeHtml(dateFrom)} → ${escapeHtml(dateTo)}</p>
+          <p class="muted">${escapeHtml(t('dashboard.reports.pdf.generatedAt'))}: ${escapeHtml(
+            new Date().toLocaleString(i18n.language || 'fr')
+          )}</p>
+        </div>
+      </div>
+      <div class="badge">${escapeHtml(t(`dashboard.reports.types.${currentReportType}`))}</div>
+    </div>
+    ${
+      detailsRows.length
+        ? `
+      <table>
+        <thead><tr>${deliveryHeader}</tr></thead>
+        <tbody>${detailsRows.join('')}</tbody>
+        ${deliveryFooter ? `<tfoot>${deliveryFooter}</tfoot>` : ''}
+      </table>
+      `
+        : `<div class="empty">${escapeHtml(t('dashboard.reports.pdf.noData'))}</div>`
+    }
+    <div class="foot">Deliverly · ${escapeHtml(t('dashboard.reports.title'))}</div>
+  </div>
+  <script>
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        window.print();
+      }, 250);
+    });
+  </script>
+</body>
+</html>`;
+
+      const printWindow = window.open('', '', 'noopener,noreferrer');
+      if (printWindow) {
+        printWindow.document.open();
+        printWindow.document.write(html);
+        printWindow.document.close();
+        return;
+      }
+
+      // Fallback when popup is blocked by the browser.
+      const iframe = document.createElement('iframe');
+      iframe.style.position = 'fixed';
+      iframe.style.right = '0';
+      iframe.style.bottom = '0';
+      iframe.style.width = '0';
+      iframe.style.height = '0';
+      iframe.style.border = '0';
+      iframe.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(iframe);
+      iframe.srcdoc = html;
+      iframe.onload = () => {
+        const frameWindow = iframe.contentWindow;
+        if (!frameWindow) {
+          showToast(t('dashboard.reports.pdf.openBlocked'), 'error');
+          document.body.removeChild(iframe);
+          return;
+        }
+        frameWindow.focus();
+        frameWindow.print();
+        setTimeout(() => {
+          if (document.body.contains(iframe)) {
+            document.body.removeChild(iframe);
+          }
+        }, 1500);
+      };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : '';
+      showToast(`${t('dashboard.reports.pdf.generationFailed')}${errorMessage ? `: ${errorMessage}` : ''}`, 'error');
+    }
+  };
+
+  const handleShare = async () => {
+    if (!data) {
+      showToast(t('dashboard.reports.empty'), 'warning');
+      return;
+    }
+    try {
+      const lines: string[] = [];
+      lines.push(`${t('dashboard.reports.types.' + currentReportType)}`);
+      lines.push(`${t('dashboard.reports.pdf.period')}: ${dateFrom} -> ${dateTo}`);
+      lines.push(`${t('dashboard.reports.pdf.generatedAt')}: ${new Date().toLocaleString(i18n.language || 'fr')}`);
+      lines.push('');
+      lines.push(tableColumns.map((column) => t(`dashboard.reports.columns.${column}`)).join(' | '));
+      lines.push('---');
+      for (const row of data.rows as Array<Record<string, unknown>>) {
+        lines.push(tableColumns.map((column) => String(formatCell(column, row[column]))).join(' | '));
+      }
+      if (!data.rows?.length) {
+        lines.push(t('dashboard.reports.pdf.noData'));
+      }
+
+      const pdfContent = buildSimplePdf({
+        title: `${t('dashboard.reports.title')} - ${t(`dashboard.reports.types.${currentReportType}`)}`,
+        lines,
+      });
+      const filename = `report-${currentReportType}-${dateFrom}-${dateTo}.pdf`;
+      const blob = new Blob([pdfContent], { type: 'application/pdf' });
+      const file = new File([blob], filename, { type: 'application/pdf' });
+
+      const fallbackDownload = () => {
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = filename;
+        anchor.click();
+        URL.revokeObjectURL(url);
+        showToast(t('dashboard.reports.pdf.shareFileFallback'), 'info');
+      };
+
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        try {
+          await navigator.share({
+            title: t('dashboard.reports.title'),
+            text: t('dashboard.reports.subtitle'),
+            files: [file],
+          });
+          return;
+        } catch (shareError) {
+          const message = shareError instanceof Error ? shareError.message.toLowerCase() : '';
+          const isAbort = message.includes('abort') || message.includes('cancel');
+          if (isAbort) return;
+          fallbackDownload();
+          return;
+        }
+      }
+
+      fallbackDownload();
+    } catch {
+      showToast(t('dashboard.reports.pdf.generationFailed'), 'error');
+    }
   };
 
   return (
@@ -256,9 +565,9 @@ const ReportsPage = () => {
           <p className="text-white/50">{t('dashboard.reports.subtitle')}</p>
         </div>
         <div className="flex gap-2">
-          <Button type="button" variant="outline" className="bg-white/5 border-white/10 hover:bg-white/10 text-white gap-2" onClick={handleShare}>
-            <Share2 className="w-4 h-4" />
-            {t('dashboard.reports.share')}
+          <Button type="button" variant="outline" className="bg-white/5 border-white/10 hover:bg-white/10 text-white gap-2" onClick={handleExportPdf}>
+            <FileText className="w-4 h-4" />
+            {t('dashboard.reports.export.pdf')}
           </Button>
           <Button type="button" className="btn-primary gap-2" onClick={() => exportRows(',', 'csv')}>
             <Download className="w-4 h-4" />
@@ -268,13 +577,13 @@ const ReportsPage = () => {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {reportTypes.map((report) => (
+        {visibleReportTypes.map((report) => (
           <button
             key={report.key}
             type="button"
             onClick={() => setSelectedReport(report.key)}
             className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
-              selectedReport === report.key ? 'bg-orange-500 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'
+              currentReportType === report.key ? 'bg-orange-500 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'
             }`}
           >
             <report.icon className="w-4 h-4" />
@@ -283,38 +592,35 @@ const ReportsPage = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3">
-        <div className="relative lg:col-span-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+        <div className="relative">
           <Calendar className="w-4 h-4 text-white/40 absolute left-3 top-1/2 -translate-y-1/2" />
           <input type="date" className="input-glass pl-10 w-full" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
         </div>
-        <div className="relative lg:col-span-2">
+        <div className="relative">
           <Calendar className="w-4 h-4 text-white/40 absolute left-3 top-1/2 -translate-y-1/2" />
           <input type="date" className="input-glass pl-10 w-full" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
         </div>
-        <select className="input-glass" value={partnerId} onChange={(e) => setPartnerId(e.target.value)}>
-          <option value="">{t('dashboard.reports.filters.allPartners')}</option>
-          {(data?.filters?.partners || []).map((partner) => (
-            <option key={partner.id} value={partner.id}>
-              {partner.label}
-            </option>
-          ))}
-        </select>
-        <select className="input-glass" value={driverId} onChange={(e) => setDriverId(e.target.value)}>
-          <option value="">{t('dashboard.reports.filters.allDrivers')}</option>
-          {(data?.filters?.drivers || []).map((driver) => (
-            <option key={driver.id} value={driver.id}>
-              {driver.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="flex items-center gap-3">
-        <Button type="button" variant="outline" className="bg-white/5 border-white/10 hover:bg-white/10 text-white gap-2" onClick={loadReport}>
-          <Filter className="w-4 h-4" />
-          {t('dashboard.reports.applyFilters')}
-        </Button>
+        {!isDriver ? (
+          <select className="input-glass" value={partnerId} onChange={(e) => setPartnerId(e.target.value)}>
+            <option value="">{t('dashboard.reports.filters.allPartners')}</option>
+            {(data?.filters?.partners || []).map((partner) => (
+              <option key={partner.id} value={partner.id}>
+                {partner.label}
+              </option>
+            ))}
+          </select>
+        ) : null}
+        {!isDriver ? (
+          <select className="input-glass" value={driverId} onChange={(e) => setDriverId(e.target.value)}>
+            <option value="">{t('dashboard.reports.filters.allDrivers')}</option>
+            {(data?.filters?.drivers || []).map((driver) => (
+              <option key={driver.id} value={driver.id}>
+                {driver.label}
+              </option>
+            ))}
+          </select>
+        ) : null}
         <select className="input-glass w-[220px]" value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="">{t('dashboard.reports.filters.allStatuses')}</option>
           {['pending', 'assigned', 'inTransit', 'delivered', 'failed', 'cancelled'].map((statusKey) => (
@@ -328,7 +634,7 @@ const ReportsPage = () => {
       <div className="grid grid-cols-2 xl:grid-cols-5 gap-4">
         {summaryConfig.map((metricKey) => (
           <div key={metricKey} className="glass-card p-4">
-            <div className="text-xs text-white/60">{t(`dashboard.reports.metrics.${selectedReport}.${metricKey}`)}</div>
+            <div className="text-xs text-white/60">{t(`dashboard.reports.metrics.${currentReportType}.${metricKey}`)}</div>
             <div className="text-xl font-semibold text-white mt-1">
               {formatMetricValue(metricKey, Number(data?.summary?.[metricKey] || 0))}
             </div>
@@ -338,7 +644,7 @@ const ReportsPage = () => {
 
       <div className="grid lg:grid-cols-2 gap-6">
         <div className="glass-card p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">{t('dashboard.reports.charts.timeline')}</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-4">{t('dashboard.reports.charts.timeline')}</h3>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
@@ -363,7 +669,7 @@ const ReportsPage = () => {
         </div>
 
         <div className="glass-card p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">{t('dashboard.reports.charts.distribution')}</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-4">{t('dashboard.reports.charts.distribution')}</h3>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -382,10 +688,10 @@ const ReportsPage = () => {
           </div>
           <div className="flex flex-wrap gap-3 mt-3">
             {distributionData.map((entry) => (
-              <div key={entry.key} className="text-xs text-white/65 flex items-center gap-2">
+              <div key={entry.key} className="text-xs text-muted-foreground flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.color }} />
                 <span>{getDistributionLabel(entry.key)}</span>
-                <span className="text-white">{entry.value.toLocaleString(i18n.language || 'fr')}</span>
+                <span className="text-foreground">{entry.value.toLocaleString(i18n.language || 'fr')}</span>
               </div>
             ))}
           </div>
@@ -394,8 +700,12 @@ const ReportsPage = () => {
 
       <div className="glass-card p-6 space-y-4">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          <h3 className="text-lg font-semibold text-white">{t('dashboard.reports.table.title')}</h3>
+          <h3 className="text-lg font-semibold text-foreground">{t('dashboard.reports.table.title')}</h3>
           <div className="flex gap-2">
+            <Button type="button" variant="outline" className="bg-white/5 border-white/10 hover:bg-white/10 text-white gap-2" onClick={handleExportPdf}>
+              <FileText className="w-4 h-4" />
+              {t('dashboard.reports.export.pdf')}
+            </Button>
             <Button type="button" variant="outline" className="bg-white/5 border-white/10 hover:bg-white/10 text-white gap-2" onClick={() => exportRows(',', 'csv')}>
               <Download className="w-4 h-4" />
               {t('dashboard.reports.export.csv')}
@@ -414,7 +724,7 @@ const ReportsPage = () => {
               <thead className="bg-white/5">
                 <tr>
                   {tableColumns.map((column) => (
-                    <th key={column} className="text-left text-white/70 font-medium px-3 py-2">
+                    <th key={column} className="text-left text-muted-foreground font-medium px-3 py-2">
                       {t(`dashboard.reports.columns.${column}`)}
                     </th>
                   ))}
@@ -424,7 +734,7 @@ const ReportsPage = () => {
                 {data.rows.map((row, index) => (
                   <tr key={index} className="border-t border-white/5 hover:bg-white/5">
                     {tableColumns.map((column) => (
-                      <td key={column} className="px-3 py-2 text-white/85 whitespace-nowrap">
+                      <td key={column} className="px-3 py-2 text-foreground whitespace-nowrap">
                         {formatCell(column, row[column])}
                       </td>
                     ))}
@@ -440,4 +750,3 @@ const ReportsPage = () => {
 };
 
 export default ReportsPage;
-

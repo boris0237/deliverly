@@ -52,6 +52,11 @@ const userSchema = new Schema(
     lastName: { type: String, required: true },
     phone: { type: String, default: '' },
     vehicleId: { type: String, default: '' },
+    currentLocation: {
+      latitude: { type: Number, default: null },
+      longitude: { type: Number, default: null },
+      updatedAt: { type: Date, default: null },
+    },
     companyId: { type: String, required: true, index: true },
     role: { type: String, enum: USER_ROLES, required: true, default: 'admin' },
     isActive: { type: Boolean, default: true },
@@ -281,6 +286,20 @@ const expenseSchema = new Schema(
   { timestamps: true }
 );
 
+const remittanceSchema = new Schema(
+  {
+    id: { type: String, required: true, unique: true, index: true },
+    companyId: { type: String, required: true, index: true },
+    partnerId: { type: String, required: true, index: true },
+    amount: { type: Number, required: true, min: 0 },
+    currency: { type: String, default: 'XAF' },
+    note: { type: String, default: '' },
+    remittanceDate: { type: Date, required: true, index: true },
+    createdBy: { type: String, required: true, index: true },
+  },
+  { timestamps: true }
+);
+
 const stockMovementSchema = new Schema(
   {
     id: { type: String, required: true, unique: true, index: true },
@@ -339,6 +358,7 @@ export type PartnerDoc = InferSchemaType<typeof partnerSchema>;
 export type DeliveryDoc = InferSchemaType<typeof deliverySchema>;
 export type ProductDoc = InferSchemaType<typeof productSchema>;
 export type ExpenseDoc = InferSchemaType<typeof expenseSchema>;
+export type RemittanceDoc = InferSchemaType<typeof remittanceSchema>;
 export type StockMovementDoc = InferSchemaType<typeof stockMovementSchema>;
 export type NotificationDoc = InferSchemaType<typeof notificationSchema>;
 export type AuthTokenDoc = InferSchemaType<typeof authTokenSchema>;
@@ -364,6 +384,9 @@ export const ProductModel: Model<ProductDoc> =
 
 export const ExpenseModel: Model<ExpenseDoc> =
   (mongoose.models.Expense as Model<ExpenseDoc>) || mongoose.model<ExpenseDoc>('Expense', expenseSchema);
+
+export const RemittanceModel: Model<RemittanceDoc> =
+  (mongoose.models.Remittance as Model<RemittanceDoc>) || mongoose.model<RemittanceDoc>('Remittance', remittanceSchema);
 
 export const StockMovementModel: Model<StockMovementDoc> =
   (mongoose.models.StockMovement as Model<StockMovementDoc>) || mongoose.model<StockMovementDoc>('StockMovement', stockMovementSchema);

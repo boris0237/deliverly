@@ -63,6 +63,7 @@
     "partners": "Partners",
     "inventory": "Inventory",
     "expenses": "Expenses",
+    "remittances": "Remittances",
     "reports": "Reports",
     "tracking": "Tracking",
     "users": "Users",
@@ -803,6 +804,7 @@
         "cancelled": "Cancelled",
         "inTransit": "In Transit",
         "commissions": "Commissions",
+        "extraCharges": "Extra Charges",
         "collected": "Amount Collected",
         "internalExpenses": "Internal Expenses",
         "partnerExpenses": "Partner Expenses",
@@ -846,6 +848,8 @@
           "totalDeliveries": "Total Deliveries",
           "delivered": "Delivered",
           "commissions": "Commissions",
+          "extraCharges": "Extra Charges",
+          "partnerExpenses": "Partner Expenses",
           "collected": "Amount Collected"
         }
       },
@@ -857,8 +861,10 @@
         "status": "Status",
         "orderValue": "Order Value",
         "deliveryFee": "Delivery Fee",
+        "partnerExtraCharge": "Extra Charge",
         "collected": "Collected",
         "commissions": "Commissions",
+        "extraCharges": "Extra Charges",
         "internalExpenses": "Internal Expenses",
         "partnerExpenses": "Partner Expenses",
         "net": "Net",
@@ -873,6 +879,9 @@
         "name": "Name",
         "price": "Price",
         "stock": "Stock",
+        "entries": "Entries",
+        "exits": "Exits",
+        "adjustments": "Adjustments",
         "minStock": "Min Stock",
         "stockValue": "Stock Value",
         "deliveries": "Deliveries"
@@ -885,6 +894,24 @@
       "table": {
         "title": "Detailed Data"
       },
+      "pdf": {
+        "company": "Company",
+        "period": "Period",
+        "generatedAt": "Generated at",
+        "details": "Details",
+        "noData": "No data to export.",
+        "cancellationReason": "Cancellation reason",
+        "extraChargeDeducted": "Extra charge deducted",
+        "totalAmount": "Total amount",
+        "commission": "Commission",
+        "amountToRemit": "Amount to remit",
+        "collectFromCustomer": "Collect from customer",
+        "totals": "Totals",
+        "openBlocked": "The browser blocked the document window. Allow popups and try again.",
+        "generationFailed": "PDF generation failed",
+        "shareFileFallback": "File sharing is unavailable. The PDF was downloaded instead.",
+        "shareFailed": "Unable to share the PDF report."
+      },
       "export": {
         "pdf": "Export as PDF",
         "excel": "Export as Excel",
@@ -892,14 +919,89 @@
       },
       "share": "Share Report"
     },
+    "remittances": {
+      "title": "Remittances",
+      "subtitle": "Track total collected amount, remitted amount, and partner outstanding balances",
+      "create": "New remittance",
+      "confirmDelete": "Do you really want to delete this remittance?",
+      "kpi": {
+        "collected": "Total collected amount",
+        "remitted": "Total remitted amount",
+        "balance": "Outstanding to remit"
+      },
+      "filters": {
+        "allPartners": "All partners"
+      },
+      "fields": {
+        "partner": "Partner",
+        "amount": "Amount",
+        "date": "Remittance date",
+        "note": "Note",
+        "currentBalance": "Current balance"
+      },
+      "placeholders": {
+        "partner": "Select a partner",
+        "note": "Optional note..."
+      },
+      "actions": {
+        "initiate": "Initiate"
+      },
+      "validation": {
+        "required": "Please fill in required fields.",
+        "exceedsBalance": "Amount exceeds partner balance."
+      },
+      "history": {
+        "title": "Remittance history",
+        "empty": "No remittance found."
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {{page}} / {{totalPages}}",
+        "summary": "{{from}}-{{to}} of {{total}}"
+      }
+    },
     "tracking": {
       "title": "Real-time Tracking",
-      "liveMap": "Live Map",
-      "drivers": "Online Drivers",
-      "deliveries": "Active Deliveries",
-      "routes": "Routes",
-      "eta": "Estimated Arrival Time",
-      "refresh": "Refresh"
+      "subtitle": "Monitor drivers and deliveries live with operational filters",
+      "liveMap": "Live OpenStreetMap",
+      "mapNoPoints": "No geolocated points available for this filter.",
+      "refresh": "Refresh",
+      "kpi": {
+        "activeDrivers": "Active drivers",
+        "busyDrivers": "Drivers on mission",
+        "activeDeliveries": "Active deliveries",
+        "unassigned": "Unassigned",
+        "avgEta": "Avg ETA"
+      },
+      "filters": {
+        "activeOnly": "Active statuses",
+        "allStatuses": "All statuses",
+        "allDrivers": "All drivers"
+      },
+      "searchPlaceholder": "Search by ID, customer, phone, address...",
+      "boardTitle": "Operations tracking",
+      "driversTitle": "Drivers",
+      "driverDetails": "Driver details",
+      "activeMissions": "Active missions",
+      "inTransit": "In transit",
+      "unassignedLabel": "Unassigned",
+      "orderShort": "Order",
+      "total": "deliveries",
+      "noCustomer": "Customer not specified",
+      "noItem": "No item",
+      "empty": "No deliveries found for this filter.",
+      "driverStatus": {
+        "offline": "Offline",
+        "busy": "Busy",
+        "available": "Available"
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {{page}} / {{totalPages}}",
+        "summary": "{{from}}-{{to}} of {{total}}"
+      }
     },
     "users": {
       "title": "Users",
@@ -1145,6 +1247,12 @@
       "INVALID_DATE": "Invalid date.",
       "DASHBOARD_OVERVIEW_FAILED": "Unable to load dashboard indicators.",
       "REPORTS_FETCH_FAILED": "Unable to load reports."
+      ,
+      "REMITTANCES_FETCH_FAILED": "Unable to load remittances.",
+      "REMITTANCE_CREATE_FAILED": "Unable to create remittance.",
+      "REMITTANCE_DELETE_FAILED": "Unable to delete remittance.",
+      "REMITTANCE_NOT_FOUND": "Remittance not found.",
+      "REMITTANCE_EXCEEDS_BALANCE": "Amount exceeds outstanding balance."
     }
   }
 }

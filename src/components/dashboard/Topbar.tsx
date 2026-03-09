@@ -28,6 +28,17 @@ interface TopbarProps {
   onSidebarToggle: () => void;
 }
 
+function haversineMeters(from: { lat: number; lng: number }, to: { lat: number; lng: number }) {
+  const toRad = (value: number) => (value * Math.PI) / 180;
+  const earthRadius = 6371000;
+  const dLat = toRad(to.lat - from.lat);
+  const dLng = toRad(to.lng - from.lng);
+  const lat1 = toRad(from.lat);
+  const lat2 = toRad(to.lat);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  return 2 * earthRadius * Math.asin(Math.min(1, Math.sqrt(a)));
+}
+
 const Topbar = ({ onSidebarToggle }: TopbarProps) => {
   const { t } = useTranslation();
   const { notifications, unreadNotificationsCount, setNotifications, addNotification, markNotificationAsRead, markAllNotificationsAsRead } =
@@ -36,6 +47,7 @@ const Topbar = ({ onSidebarToggle }: TopbarProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const audioContextRef = useRef<AudioContext | null>(null);
   const notificationAudioRef = useRef<HTMLAudioElement | null>(null);
+  const lastLocationSentRef = useRef<{ lat: number; lng: number; at: number } | null>(null);
 
   const getAudioContext = async () => {
     try {
@@ -172,6 +184,67 @@ const Topbar = ({ onSidebarToggle }: TopbarProps) => {
       if (socket) socket.disconnect();
     };
   }, [addNotification, user?.companyId, user?.id]);
+
+  useEffect(() => {
+    if (!user?.id || user.role !== 'driver') return;
+    if (typeof window === 'undefined' || !('geolocation' in navigator)) return;
+
+    let isMounted = true;
+    let watchId: number | null = null;
+    let lastAttemptAt = 0;
+
+    const pushLocation = async (coords: GeolocationCoordinates, positionTimestamp: number) => {
+      const latitude = Number(coords.latitude || 0);
+      const longitude = Number(coords.longitude || 0);
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return;
+
+      const now = Date.now();
+      const previous = lastLocationSentRef.current;
+      if (previous) {
+        const movedMeters = haversineMeters({ lat: previous.lat, lng: previous.lng }, { lat: latitude, lng: longitude });
+        const elapsed = now - previous.at;
+        if (movedMeters < 15 && elapsed < 30000) return;
+      } else if (now - lastAttemptAt < 5000) {
+        return;
+      }
+      lastAttemptAt = now;
+
+      try {
+        const response = await fetch('/api/dashboard/drivers/location', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            latitude,
+            longitude,
+            accuracy: Number(coords.accuracy || 0),
+            timestamp: new Date(positionTimestamp || now).toISOString(),
+          }),
+        });
+        if (!isMounted || !response.ok) return;
+        lastLocationSentRef.current = { lat: latitude, lng: longitude, at: now };
+      } catch {
+        // ignore location network errors
+      }
+    };
+
+    const onSuccess = (position: GeolocationPosition) => {
+      void pushLocation(position.coords, position.timestamp);
+    };
+    const onError = () => {
+      // ignore permission/location errors silently
+    };
+
+    watchId = navigator.geolocation.watchPosition(onSuccess, onError, {
+      enableHighAccuracy: true,
+      maximumAge: 10000,
+      timeout: 15000,
+    });
+
+    return () => {
+      isMounted = false;
+      if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+    };
+  }, [user?.id, user?.role]);
 
   const handleMarkNotificationAsRead = async (notificationId: string) => {
     markNotificationAsRead(notificationId);

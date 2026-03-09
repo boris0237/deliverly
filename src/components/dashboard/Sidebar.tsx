@@ -9,6 +9,7 @@ import {
   Boxes,
   Receipt,
   FileText,
+  HandCoins,
   MapPin,
   Settings,
   UserCog,
@@ -41,6 +42,7 @@ const Sidebar = ({ isOpen, onToggle }: SidebarProps) => {
     { path: '/dashboard/inventory', icon: Boxes, label: t('common.inventory') },
     { path: '/dashboard/expenses', icon: Receipt, label: t('common.expenses') },
     { path: '/dashboard/reports', icon: FileText, label: t('common.reports') },
+    { path: '/dashboard/remittances', icon: HandCoins, label: t('common.remittances') },
     { path: '/dashboard/tracking', icon: MapPin, label: t('common.tracking') },
   ];
 

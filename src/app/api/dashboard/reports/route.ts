@@ -41,12 +41,12 @@ function parseDateRange(request: Request): DateRange {
   return resolvedFrom <= resolvedTo ? { from: resolvedFrom, to: resolvedTo } : fallback;
 }
 
-async function resolveCompanyId(userId: string): Promise<string | null> {
+async function resolveActor(userId: string): Promise<{ companyId: string; role: string } | null> {
   const user = await UserModel.findOne({ id: userId }).lean();
   if (!user?.companyId) return null;
   const company = await CompanyModel.findOne({ id: user.companyId }).lean();
   if (!company) return null;
-  return company.id;
+  return { companyId: company.id, role: String(user.role || '') };
 }
 
 function buildDeliveryStages(companyId: string, dateRange: DateRange, filters: { partnerId: string; driverId: string; status: string }) {
@@ -68,17 +68,19 @@ export async function GET(request: Request) {
     const currentUserId = await getCurrentSessionUserId();
     if (!currentUserId) return NextResponse.json({ error: 'Unauthorized', code: 'UNAUTHORIZED' }, { status: 401 });
 
-    const companyId = await resolveCompanyId(currentUserId);
-    if (!companyId) return NextResponse.json({ error: 'Company not found', code: 'COMPANY_NOT_FOUND' }, { status: 404 });
+    const actor = await resolveActor(currentUserId);
+    if (!actor?.companyId) return NextResponse.json({ error: 'Company not found', code: 'COMPANY_NOT_FOUND' }, { status: 404 });
+    const companyId = actor.companyId;
 
     const { searchParams } = new URL(request.url);
     const reportType = (searchParams.get('type') || 'deliveries') as ReportType;
-    const type: ReportType = ['deliveries', 'financial', 'driver', 'inventory', 'partner'].includes(reportType)
+    const requestedType: ReportType = ['deliveries', 'financial', 'driver', 'inventory', 'partner'].includes(reportType)
       ? reportType
       : 'deliveries';
+    const type: ReportType = actor.role === 'driver' ? 'deliveries' : requestedType;
     const dateRange = parseDateRange(request);
     const partnerId = (searchParams.get('partnerId') || '').trim();
-    const driverId = (searchParams.get('driverId') || '').trim();
+    const driverId = actor.role === 'driver' ? currentUserId : (searchParams.get('driverId') || '').trim();
     const status = (searchParams.get('status') || '').trim();
 
     const company = await CompanyModel.findOne({ id: companyId }).lean();
@@ -158,6 +160,16 @@ export async function GET(request: Request) {
           status: r.status,
           orderValue: Number(r.orderValue || 0),
           deliveryFee: Number(r.deliveryFee || 0),
+          partnerExtraCharge: Number(r.partnerExtraCharge || 0),
+          collectFromCustomer: r.collectFromCustomer !== false,
+          cancellationReason: String(r.cancellationReason || ''),
+          cancellationNote: String(r.cancellationNote || ''),
+          rescheduledDate: r.rescheduledDate || null,
+          totalAmount: Number(r.orderValue || 0) + Number(r.deliveryFee || 0),
+          remitAmount:
+            r.collectFromCustomer === false
+              ? 0
+              : Math.max(0, Number(r.orderValue || 0) - Number(r.deliveryFee || 0) - Number(r.partnerExtraCharge || 0)),
         })),
       });
     }
@@ -165,7 +177,7 @@ export async function GET(request: Request) {
     if (type === 'financial') {
       const dateFromKey = dateRange.from.toISOString().slice(0, 10);
       const dateToKey = dateRange.to.toISOString().slice(0, 10);
-      const expenseDateStages: Record<string, unknown>[] = [
+      const expenseDateStages: any[] = [
         { $match: { companyId } },
         {
           $addFields: {
@@ -393,6 +405,17 @@ export async function GET(request: Request) {
           { $sort: { _id: 1 } },
         ]),
       ]);
+      const movementByProduct = new Map<string, { entries: number; exits: number; adjustments: number }>();
+      for (const movement of movementRows) {
+        const productId = String(movement.productId || '');
+        if (!productId) continue;
+        const current = movementByProduct.get(productId) || { entries: 0, exits: 0, adjustments: 0 };
+        const qty = Number(movement.quantity || 0);
+        if (movement.type === 'entry') current.entries += qty;
+        else if (movement.type === 'exit') current.exits += qty;
+        else current.adjustments += qty;
+        movementByProduct.set(productId, current);
+      }
       const totalProducts = products.length;
       const totalStock = products.reduce((sum, p) => sum + Number(p.stockQuantity || 0), 0);
       const lowStock = products.filter((p) => Number(p.stockQuantity || 0) > 0 && Number(p.stockQuantity || 0) <= Number(p.minStockLevel || 0)).length;
@@ -431,6 +454,9 @@ export async function GET(request: Request) {
               stock,
               minStock,
               status: statusKey,
+              entries: movementByProduct.get(String(p.id || ''))?.entries || 0,
+              exits: movementByProduct.get(String(p.id || ''))?.exits || 0,
+              adjustments: movementByProduct.get(String(p.id || ''))?.adjustments || 0,
               stockValue: stock * Number(p.price || 0),
             };
           })
@@ -439,7 +465,20 @@ export async function GET(request: Request) {
       });
     }
 
-    const [summaryRows, seriesRows, partnerRows] = await Promise.all([
+    const dateFromKey = dateRange.from.toISOString().slice(0, 10);
+    const dateToKey = dateRange.to.toISOString().slice(0, 10);
+    const partnerExpenseStages: any[] = [
+      { $match: { companyId, targetType: 'partner' } },
+      {
+        $addFields: {
+          expenseDay: { $dateToString: { format: '%Y-%m-%d', date: '$date', timezone: 'Africa/Douala' } },
+        },
+      },
+      { $match: { expenseDay: { $gte: dateFromKey, $lte: dateToKey } } },
+    ];
+    if (partnerId) partnerExpenseStages.push({ $match: { targetId: partnerId } });
+
+    const [summaryRows, seriesRows, partnerRows, partnerExpenseSummaryRows, partnerExpenseDailyRows, partnerExpenseByPartnerRows] = await Promise.all([
       DeliveryModel.aggregate([
         ...deliveryStages,
         {
@@ -448,6 +487,7 @@ export async function GET(request: Request) {
             totalDeliveries: { $sum: 1 },
             delivered: { $sum: { $cond: [{ $eq: ['$status', 'delivered'] }, 1, 0] } },
             commissions: { $sum: { $cond: [{ $eq: ['$status', 'delivered'] }, { $ifNull: ['$deliveryFee', 0] }, 0] } },
+            extraCharges: { $sum: { $cond: [{ $eq: ['$status', 'delivered'] }, { $ifNull: ['$partnerExtraCharge', 0] }, 0] } },
             collected: {
               $sum: {
                 $cond: [{ $and: [{ $eq: ['$status', 'delivered'] }, { $eq: ['$collectFromCustomer', true] }] }, '$orderValue', 0],
@@ -464,6 +504,7 @@ export async function GET(request: Request) {
             deliveries: { $sum: 1 },
             delivered: { $sum: { $cond: [{ $eq: ['$status', 'delivered'] }, 1, 0] } },
             commissions: { $sum: { $cond: [{ $eq: ['$status', 'delivered'] }, { $ifNull: ['$deliveryFee', 0] }, 0] } },
+            extraCharges: { $sum: { $cond: [{ $eq: ['$status', 'delivered'] }, { $ifNull: ['$partnerExtraCharge', 0] }, 0] } },
           },
         },
         { $sort: { _id: 1 } },
@@ -477,6 +518,7 @@ export async function GET(request: Request) {
             delivered: { $sum: { $cond: [{ $eq: ['$status', 'delivered'] }, 1, 0] } },
             cancelled: { $sum: { $cond: [{ $in: ['$status', ['failed', 'cancelled']] }, 1, 0] } },
             commissions: { $sum: { $cond: [{ $eq: ['$status', 'delivered'] }, { $ifNull: ['$deliveryFee', 0] }, 0] } },
+            extraCharges: { $sum: { $cond: [{ $eq: ['$status', 'delivered'] }, { $ifNull: ['$partnerExtraCharge', 0] }, 0] } },
             collected: {
               $sum: {
                 $cond: [{ $and: [{ $eq: ['$status', 'delivered'] }, { $eq: ['$collectFromCustomer', true] }] }, '$orderValue', 0],
@@ -486,8 +528,49 @@ export async function GET(request: Request) {
         },
         { $sort: { deliveries: -1 } },
       ]),
+      ExpenseModel.aggregate([...partnerExpenseStages, { $group: { _id: null, partnerExpenses: { $sum: '$amount' } } }]),
+      ExpenseModel.aggregate([
+        ...partnerExpenseStages,
+        { $group: { _id: '$expenseDay', partnerExpenses: { $sum: '$amount' } } },
+        { $sort: { _id: 1 } },
+      ]),
+      ExpenseModel.aggregate([
+        ...partnerExpenseStages,
+        { $group: { _id: '$targetId', partnerExpenses: { $sum: '$amount' } } },
+        { $sort: { partnerExpenses: -1 } },
+      ]),
     ]);
-    const summary = summaryRows?.[0] || { totalDeliveries: 0, delivered: 0, commissions: 0, collected: 0 };
+    const summary = summaryRows?.[0] || { totalDeliveries: 0, delivered: 0, commissions: 0, extraCharges: 0, collected: 0 };
+    const partnerExpensesSummary = Number(partnerExpenseSummaryRows?.[0]?.partnerExpenses || 0);
+    const seriesByDate = new Map(
+      seriesRows.map((row) => [
+        String(row._id),
+        {
+          date: String(row._id),
+          deliveries: Number(row.deliveries || 0),
+          delivered: Number(row.delivered || 0),
+          commissions: Number(row.commissions || 0),
+          extraCharges: Number(row.extraCharges || 0),
+          partnerExpenses: 0,
+        },
+      ])
+    );
+    for (const expenseRow of partnerExpenseDailyRows) {
+      const key = String(expenseRow._id || '');
+      const current = seriesByDate.get(key) || {
+        date: key,
+        deliveries: 0,
+        delivered: 0,
+        commissions: 0,
+        extraCharges: 0,
+        partnerExpenses: 0,
+      };
+      current.partnerExpenses = Number(expenseRow.partnerExpenses || 0);
+      seriesByDate.set(key, current);
+    }
+    const partnerExpensesByPartner = new Map(
+      partnerExpenseByPartnerRows.map((row) => [String(row._id || ''), Number(row.partnerExpenses || 0)])
+    );
     return NextResponse.json({
       type,
       currency,
@@ -502,14 +585,11 @@ export async function GET(request: Request) {
         totalDeliveries: Number(summary.totalDeliveries || 0),
         delivered: Number(summary.delivered || 0),
         commissions: Number(summary.commissions || 0),
+        extraCharges: Number(summary.extraCharges || 0),
+        partnerExpenses: partnerExpensesSummary,
         collected: Number(summary.collected || 0),
       },
-      series: seriesRows.map((r) => ({
-        date: String(r._id || ''),
-        deliveries: Number(r.deliveries || 0),
-        delivered: Number(r.delivered || 0),
-        commissions: Number(r.commissions || 0),
-      })),
+      series: [...seriesByDate.values()].sort((a, b) => a.date.localeCompare(b.date)),
       distribution: partnerRows.slice(0, 8).map((r) => ({
         key: partnerById.get(String(r._id || '')) || '-',
         value: Number(r.deliveries || 0),
@@ -523,6 +603,8 @@ export async function GET(request: Request) {
           delivered,
           cancelled: Number(r.cancelled || 0),
           commissions: Number(r.commissions || 0),
+          extraCharges: Number(r.extraCharges || 0),
+          partnerExpenses: Number(partnerExpensesByPartner.get(String(r._id || '')) || 0),
           collected: Number(r.collected || 0),
           successRate: deliveries > 0 ? Number(((delivered / deliveries) * 100).toFixed(2)) : 0,
         };

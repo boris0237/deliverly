@@ -63,6 +63,7 @@
     "partners": "Partenaires",
     "inventory": "Inventaire",
     "expenses": "Dépenses",
+    "remittances": "Reversements",
     "reports": "Rapports",
     "tracking": "Suivi",
     "users": "Utilisateurs",
@@ -803,6 +804,7 @@
         "cancelled": "Annulées",
         "inTransit": "En cours",
         "commissions": "Commissions",
+        "extraCharges": "Charges supplémentaires",
         "collected": "Montant collecté",
         "internalExpenses": "Dépenses interne",
         "partnerExpenses": "Dépenses partenaire",
@@ -846,6 +848,8 @@
           "totalDeliveries": "Total livraisons",
           "delivered": "Livrées",
           "commissions": "Commissions",
+          "extraCharges": "Charges supplémentaires",
+          "partnerExpenses": "Dépenses partenaire",
           "collected": "Montant collecté"
         }
       },
@@ -857,8 +861,10 @@
         "status": "Statut",
         "orderValue": "Valeur commande",
         "deliveryFee": "Frais livraison",
+        "partnerExtraCharge": "Charge supplémentaire",
         "collected": "Collecté",
         "commissions": "Commissions",
+        "extraCharges": "Charges supplémentaires",
         "internalExpenses": "Dépenses interne",
         "partnerExpenses": "Dépenses partenaire",
         "net": "Net",
@@ -873,6 +879,9 @@
         "name": "Nom",
         "price": "Prix",
         "stock": "Stock",
+        "entries": "Entrées",
+        "exits": "Sorties",
+        "adjustments": "Ajustements",
         "minStock": "Stock min",
         "stockValue": "Valeur stock",
         "deliveries": "Livraisons"
@@ -885,6 +894,24 @@
       "table": {
         "title": "Données détaillées"
       },
+      "pdf": {
+        "company": "Entreprise",
+        "period": "Période",
+        "generatedAt": "Généré le",
+        "details": "Détails",
+        "noData": "Aucune donnée à exporter.",
+        "cancellationReason": "Motif d'annulation",
+        "extraChargeDeducted": "Charge supplémentaire déduite",
+        "totalAmount": "Montant total",
+        "commission": "Commission",
+        "amountToRemit": "Montant à reverser",
+        "collectFromCustomer": "Collecte client",
+        "totals": "Totaux",
+        "openBlocked": "Le navigateur a bloqué l'ouverture du document. Autorisez les popups puis réessayez.",
+        "generationFailed": "Échec de génération du PDF",
+        "shareFileFallback": "Partage de fichier indisponible. Le PDF a été téléchargé.",
+        "shareFailed": "Impossible de partager le rapport PDF."
+      },
       "export": {
         "pdf": "Exporter en PDF",
         "excel": "Exporter en Excel",
@@ -892,14 +919,89 @@
       },
       "share": "Partager le rapport"
     },
+    "remittances": {
+      "title": "Reversements",
+      "subtitle": "Suivez les montants collectés, reversés et le solde à reverser par partenaire",
+      "create": "Nouveau reversement",
+      "confirmDelete": "Voulez-vous vraiment supprimer ce reversement ?",
+      "kpi": {
+        "collected": "Montant collecté global",
+        "remitted": "Montant reversé",
+        "balance": "Solde à reverser"
+      },
+      "filters": {
+        "allPartners": "Tous les partenaires"
+      },
+      "fields": {
+        "partner": "Partenaire",
+        "amount": "Montant",
+        "date": "Date de reversement",
+        "note": "Note",
+        "currentBalance": "Solde actuel"
+      },
+      "placeholders": {
+        "partner": "Sélectionnez un partenaire",
+        "note": "Note optionnelle..."
+      },
+      "actions": {
+        "initiate": "Initier"
+      },
+      "validation": {
+        "required": "Veuillez renseigner les champs obligatoires.",
+        "exceedsBalance": "Le montant dépasse le solde du partenaire."
+      },
+      "history": {
+        "title": "Historique des reversements",
+        "empty": "Aucun reversement trouvé."
+      },
+      "pagination": {
+        "previous": "Précédent",
+        "next": "Suivant",
+        "page": "Page {{page}} / {{totalPages}}",
+        "summary": "{{from}}-{{to}} sur {{total}}"
+      }
+    },
     "tracking": {
       "title": "Suivi en temps réel",
-      "liveMap": "Carte en direct",
-      "drivers": "Livreurs en ligne",
-      "deliveries": "Livraisons actives",
-      "routes": "Itinéraires",
-      "eta": "Heure d'arrivée estimée",
-      "refresh": "Actualiser"
+      "subtitle": "Supervisez vos livreurs et livraisons en direct avec filtres opérationnels",
+      "liveMap": "Carte OpenStreetMap en direct",
+      "mapNoPoints": "Aucun point géolocalisé disponible pour ce filtre.",
+      "refresh": "Actualiser",
+      "kpi": {
+        "activeDrivers": "Livreurs actifs",
+        "busyDrivers": "Livreurs en mission",
+        "activeDeliveries": "Livraisons actives",
+        "unassigned": "Non assignées",
+        "avgEta": "ETA moyen"
+      },
+      "filters": {
+        "activeOnly": "Statuts actifs",
+        "allStatuses": "Tous les statuts",
+        "allDrivers": "Tous les livreurs"
+      },
+      "searchPlaceholder": "Rechercher par ID, client, téléphone, adresse...",
+      "boardTitle": "Suivi opérationnel",
+      "driversTitle": "Livreurs",
+      "driverDetails": "Détails livreur",
+      "activeMissions": "Missions actives",
+      "inTransit": "En cours",
+      "unassignedLabel": "Non assigné",
+      "orderShort": "Commande",
+      "total": "livraisons",
+      "noCustomer": "Client non renseigné",
+      "noItem": "Aucun élément",
+      "empty": "Aucune livraison trouvée pour ce filtre.",
+      "driverStatus": {
+        "offline": "Hors ligne",
+        "busy": "En mission",
+        "available": "Disponible"
+      },
+      "pagination": {
+        "previous": "Précédent",
+        "next": "Suivant",
+        "page": "Page {{page}} / {{totalPages}}",
+        "summary": "{{from}}-{{to}} sur {{total}}"
+      }
     },
     "users": {
       "title": "Utilisateurs",
@@ -1145,6 +1247,12 @@
       "INVALID_DATE": "Date invalide.",
       "DASHBOARD_OVERVIEW_FAILED": "Impossible de charger les indicateurs du tableau de bord.",
       "REPORTS_FETCH_FAILED": "Impossible de charger les rapports."
+      ,
+      "REMITTANCES_FETCH_FAILED": "Impossible de charger les reversements.",
+      "REMITTANCE_CREATE_FAILED": "Impossible de créer le reversement.",
+      "REMITTANCE_DELETE_FAILED": "Impossible de supprimer le reversement.",
+      "REMITTANCE_NOT_FOUND": "Reversement introuvable.",
+      "REMITTANCE_EXCEEDS_BALANCE": "Le montant dépasse le solde à reverser."
     }
   }
 }
