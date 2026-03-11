@@ -27,6 +27,11 @@ type NotificationRealtimeEvent = {
     createdAt: string;
   };
 };
+type WhatsAppRealtimeEvent = {
+  companyId: string;
+  connectionId?: string;
+  type: 'connection' | 'groups' | 'inbound';
+};
 
 declare global {
   // eslint-disable-next-line no-var
@@ -57,4 +62,10 @@ export function emitDriverLocationRealtimeEvent(event: DriverLocationRealtimeEve
   const io = getSocketServer();
   if (!io) return;
   io.emit('drivers:location', event);
+}
+
+export function emitWhatsAppRealtimeEvent(event: WhatsAppRealtimeEvent) {
+  const io = getSocketServer();
+  if (!io) return;
+  io.emit('whatsapp:updated', event);
 }

@@ -1,4 +1,15 @@
-import { createHash } from 'node:crypto';
+import 'server-only';
+import { createRequire } from 'module';
+
+type NodeCryptoModule = {
+  createHash: (algorithm: 'sha1') => { update: (value: string) => { digest: (encoding: 'hex') => string } };
+};
+
+const require = createRequire(import.meta.url);
+
+function getNodeCrypto(): NodeCryptoModule {
+  return require('node:crypto') as NodeCryptoModule;
+}
 
 type UploadOptions = {
   folder?: string;
@@ -36,6 +47,7 @@ export async function uploadToCloudinary(file: File, options: UploadOptions = {}
     .sort()
     .map((key) => `${key}=${params[key]}`)
     .join('&');
+  const { createHash } = getNodeCrypto();
   const signature = createHash('sha1').update(`${signaturePayload}${apiSecret}`).digest('hex');
 
   const payload = new FormData();

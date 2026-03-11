@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { io, type Socket } from 'socket.io-client';
+import { useRouter } from 'next/navigation';
 import { 
   Search, 
   Bell, 
@@ -41,6 +42,7 @@ function haversineMeters(from: { lat: number; lng: number }, to: { lat: number; 
 
 const Topbar = ({ onSidebarToggle }: TopbarProps) => {
   const { t } = useTranslation();
+  const router = useRouter();
   const { notifications, unreadNotificationsCount, setNotifications, addNotification, markNotificationAsRead, markAllNotificationsAsRead } =
     useDashboardStore();
   const { user } = useAuthStore();
@@ -407,11 +409,11 @@ const Topbar = ({ onSidebarToggle }: TopbarProps) => {
               <p className="font-medium text-white">{user?.firstName} {user?.lastName}</p>
               <p className="text-sm text-white/50">{user?.email}</p>
             </div>
-            <DropdownMenuItem className="cursor-pointer hover:bg-white/5">
+            <DropdownMenuItem className="cursor-pointer hover:bg-white/5" onSelect={() => router.push('/dashboard/profile')}>
               <User className="w-4 h-4 mr-2" />
               {t('common.profile')}
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer hover:bg-white/5">
+            <DropdownMenuItem className="cursor-pointer hover:bg-white/5" onSelect={() => router.push('/dashboard/settings')}>
               <Check className="w-4 h-4 mr-2" />
               {t('common.settings')}
             </DropdownMenuItem>

@@ -5,6 +5,7 @@ import { CompanyModel, connectDb, DeliveryModel, PartnerModel, ProductModel, Sto
 import { createCompanyNotifications } from '@/lib/notifications/service';
 import { getCurrentSessionUserId } from '@/lib/auth/session';
 import { emitDeliveryRealtimeEvent } from '@/lib/realtime/socket-server';
+import { notifyDeliveryStatusToWhatsAppGroup } from '@/lib/whatsapp/status-notifier';
 
 const updateDeliverySchema = z
   .object({
@@ -251,6 +252,8 @@ export async function PUT(request: Request, context: { params: Promise<{ deliver
     const payload = parsed.data;
     const setPayload: Record<string, unknown> = { updatedAt: new Date() };
     const actorName = `${actor?.firstName || ''} ${actor?.lastName || ''}`.trim() || actor?.email || currentUserId;
+    const localeHeader = request.headers.get('accept-language') || '';
+    const locale = localeHeader.toLowerCase().includes('fr') ? 'fr' : 'en';
 
     if (isDriverActor) {
       const unauthorizedKeys = Object.keys(payload).filter(
@@ -318,6 +321,16 @@ export async function PUT(request: Request, context: { params: Promise<{ deliver
           data: { deliveryId, action: 'accepted', status: 'assigned' },
         });
         emitDeliveryRealtimeEvent({ companyId: company.id, deliveryId, type: 'accepted' });
+        await notifyDeliveryStatusToWhatsAppGroup({
+          companyId: company.id,
+          deliveryId,
+          status: 'assigned',
+          partnerId: String(accepted.partnerId || ''),
+          customerName: String(accepted.customerName || ''),
+          customerPhone: String(accepted.customerPhone || ''),
+          address: String(accepted.address || ''),
+          locale,
+        });
         return NextResponse.json({ message: 'Delivery accepted successfully.', delivery: mapDelivery(accepted, '', '', !isDriverActor) });
       } else if (nextStatus === 'inTransit') {
         const canStartAssigned = existing.status === 'assigned' && isAssignedToCurrentDriver;
@@ -612,6 +625,21 @@ export async function PUT(request: Request, context: { params: Promise<{ deliver
       data: { deliveryId, action: logAction, status: statusAfter },
     });
     emitDeliveryRealtimeEvent({ companyId: company.id, deliveryId, type: 'updated' });
+    if (statusBefore !== statusAfter) {
+      await notifyDeliveryStatusToWhatsAppGroup({
+        companyId: company.id,
+        deliveryId,
+        status: statusAfter,
+        partnerId: String(updated.partnerId || ''),
+        customerName: String(updated.customerName || ''),
+        customerPhone: String(updated.customerPhone || ''),
+        address: String(updated.address || ''),
+        cancellationReason: String(updated.cancellationReason || ''),
+        cancellationNote: String(updated.cancellationNote || ''),
+        rescheduledDate: updated.rescheduledDate || null,
+        locale,
+      });
+    }
     return NextResponse.json({ message: 'Delivery updated successfully.', delivery: mapDelivery(updated, '', '', !isDriverActor) });
   } catch (error) {
     if (error instanceof Error && error.message === 'INSUFFICIENT_STOCK') {

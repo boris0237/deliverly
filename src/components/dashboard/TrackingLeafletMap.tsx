@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 type MapDeliveryPoint = {
   id: string;
@@ -29,6 +29,12 @@ type Props = {
   selectedDriverId?: string;
   onSelectDriver?: (driverId: string) => void;
   emptyLabel: string;
+  labels: {
+    drivers: string;
+    deliveries: string;
+    routes: string;
+    selectedDriver: string;
+  };
 };
 
 declare global {
@@ -66,6 +72,19 @@ function getVehicleEmoji(vehicleType?: string) {
 
 let leafletLoader: Promise<void> | null = null;
 
+function getTileConfig(isDark: boolean) {
+  if (isDark) {
+    return {
+      url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+      attribution: '',
+    };
+  }
+  return {
+    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    attribution: '',
+  };
+}
+
 function ensureLeaflet() {
   if (typeof window === 'undefined') return Promise.resolve();
   if (window.L) return Promise.resolve();
@@ -101,11 +120,31 @@ function ensureLeaflet() {
   return leafletLoader;
 }
 
-const TrackingLeafletMap = ({ center, deliveryPoints, driverPoints, selectedDriverId, onSelectDriver, emptyLabel }: Props) => {
+const TrackingLeafletMap = ({
+  center,
+  deliveryPoints,
+  driverPoints,
+  selectedDriverId,
+  onSelectDriver,
+  emptyLabel,
+  labels,
+}: Props) => {
   const mapNodeRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<any>(null);
+  const tileLayerRef = useRef<any>(null);
   const deliveryLayerRef = useRef<any>(null);
   const driverLayerRef = useRef<any>(null);
+  const routeLayerRef = useRef<any>(null);
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const syncTheme = () => setIsDark(document.documentElement.classList.contains('dark'));
+    syncTheme();
+    const observer = new MutationObserver(syncTheme);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -114,15 +153,19 @@ const TrackingLeafletMap = ({ center, deliveryPoints, driverPoints, selectedDriv
       await ensureLeaflet();
       if (!mounted || !mapNodeRef.current || !window.L || mapRef.current) return;
       const L = window.L;
-      const map = L.map(mapNodeRef.current, { zoomControl: true });
+      const map = L.map(mapNodeRef.current, { zoomControl: false });
       map.setView([center.lat, center.lng], 12);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors',
+      L.control.zoom({ position: 'bottomright' }).addTo(map);
+      const tileConfig = getTileConfig(isDark);
+      const tile = L.tileLayer(tileConfig.url, {
+        attribution: tileConfig.attribution,
         maxZoom: 19,
       }).addTo(map);
       mapRef.current = map;
+      tileLayerRef.current = tile;
       deliveryLayerRef.current = L.layerGroup().addTo(map);
       driverLayerRef.current = L.layerGroup().addTo(map);
+      routeLayerRef.current = L.layerGroup().addTo(map);
     };
 
     void init();
@@ -132,10 +175,25 @@ const TrackingLeafletMap = ({ center, deliveryPoints, driverPoints, selectedDriv
         mapRef.current.remove();
         mapRef.current = null;
       }
+      tileLayerRef.current = null;
       deliveryLayerRef.current = null;
       driverLayerRef.current = null;
+      routeLayerRef.current = null;
     };
-  }, [center.lat, center.lng]);
+  }, [center.lat, center.lng, isDark]);
+
+  useEffect(() => {
+    if (!mapRef.current || !window.L) return;
+    const L = window.L;
+    const map = mapRef.current;
+    if (tileLayerRef.current) {
+      map.removeLayer(tileLayerRef.current);
+      tileLayerRef.current = null;
+    }
+    const tileConfig = getTileConfig(isDark);
+    tileLayerRef.current = L.tileLayer(tileConfig.url, { attribution: tileConfig.attribution, maxZoom: 19 }).addTo(map);
+  }, [isDark]);
+  
 
   useEffect(() => {
     if (!mapRef.current || !window.L) return;
@@ -143,21 +201,59 @@ const TrackingLeafletMap = ({ center, deliveryPoints, driverPoints, selectedDriv
     const map = mapRef.current;
     const deliveryLayer = deliveryLayerRef.current;
     const driverLayer = driverLayerRef.current;
-    if (!deliveryLayer || !driverLayer) return;
+    const routeLayer = routeLayerRef.current;
+    if (!deliveryLayer || !driverLayer || !routeLayer) return;
 
     deliveryLayer.clearLayers();
     driverLayer.clearLayers();
+    routeLayer.clearLayers();
 
     const bounds = L.latLngBounds([]);
+    const driverById = new Map(driverPoints.map((driver) => [driver.id, driver]));
+
+    for (const point of deliveryPoints) {
+      if (!point.driverId) continue;
+      const driver = driverById.get(point.driverId);
+      if (!driver) continue;
+      const isSelectedDriver = selectedDriverId ? selectedDriverId === driver.id : true;
+      if (!isSelectedDriver) continue;
+      const color = DELIVERY_COLORS[point.status] || '#64748b';
+      L.polyline(
+        [
+          [driver.lat, driver.lng],
+          [point.lat, point.lng],
+        ],
+        {
+          color,
+          opacity: 0.55,
+          weight: selectedDriverId === driver.id ? 3.5 : 2.5,
+          dashArray: '6 8',
+        }
+      ).addTo(routeLayer);
+    }
 
     for (const point of deliveryPoints) {
       const color = DELIVERY_COLORS[point.status] || '#64748b';
-      const marker = L.circleMarker([point.lat, point.lng], {
-        radius: 7,
-        color,
-        fillColor: color,
-        fillOpacity: 0.8,
-        weight: 2,
+      const marker = L.marker([point.lat, point.lng], {
+        icon: L.divIcon({
+          className: 'deliverly-delivery-marker',
+          html: `<div style="
+            width:20px;
+            height:20px;
+            border-radius:6px;
+            border:2px solid #ffffff;
+            background:${color};
+            box-shadow:0 6px 16px rgba(0,0,0,.26);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#fff;
+            font-size:10px;
+            font-weight:700;
+          ">•</div>`,
+          iconSize: [20, 20],
+          iconAnchor: [10, 10],
+        }),
       });
       marker.bindPopup(`<strong>#${point.id.slice(0, 8)}</strong><br/>${point.label}`);
       marker.addTo(deliveryLayer);
@@ -207,10 +303,33 @@ const TrackingLeafletMap = ({ center, deliveryPoints, driverPoints, selectedDriv
   }, [center.lat, center.lng, deliveryPoints, driverPoints, onSelectDriver, selectedDriverId]);
 
   const noPoints = deliveryPoints.length === 0 && driverPoints.length === 0;
+  const selectedDriver = useMemo(() => driverPoints.find((driver) => driver.id === selectedDriverId) || null, [driverPoints, selectedDriverId]);
 
   return (
     <div className="relative h-[460px] rounded-xl overflow-hidden border border-border bg-card/60">
       <div ref={mapNodeRef} className="absolute inset-0" />
+      {!isDark ? (
+        <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(180deg,rgba(15,23,42,0.03),rgba(15,23,42,0.13))]" />
+      ) : null}
+      <div className="absolute top-3 left-3 z-[500] flex flex-wrap gap-2 pointer-events-none">
+        <div className="px-3 py-1.5 rounded-full bg-background/85 backdrop-blur border border-border text-[11px] text-foreground">
+          {labels.drivers}: <span className="font-semibold">{driverPoints.length}</span>
+        </div>
+        <div className="px-3 py-1.5 rounded-full bg-background/85 backdrop-blur border border-border text-[11px] text-foreground">
+          {labels.deliveries}: <span className="font-semibold">{deliveryPoints.length}</span>
+        </div>
+        <div className="px-3 py-1.5 rounded-full bg-background/85 backdrop-blur border border-border text-[11px] text-foreground">
+          {labels.routes}: <span className="font-semibold">{deliveryPoints.filter((point) => Boolean(point.driverId)).length}</span>
+        </div>
+      </div>
+      {selectedDriver ? (
+        <div className="absolute top-3 right-3 z-[500] pointer-events-none">
+          <div className="px-3 py-2 rounded-lg bg-background/85 backdrop-blur border border-border text-xs text-foreground">
+            <span className="text-muted-foreground">{labels.selectedDriver}: </span>
+            <span className="font-medium">{selectedDriver.name}</span>
+          </div>
+        </div>
+      ) : null}
       {noPoints ? (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="px-3 py-2 rounded-lg text-xs text-muted-foreground bg-card/90 border border-border">{emptyLabel}</div>

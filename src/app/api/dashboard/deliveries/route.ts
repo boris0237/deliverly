@@ -5,6 +5,7 @@ import { CompanyModel, connectDb, DeliveryModel, PartnerModel, ProductModel, Use
 import { getCurrentSessionUserId } from '@/lib/auth/session';
 import { createCompanyNotifications } from '@/lib/notifications/service';
 import { emitDeliveryRealtimeEvent } from '@/lib/realtime/socket-server';
+import { notifyNewDeliveryToWhatsAppGroup } from '@/lib/whatsapp/status-notifier';
 
 const createDeliverySchema = z.object({
   partnerId: z.string().trim().min(1),
@@ -120,6 +121,47 @@ export async function GET(request: Request) {
     const dateFrom = (searchParams.get('dateFrom') || '').trim();
     const dateTo = (searchParams.get('dateTo') || '').trim();
 
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+    const rescheduledDeliveries = await DeliveryModel.find({
+      companyId: company.id,
+      status: 'cancelled',
+      rescheduledDate: { $gte: todayStart, $lte: todayEnd },
+    }).lean();
+    if (rescheduledDeliveries.length > 0) {
+      const now = new Date();
+      const ops = rescheduledDeliveries.map((delivery) => {
+        const nextStatus = delivery.driverId ? 'assigned' : 'pending';
+        return {
+          updateOne: {
+            filter: { id: delivery.id, companyId: company.id },
+            update: {
+              $set: {
+                status: nextStatus,
+                deliveryDate: delivery.rescheduledDate,
+              },
+              $push: {
+                logs: {
+                  id: randomToken(12),
+                  action: 'status_changed',
+                  message: `Status changed from cancelled to ${nextStatus}`,
+                  actorId: 'system',
+                  actorName: 'System',
+                  createdAt: now,
+                },
+              },
+            },
+          },
+        };
+      });
+      await DeliveryModel.bulkWrite(ops, { ordered: false });
+      for (const delivery of rescheduledDeliveries) {
+        emitDeliveryRealtimeEvent({ companyId: company.id, deliveryId: delivery.id, type: 'updated' });
+      }
+    }
+
     const query: Record<string, unknown> = { companyId: company.id };
     if (status && status !== 'all') query.status = status;
     if (search) {
@@ -128,14 +170,27 @@ export async function GET(request: Request) {
     }
     if (actor.role === 'driver') {
       const visibilityFilter = {
-        $or: [{ driverId: actor.id }, { driverId: '' }, { driverId: null }, { driverId: { $exists: false } }],
+        $or: [
+          { driverId: actor.id },
+          { driverId: '' },
+          { driverId: null },
+          { driverId: { $exists: false } },
+        ],
+      };
+      const pendingUnassignedFilter = {
+        $or: [
+          { driverId: actor.id },
+          { status: 'pending', driverId: '' },
+          { status: 'pending', driverId: null },
+          { status: 'pending', driverId: { $exists: false } },
+        ],
       };
       if (query.$or) {
         const searchFilter = { $or: query.$or as Array<Record<string, unknown>> };
         delete query.$or;
-        query.$and = [visibilityFilter, searchFilter];
+        query.$and = [pendingUnassignedFilter, searchFilter];
       } else {
-        query.$or = visibilityFilter.$or;
+        query.$or = pendingUnassignedFilter.$or;
       }
     }
     if (dateFrom || dateTo) {
@@ -394,6 +449,9 @@ export async function POST(request: Request) {
     });
 
     emitDeliveryRealtimeEvent({ companyId: company.id, deliveryId: created.id, type: 'created' });
+    const localeHeader = request.headers.get('accept-language') || '';
+    const locale = localeHeader.toLowerCase().includes('fr') ? 'fr' : 'en';
+    await notifyNewDeliveryToWhatsAppGroup({ companyId: company.id, deliveryId: created.id, locale });
     return NextResponse.json(
       {
         message: 'Delivery created successfully.',

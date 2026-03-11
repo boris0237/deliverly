@@ -51,6 +51,7 @@ const userSchema = new Schema(
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     phone: { type: String, default: '' },
+    avatar: { type: String, default: '' },
     vehicleId: { type: String, default: '' },
     currentLocation: {
       latitude: { type: Number, default: null },
@@ -74,6 +75,7 @@ const companySchema = new Schema(
     ownerUserId: { type: String, default: null, index: true },
     logo: { type: String, default: '' },
     address: { type: String, default: '' },
+    whatsappDefaultLocale: { type: String, default: 'fr' },
     businessHours: {
       open: { type: String, default: '09:00' },
       close: { type: String, default: '18:00' },
@@ -351,6 +353,60 @@ const sessionSchema = new Schema(
   { timestamps: { createdAt: true, updatedAt: false } }
 );
 
+const whatsappConnectionSchema = new Schema(
+  {
+    id: { type: String, required: true, unique: true, index: true },
+    companyId: { type: String, required: true, index: true },
+    ownerUserId: { type: String, required: true, index: true },
+    displayName: { type: String, default: '' },
+    phoneNumber: { type: String, default: '' },
+    status: { type: String, enum: ['disconnected', 'connecting', 'qr', 'connected', 'error'], default: 'disconnected', index: true },
+    qrCode: { type: String, default: '' },
+    lastError: { type: String, default: '' },
+    lastSeenAt: { type: Date, default: null },
+    reconnectAttempts: { type: Number, default: 0 },
+    workerKey: { type: String, default: '' },
+  },
+  { timestamps: true }
+);
+
+const whatsappGroupBindingSchema = new Schema(
+  {
+    id: { type: String, required: true, unique: true, index: true },
+    companyId: { type: String, required: true, index: true },
+    connectionId: { type: String, required: true, index: true },
+    groupJid: { type: String, required: true, index: true },
+    groupName: { type: String, default: '' },
+    partnerId: { type: String, default: '', index: true },
+    isActive: { type: Boolean, default: true, index: true },
+    notifyOnStatusUpdates: { type: Boolean, default: true },
+    lastInboundAt: { type: Date, default: null },
+    lastOutboundAt: { type: Date, default: null },
+  },
+  { timestamps: true }
+);
+whatsappGroupBindingSchema.index({ companyId: 1, connectionId: 1, groupJid: 1 }, { unique: true });
+
+const whatsappInboundMessageSchema = new Schema(
+  {
+    id: { type: String, required: true, unique: true, index: true },
+    companyId: { type: String, required: true, index: true },
+    connectionId: { type: String, required: true, index: true },
+    groupJid: { type: String, required: true, index: true },
+    senderJid: { type: String, default: '' },
+    senderName: { type: String, default: '' },
+    messageId: { type: String, default: '', index: true },
+    rawText: { type: String, default: '' },
+    status: { type: String, enum: ['received', 'parsed', 'processed', 'failed'], default: 'received', index: true },
+    errorCode: { type: String, default: '' },
+    errorMessage: { type: String, default: '' },
+    parsedPayload: { type: Schema.Types.Mixed, default: {} },
+    createdDeliveryId: { type: String, default: '' },
+  },
+  { timestamps: true }
+);
+whatsappInboundMessageSchema.index({ companyId: 1, connectionId: 1, messageId: 1 }, { unique: true, sparse: true });
+
 export type UserDoc = InferSchemaType<typeof userSchema>;
 export type CompanyDoc = InferSchemaType<typeof companySchema>;
 export type CompanyMemberDoc = InferSchemaType<typeof companyMemberSchema>;
@@ -363,6 +419,9 @@ export type StockMovementDoc = InferSchemaType<typeof stockMovementSchema>;
 export type NotificationDoc = InferSchemaType<typeof notificationSchema>;
 export type AuthTokenDoc = InferSchemaType<typeof authTokenSchema>;
 export type SessionDoc = InferSchemaType<typeof sessionSchema>;
+export type WhatsAppConnectionDoc = InferSchemaType<typeof whatsappConnectionSchema>;
+export type WhatsAppGroupBindingDoc = InferSchemaType<typeof whatsappGroupBindingSchema>;
+export type WhatsAppInboundMessageDoc = InferSchemaType<typeof whatsappInboundMessageSchema>;
 
 export const UserModel: Model<UserDoc> =
   (mongoose.models.AuthUser as Model<UserDoc>) || mongoose.model<UserDoc>('AuthUser', userSchema);
@@ -399,3 +458,15 @@ export const AuthTokenModel: Model<AuthTokenDoc> =
 
 export const SessionModel: Model<SessionDoc> =
   (mongoose.models.AuthSession as Model<SessionDoc>) || mongoose.model<SessionDoc>('AuthSession', sessionSchema);
+
+export const WhatsAppConnectionModel: Model<WhatsAppConnectionDoc> =
+  (mongoose.models.WhatsAppConnection as Model<WhatsAppConnectionDoc>) ||
+  mongoose.model<WhatsAppConnectionDoc>('WhatsAppConnection', whatsappConnectionSchema);
+
+export const WhatsAppGroupBindingModel: Model<WhatsAppGroupBindingDoc> =
+  (mongoose.models.WhatsAppGroupBinding as Model<WhatsAppGroupBindingDoc>) ||
+  mongoose.model<WhatsAppGroupBindingDoc>('WhatsAppGroupBinding', whatsappGroupBindingSchema);
+
+export const WhatsAppInboundMessageModel: Model<WhatsAppInboundMessageDoc> =
+  (mongoose.models.WhatsAppInboundMessage as Model<WhatsAppInboundMessageDoc>) ||
+  mongoose.model<WhatsAppInboundMessageDoc>('WhatsAppInboundMessage', whatsappInboundMessageSchema);

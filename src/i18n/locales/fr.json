@@ -66,6 +66,7 @@
     "remittances": "Reversements",
     "reports": "Rapports",
     "tracking": "Suivi",
+    "whatsappAssistant": "Assistant WhatsApp",
     "users": "Utilisateurs",
     "analytics": "Analyses",
     "support": "Support",
@@ -966,6 +967,8 @@
       "subtitle": "Supervisez vos livreurs et livraisons en direct avec filtres opérationnels",
       "liveMap": "Carte OpenStreetMap en direct",
       "mapNoPoints": "Aucun point géolocalisé disponible pour ce filtre.",
+      "routesLabel": "Liaisons",
+      "selectedDriverLabel": "Livreur sélectionné",
       "refresh": "Actualiser",
       "kpi": {
         "activeDrivers": "Livreurs actifs",
@@ -1001,6 +1004,72 @@
         "next": "Suivant",
         "page": "Page {{page}} / {{totalPages}}",
         "summary": "{{from}}-{{to}} sur {{total}}"
+      }
+    },
+    "profile": {
+      "title": "Mon profil",
+      "subtitle": "Gérez vos informations personnelles et votre sécurité",
+      "avatarSelected": "Photo de profil sélectionnée. Cliquez sur Enregistrer pour finaliser.",
+      "sections": {
+        "personal": "Informations personnelles",
+        "security": "Sécurité",
+        "account": "Compte"
+      },
+      "fields": {
+        "firstName": "Prénom",
+        "lastName": "Nom",
+        "phone": "Téléphone",
+        "email": "Email",
+        "company": "Entreprise",
+        "role": "Rôle",
+        "lastLogin": "Dernière connexion",
+        "currentPassword": "Mot de passe actuel",
+        "newPassword": "Nouveau mot de passe",
+        "confirmPassword": "Confirmer le mot de passe"
+      },
+      "placeholders": {
+        "currentPassword": "Saisissez votre mot de passe actuel",
+        "newPassword": "Minimum 8 caractères",
+        "confirmPassword": "Répétez le nouveau mot de passe"
+      },
+      "validation": {
+        "required": "Veuillez renseigner votre prénom et votre nom.",
+        "passwordMismatch": "Les mots de passe ne correspondent pas.",
+        "invalidAvatarFile": "Veuillez sélectionner une image valide."
+      }
+    },
+    "whatsappAssistant": {
+      "title": "Assistant WhatsApp",
+      "subtitle": "Liez WhatsApp, mappez vos groupes aux partenaires et automatisez la création des livraisons",
+      "connectionStatus": "Statut de connexion",
+      "groupsMapped": "Groupes mappés",
+      "totalGroups": "{{count}} groupes détectés",
+      "lastSeen": "Dernière activité",
+      "connect": "Lier WhatsApp",
+      "disconnect": "Déconnecter",
+      "syncGroups": "Synchroniser les groupes",
+      "connectionStarted": "Connexion WhatsApp lancée.",
+      "disconnected": "Assistant WhatsApp déconnecté.",
+      "groupSyncStarted": "Synchronisation des groupes lancée.",
+      "scanQrHelp": "Scannez ce QR code dans WhatsApp (Appareils connectés).",
+      "groupBindings": "Liaison groupes → partenaires",
+      "partner": "Partenaire",
+      "unmapped": "Non mappé",
+      "notifyStatus": "Notifier les statuts dans le groupe",
+      "noGroups": "Aucun groupe disponible. Lancez une synchronisation après connexion.",
+      "searchPlaceholder": "Rechercher par nom du groupe ou JID...",
+      "pagination": {
+        "previous": "Précédent",
+        "next": "Suivant",
+        "page": "Page {{page}} / {{totalPages}}",
+        "summary": "{{from}}-{{to}} sur {{total}}"
+      },
+      "status": {
+        "disconnected": "Déconnecté",
+        "connecting": "Connexion en cours",
+        "qr": "Scan QR requis",
+        "connected": "Connecté",
+        "error": "Erreur"
       }
     },
     "users": {
@@ -1076,7 +1145,10 @@
         "address": "Adresse",
         "addressPlaceholder": "123 Rue de Paris, 75001 Paris",
         "businessHours": "Heures d'ouverture",
-        "to": "a"
+        "to": "a",
+        "whatsappLocale": "Langue WhatsApp",
+        "whatsappLocaleFr": "Francais (FR)",
+        "whatsappLocaleEn": "Anglais (EN)"
       },
       "delivery": {
         "title": "Tarif livraison",
@@ -1195,6 +1267,22 @@
       "USER_UPDATE_FAILED": "Impossible de modifier l'utilisateur.",
       "USER_DELETE_FAILED": "Impossible de supprimer l'utilisateur.",
       "USER_NOT_FOUND": "Utilisateur introuvable.",
+      "PROFILE_FETCH_FAILED": "Impossible de charger le profil.",
+      "PROFILE_UPDATE_FAILED": "Impossible de modifier le profil.",
+      "CURRENT_PASSWORD_REQUIRED": "Le mot de passe actuel est requis.",
+      "INVALID_CURRENT_PASSWORD": "Le mot de passe actuel est incorrect.",
+      "WHATSAPP_ASSISTANT_FETCH_FAILED": "Impossible de charger l'assistant WhatsApp.",
+      "WHATSAPP_CONNECT_FAILED": "Impossible de connecter WhatsApp.",
+      "WHATSAPP_DISCONNECT_FAILED": "Impossible de déconnecter WhatsApp.",
+      "WHATSAPP_CONNECTION_NOT_FOUND": "Connexion WhatsApp introuvable.",
+      "WHATSAPP_GROUP_SYNC_FAILED": "Impossible de synchroniser les groupes WhatsApp.",
+      "WHATSAPP_NOT_READY": "WhatsApp n'est pas encore prêt. Réessayez dans quelques secondes.",
+      "WHATSAPP_GROUP_BINDING_NOT_FOUND": "Liaison de groupe introuvable.",
+      "WHATSAPP_GROUP_BINDING_UPDATE_FAILED": "Impossible de modifier la liaison du groupe.",
+      "WHATSAPP_ORDER_PARSE_FAILED": "Impossible d'interpréter la commande WhatsApp.",
+      "WHATSAPP_ORDER_PROCESS_FAILED": "Impossible de traiter la commande WhatsApp.",
+      "WHATSAPP_GROUP_NOT_MAPPED": "Groupe WhatsApp non lié à un partenaire.",
+      "WHATSAPP_NOT_CONNECTED": "WhatsApp n'est pas connecté.",
       "CANNOT_DEACTIVATE_SELF": "Vous ne pouvez pas désactiver votre propre compte.",
       "CANNOT_DELETE_SELF": "Vous ne pouvez pas supprimer votre propre compte.",
       "INVALID_VEHICLE": "Véhicule invalide.",

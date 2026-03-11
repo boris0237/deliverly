@@ -84,6 +84,7 @@ const updateSchema = z.object({
   name: z.string().trim().min(2).max(120).optional(),
   logo: z.string().trim().optional(),
   address: z.string().trim().max(250).optional(),
+  whatsappDefaultLocale: z.enum(['fr', 'en']).optional(),
   businessHours: z
     .object({
       open: timeSchema,
@@ -100,6 +101,7 @@ type ResolvedCompany = {
   name: string;
   logo?: string;
   address?: string;
+  whatsappDefaultLocale?: string;
   businessHours?: {
     open?: string;
     close?: string;
@@ -182,6 +184,7 @@ export async function GET() {
         name: company.name,
         logo: company.logo || '',
         address: company.address || '',
+        whatsappDefaultLocale: company.whatsappDefaultLocale || 'fr',
         businessHours: {
           open: company.businessHours?.open || '09:00',
           close: company.businessHours?.close || '18:00',
@@ -223,6 +226,7 @@ export async function PUT(request: Request) {
       const name = String(formData.get('name') || '').trim();
       const logo = String(formData.get('logo') || '').trim();
       const address = String(formData.get('address') || '').trim();
+      const whatsappDefaultLocale = String(formData.get('whatsappDefaultLocale') || '').trim();
       const open = String(formData.get('businessHours.open') || '').trim();
       const close = String(formData.get('businessHours.close') || '').trim();
       const deliveryPricingRaw = String(formData.get('deliveryPricing') || '').trim();
@@ -231,6 +235,7 @@ export async function PUT(request: Request) {
       if (name) body.name = name;
       if (logo) body.logo = logo;
       if (address) body.address = address;
+      if (whatsappDefaultLocale) body.whatsappDefaultLocale = whatsappDefaultLocale;
       if (open && close) body.businessHours = { open, close };
       if (deliveryPricingRaw) {
         try {
@@ -269,6 +274,7 @@ export async function PUT(request: Request) {
     };
     if (payload.name !== undefined) setPayload.name = payload.name;
     if (payload.address !== undefined) setPayload.address = payload.address;
+    if (payload.whatsappDefaultLocale !== undefined) setPayload.whatsappDefaultLocale = payload.whatsappDefaultLocale;
     if (payload.businessHours !== undefined) {
       setPayload.businessHours = {
         ...(company.businessHours || {}),
@@ -298,6 +304,7 @@ export async function PUT(request: Request) {
         name: payload.name ?? company.name,
         logo: logoUrl,
         address: payload.address ?? company.address ?? '',
+        whatsappDefaultLocale: payload.whatsappDefaultLocale ?? company.whatsappDefaultLocale ?? 'fr',
         businessHours: {
           open: payload.businessHours?.open || company.businessHours?.open || '09:00',
           close: payload.businessHours?.close || company.businessHours?.close || '18:00',

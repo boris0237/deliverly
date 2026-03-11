@@ -372,6 +372,12 @@ const TrackingPage = () => {
               selectedDriverId={selectedDriverId}
               onSelectDriver={setSelectedDriverId}
               emptyLabel={t('dashboard.tracking.mapNoPoints')}
+              labels={{
+                drivers: t('dashboard.tracking.driversTitle'),
+                deliveries: t('common.deliveries'),
+                routes: t('dashboard.tracking.routesLabel'),
+                selectedDriver: t('dashboard.tracking.selectedDriverLabel'),
+              }}
             />
           </div>
           <div className="glass-card p-4 space-y-4">

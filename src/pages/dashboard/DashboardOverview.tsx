@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Coins, Package, PiggyBank, Wallet } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import {
   Area,
   AreaChart,
@@ -16,7 +17,7 @@ import {
   YAxis,
 } from 'recharts';
 import { Button } from '@/components/ui/button';
-import { useUIStore } from '@/store';
+import { useAuthStore, useUIStore } from '@/store';
 import { getLocalizedApiError } from '@/lib/auth/error-message';
 
 type Period = 'today' | 'week' | 'month' | 'custom';
@@ -65,8 +66,11 @@ const getMonthRange = () => {
 
 const DashboardOverview = () => {
   const { t, i18n } = useTranslation();
+  const router = useRouter();
+  const authUser = useAuthStore((state) => state.user);
   const { showToast } = useUIStore();
   const initialMonthRange = useMemo(() => getMonthRange(), []);
+  const isDriverUser = authUser?.role === 'driver';
 
   const [period, setPeriod] = useState<Period>('month');
   const [dateFrom, setDateFrom] = useState(initialMonthRange.dateFrom);
@@ -113,6 +117,7 @@ const DashboardOverview = () => {
   );
 
   const loadOverview = useCallback(async () => {
+    if (isDriverUser) return;
     setIsLoading(true);
     try {
       const params = new URLSearchParams();
@@ -149,8 +154,16 @@ const DashboardOverview = () => {
   }, [dateFrom, dateTo, showToast, t]);
 
   useEffect(() => {
+    if (isDriverUser) {
+      router.replace('/dashboard/deliveries');
+      return;
+    }
     void loadOverview();
-  }, [loadOverview]);
+  }, [isDriverUser, loadOverview, router]);
+
+  if (isDriverUser) {
+    return null;
+  }
 
   const applyPeriod = (nextPeriod: Exclude<Period, 'custom'>) => {
     const range = nextPeriod === 'today' ? getTodayRange() : nextPeriod === 'week' ? getWeekRange() : getMonthRange();

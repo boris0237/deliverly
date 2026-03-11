@@ -9,6 +9,7 @@ export interface AuthUserRecord {
   firstName: string;
   lastName: string;
   phone?: string;
+  avatar?: string;
   vehicleId?: string;
   companyId?: string;
   role: UserRole;

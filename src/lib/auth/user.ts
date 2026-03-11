@@ -10,7 +10,7 @@ export function toPublicUser(user: AuthUserRecord): User {
     role: user.role,
     phone: user.phone || '',
     companyId: user.companyId || 'default',
-    avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user.email)}`,
+    avatar: user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user.email)}`,
     isActive: user.isActive,
     createdAt: new Date(user.createdAt),
     updatedAt: new Date(user.updatedAt),

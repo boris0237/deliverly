@@ -130,6 +130,17 @@ type DeliveryRealtimeEvent = {
 
 const todayIso = () => new Date().toISOString().slice(0, 10);
 const tomorrowIso = () => new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+const isSameDay = (left?: string | Date | null, right?: string | Date | null) => {
+  if (!left || !right) return false;
+  const leftDate = new Date(left);
+  const rightDate = new Date(right);
+  if (Number.isNaN(leftDate.getTime()) || Number.isNaN(rightDate.getTime())) return false;
+  return (
+    leftDate.getFullYear() === rightDate.getFullYear() &&
+    leftDate.getMonth() === rightDate.getMonth() &&
+    leftDate.getDate() === rightDate.getDate()
+  );
+};
 const CANCELLATION_REASONS = [
   'no_response',
   'postponed_later',
@@ -1484,6 +1495,12 @@ const DeliveriesPage = () => {
                   <span className="text-white/50">{t('dashboard.deliveries.fields.status')}:</span>{' '}
                   {viewDelivery?.status ? t(`dashboard.deliveries.status.${viewDelivery.status}`) : '-'}
                 </div>
+                {viewDelivery?.status !== 'cancelled' && viewDelivery?.rescheduledDate ? (
+                  <div>
+                    <span className="text-white/50">{t('dashboard.deliveries.labels.rescheduledTo')}:</span>{' '}
+                    {new Date(viewDelivery.rescheduledDate).toLocaleDateString(i18n.language || 'fr')}
+                  </div>
+                ) : null}
                 <div><span className="text-white/50">{t('dashboard.deliveries.fields.orderValue')}:</span> {formatMoney(viewDelivery?.orderValue || 0)}</div>
                 <div><span className="text-white/50">{t('dashboard.deliveries.fields.deliveryFee')}:</span> {formatMoney(viewDelivery?.deliveryFee || 0)}</div>
                 <div><span className="text-white/50">{t('dashboard.deliveries.fields.partnerExtraCharge')}:</span> {formatMoney(viewDelivery?.partnerExtraCharge || 0)}</div>
@@ -1732,7 +1749,8 @@ const DeliveriesPage = () => {
                   <div className="text-white/50">+{delivery.items.length - 2}</div>
                 ) : null}
               </div>
-              {delivery.status === 'cancelled' && delivery.rescheduledDate ? (
+              {delivery.rescheduledDate &&
+              (delivery.status === 'cancelled' || isSameDay(delivery.rescheduledDate, delivery.deliveryDate)) ? (
                 <div className="inline-flex items-center rounded-full border border-orange-400/40 bg-orange-400/10 px-2 py-0.5 text-[11px] text-orange-500">
                   {t('dashboard.deliveries.labels.rescheduledTo')} - {new Date(delivery.rescheduledDate).toLocaleDateString(i18n.language || 'fr')}
                 </div>

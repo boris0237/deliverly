@@ -11,6 +11,7 @@ import {
   FileText,
   HandCoins,
   MapPin,
+  MessageCircle,
   Settings,
   UserCog,
   ChevronLeft,
@@ -44,6 +45,7 @@ const Sidebar = ({ isOpen, onToggle }: SidebarProps) => {
     { path: '/dashboard/reports', icon: FileText, label: t('common.reports') },
     { path: '/dashboard/remittances', icon: HandCoins, label: t('common.remittances') },
     { path: '/dashboard/tracking', icon: MapPin, label: t('common.tracking') },
+    { path: '/dashboard/whatsapp-assistant', icon: MessageCircle, label: t('common.whatsappAssistant') },
   ];
 
   const adminNavItems = [

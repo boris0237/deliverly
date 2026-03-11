@@ -113,6 +113,7 @@ const SettingsPage = () => {
     address: '',
     openTime: '09:00',
     closeTime: '18:00',
+    whatsappDefaultLocale: 'fr',
   });
   const [deliveryPricing, setDeliveryPricing] = useState(DEFAULT_DELIVERY_PRICING);
   const [vehicles, setVehicles] = useState<CompanyVehicle[]>(DEFAULT_VEHICLES);
@@ -147,6 +148,7 @@ const SettingsPage = () => {
           address: data?.company?.address || '',
           openTime: data?.company?.businessHours?.open || '09:00',
           closeTime: data?.company?.businessHours?.close || '18:00',
+          whatsappDefaultLocale: data?.company?.whatsappDefaultLocale || 'fr',
         });
         setDeliveryPricing({
           ...DEFAULT_DELIVERY_PRICING,
@@ -207,6 +209,7 @@ const SettingsPage = () => {
       payload.append('name', companyForm.name);
       payload.append('logo', companyForm.logo);
       payload.append('address', companyForm.address);
+      payload.append('whatsappDefaultLocale', companyForm.whatsappDefaultLocale);
       payload.append('businessHours.open', companyForm.openTime);
       payload.append('businessHours.close', companyForm.closeTime);
       if (selectedLogoFile) payload.append('logoFile', selectedLogoFile);
@@ -719,6 +722,19 @@ const SettingsPage = () => {
                     onChange={(e) => updateCompanyField('closeTime', e.target.value)}
                   />
                 </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm text-white/70">
+                  {t('dashboard.settings.company.whatsappLocale')}
+                </label>
+                <select
+                  className="input-glass"
+                  value={companyForm.whatsappDefaultLocale}
+                  onChange={(e) => updateCompanyField('whatsappDefaultLocale', e.target.value)}
+                >
+                  <option value="fr">{t('dashboard.settings.company.whatsappLocaleFr')}</option>
+                  <option value="en">{t('dashboard.settings.company.whatsappLocaleEn')}</option>
+                </select>
               </div>
             </div>
 
