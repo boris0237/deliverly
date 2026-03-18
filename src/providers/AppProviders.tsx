@@ -3,24 +3,33 @@
 import { useEffect } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '@/i18n';
-import { useAuthStore, useThemeStore } from '@/store';
+import { useAuthStore, useThemeStore, usePwaInstallStore } from '@/store';
 import AppToaster from '@/components/ui/app-toaster';
+import PwaInstallPrompt from '@/components/PwaInstallPrompt';
 
 export default function AppProviders({ children }: { children: React.ReactNode }) {
   const { isDark } = useThemeStore();
-  const { login, logout, setLoading } = useAuthStore();
+  const { login, logout, setLoading, user, isAuthenticated } = useAuthStore();
+  const { setDeferredPrompt, setInstallable, setInstalled } = usePwaInstallStore();
 
   useEffect(() => {
     let mounted = true;
 
     const bootstrapAuth = async () => {
+      const needsBootstrap = !user || !isAuthenticated;
+      if (!needsBootstrap) {
+        setLoading(false);
+        return;
+      }
       setLoading(true);
       try {
         const response = await fetch('/api/auth/me', { method: 'GET', cache: 'no-store' });
         if (!mounted) return;
 
         if (!response.ok) {
-          logout();
+          if (!user) {
+            logout();
+          }
           return;
         }
 
@@ -28,10 +37,15 @@ export default function AppProviders({ children }: { children: React.ReactNode }
         if (data?.user) {
           login(data.user, null);
         } else {
-          logout();
+          if (!user) {
+            logout();
+          }
         }
       } catch {
-        if (mounted) logout();
+        if (!mounted) return;
+        if (!user) {
+          logout();
+        }
       } finally {
         if (mounted) setLoading(false);
       }
@@ -42,7 +56,7 @@ export default function AppProviders({ children }: { children: React.ReactNode }
     return () => {
       mounted = false;
     };
-  }, [login, logout, setLoading]);
+  }, [isAuthenticated, login, logout, setLoading, user]);
 
   useEffect(() => {
     if (isDark) {
@@ -52,9 +66,41 @@ export default function AppProviders({ children }: { children: React.ReactNode }
     }
   }, [isDark]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
+    setInstalled(isStandalone);
+
+    const handler = (event: Event) => {
+      event.preventDefault();
+      setDeferredPrompt(event as any);
+      setInstallable(true);
+    };
+
+    const installedHandler = () => {
+      setInstalled(true);
+      setDeferredPrompt(null);
+      setInstallable(false);
+    };
+
+    window.addEventListener('beforeinstallprompt', handler);
+    window.addEventListener('appinstalled', installedHandler);
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => undefined);
+    }
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+      window.removeEventListener('appinstalled', installedHandler);
+    };
+  }, [setDeferredPrompt, setInstallable, setInstalled]);
+
   return (
     <I18nextProvider i18n={i18n}>
       {children}
+      <PwaInstallPrompt />
       <AppToaster />
     </I18nextProvider>
   );

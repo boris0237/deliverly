@@ -167,7 +167,7 @@
   }
   
   /* Input Styles */
-  .input-glass {
+.input-glass {
     @apply w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/40
            focus:outline-none focus:border-orange-500/50 focus:ring-2 focus:ring-orange-500/20
            transition-all duration-300;
@@ -240,6 +240,46 @@
   .skeleton {
     @apply bg-white/10 rounded animate-pulse;
   }
+}
+
+.campaign-editor .tiptap {
+  min-height: 180px;
+  font-size: 14px;
+  color: inherit;
+}
+
+.campaign-editor .tiptap:focus {
+  outline: none;
+}
+
+.campaign-editor .tiptap p {
+  margin: 0 0 0.75rem;
+}
+
+.campaign-editor .tiptap ul,
+.campaign-editor .tiptap ol {
+  padding-left: 1.25rem;
+  margin: 0 0 0.75rem;
+}
+
+.campaign-editor .tiptap a {
+  color: #f97316;
+  text-decoration: underline;
+}
+
+.campaign-editor .tiptap img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin: 0.5rem 0;
+}
+
+.campaign-editor .tiptap p.is-editor-empty:first-child::before {
+  color: rgba(255, 255, 255, 0.4);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
 }
 
 @layer utilities {

@@ -6,6 +6,7 @@ import {
   MoreVertical,
   MapPin,
   Phone,
+  MessageCircle,
   Package,
   Calendar,
   Truck,
@@ -49,6 +50,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuthStore, useUIStore } from '@/store';
 import { getLocalizedApiError } from '@/lib/auth/error-message';
 import { cn } from '@/lib/utils';
+import { canManage } from '@/lib/auth/access';
 
 type DeliveryStatus = 'pending' | 'assigned' | 'pickedUp' | 'inTransit' | 'delivered' | 'failed' | 'cancelled';
 
@@ -159,6 +161,8 @@ const CANCELLATION_REASONS = [
 ] as const;
 type CancellationReason = (typeof CANCELLATION_REASONS)[number];
 
+const normalizePhone = (value: string) => value.replace(/[^\d]/g, '');
+
 const DEFAULT_FORM: DeliveryForm = {
   partnerId: '',
   driverId: '',
@@ -258,6 +262,7 @@ const DeliveriesPage = () => {
   const { showToast } = useUIStore();
   const isDriverUser = authUser?.role === 'driver';
   const currentUserId = authUser?.id || '';
+  const canManageDeliveries = canManage(authUser?.role, 'manageDeliveries');
 
   const [deliveries, setDeliveries] = useState<DeliveryCard[]>([]);
   const [partners, setPartners] = useState<PartnerItem[]>([]);
@@ -426,6 +431,18 @@ const DeliveriesPage = () => {
       }).format(value || 0);
     }
   };
+
+  const handleCopyId = useCallback(
+    async (id: string) => {
+      try {
+        await navigator.clipboard.writeText(id);
+        showToast(t('common.copied'), 'success');
+      } catch {
+        showToast(t('errors.network'), 'error');
+      }
+    },
+    [showToast, t]
+  );
 
   const statusBadgeClass = (status: DeliveryStatus) => {
     switch (status) {
@@ -977,7 +994,7 @@ const DeliveriesPage = () => {
           <h1 className="text-2xl font-bold text-white">{t('dashboard.deliveries.title')}</h1>
           <p className="text-white/50">{t('dashboard.deliveries.subtitle')}</p>
         </div>
-        {!isDriverUser ? (
+        {!isDriverUser && canManageDeliveries ? (
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button className="btn-primary gap-2">
@@ -1703,9 +1720,18 @@ const DeliveriesPage = () => {
           const driverActions = isDriverUser ? getDriverWorkflowActions(delivery) : [];
           return (
             <div key={delivery.id} className="glass-card p-5 space-y-4">
-            <div className="flex items-start justify-between">
+            <div className="flex items-start justify-between gap-3">
               <div>
-                <div className="text-xs text-white/50">#{delivery.id}</div>
+                <div className="flex flex-wrap items-center gap-2 text-xs">
+                  <button
+                    type="button"
+                    className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-white/70 hover:bg-white/10"
+                    onClick={() => handleCopyId(delivery.id)}
+                    title={t('dashboard.deliveries.card.copyId')}
+                  >
+                    #{delivery.id}
+                  </button>
+                </div>
                 <div className="text-white font-semibold">{delivery.customerName}</div>
               </div>
               <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusBadgeClass(delivery.status)}`}>
@@ -1717,6 +1743,29 @@ const DeliveriesPage = () => {
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4" />
                 {delivery.customerPhone}
+              
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                {delivery.customerPhone ? (
+                  <>
+                    <a
+                      href={`tel:${normalizePhone(delivery.customerPhone)}`}
+                      className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 "
+                    >
+                      <Phone className="h-3 w-3" />
+                      {t('dashboard.deliveries.card.call')}
+                    </a>
+                    {/* <a
+                      href={`https://wa.me/${normalizePhone(delivery.customerPhone)}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2 py-0.5 text-emerald-700 hover:bg-emerald-400/20"
+                    >
+                      <MessageCircle className="h-3 w-3" />
+                      WhatsApp
+                    </a> */}
+                  </>
+                ) : null}
+              </div>
               </div>
               <div className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 mt-0.5" />
@@ -1792,7 +1841,7 @@ const DeliveriesPage = () => {
                     </Button>
                   ))}
                 </div>
-              ) : (
+              ) : canManageDeliveries ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="text-white/50 hover:text-white hover:bg-white/10">
@@ -1822,6 +1871,8 @@ const DeliveriesPage = () => {
                     </>
                   </DropdownMenuContent>
                 </DropdownMenu>
+              ) : (
+                <span />
               )}
             </div>
             </div>

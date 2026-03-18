@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Deliverly",
+    "appName": "Delivoo",
     "loading": "Chargement...",
     "save": "Enregistrer",
     "saved": "Paramètres enregistrés avec succès.",
@@ -14,6 +14,7 @@
     "import": "Importer",
     "close": "Fermer",
     "confirm": "Confirmer",
+    "copied": "Copié dans le presse-papiers.",
     "back": "Retour",
     "next": "Suivant",
     "submit": "Soumettre",
@@ -57,16 +58,21 @@
     "forgotPassword": "Mot de passe oublié",
     "resetPassword": "Réinitialiser le mot de passe",
     "verifyEmail": "Vérifier l'email",
+    "superAdminOverview": "Vue d'ensemble plateforme",
+    "billingPlans": "Plans de facturation",
+    "companies": "Entreprises",
     "dashboard": "Tableau de bord",
     "deliveries": "Livraisons",
     "drivers": "Livreurs",
     "partners": "Partenaires",
     "inventory": "Inventaire",
     "expenses": "Dépenses",
+    "billing": "Facturation",
     "remittances": "Reversements",
     "reports": "Rapports",
     "tracking": "Suivi",
     "whatsappAssistant": "Assistant WhatsApp",
+    "campaigns": "Campagnes email",
     "users": "Utilisateurs",
     "analytics": "Analyses",
     "support": "Support",
@@ -144,7 +150,7 @@
       "subtitle": "Découvrez notre tableau de bord puissant et facile à utiliser"
     },
     "benefits": {
-      "title": "Pourquoi choisir Deliverly ?",
+      "title": "Pourquoi choisir Delivoo ?",
       "subtitle": "Les avantages qui font la différence",
       "items": {
         "time": {
@@ -170,7 +176,7 @@
       "subtitle": "Des entreprises qui nous font confiance",
       "items": {
         "1": {
-          "quote": "Deliverly a transformé notre façon de gérer les livraisons. Nous avons gagné 30% de temps et réduit nos coûts de 20%.",
+          "quote": "Delivoo a transformé notre façon de gérer les livraisons. Nous avons gagné 30% de temps et réduit nos coûts de 20%.",
           "author": "Marie Dupont",
           "role": "Directrice des opérations, FoodExpress"
         },
@@ -180,7 +186,7 @@
           "role": "CEO, RapidLivraison"
         },
         "3": {
-          "quote": "L'interface est intuitive et l'équipe de support est excellente. Je recommande vivement Deliverly.",
+          "quote": "L'interface est intuitive et l'équipe de support est excellente. Je recommande vivement Delivoo.",
           "author": "Sophie Bernard",
           "role": "Manager logistique, PharmaPlus"
         }
@@ -189,12 +195,43 @@
     "pricing": {
       "title": "Tarifs simples et transparents",
       "subtitle": "Choisissez le plan qui correspond à vos besoins",
+      "period": "/mois",
+      "contactPrice": "Sur mesure",
+      "defaultDescription": "Un plan adapté à votre croissance.",
+      "cta": {
+        "start": "Commencer",
+        "contact": "Nous contacter"
+      },
+      "features": {
+        "unlimited": "Illimité",
+        "partners": "{{count}} partenaires",
+        "drivers": "{{count}} livreurs",
+        "users": "{{count}} utilisateurs",
+        "tracking": "Suivi en temps réel",
+        "financialReports": "Rapports financiers",
+        "whatsappAssistant": "Assistant WhatsApp"
+      },
+      "billing": {
+        "monthly": "Mensuel",
+        "yearly": "Annuel",
+        "discount": "-{{percent}}%",
+        "note": "Économisez jusqu'à {{percent}}% avec l'annuel."
+      },
+      "highlight": {
+        "label": "Plan sélectionné",
+        "title": "Ce que vous obtenez",
+        "ctaLabel": "Passer à l’action",
+        "cta": "Commencer maintenant"
+      },
+      "faq": {
+        "label": "Des questions ?",
+        "link": "Consultez notre FAQ"
+      },
       "plans": {
         "starter": {
           "name": "Starter",
           "description": "Parfait pour les petites entreprises",
           "price": "29€",
-          "period": "/mois",
           "features": [
             "Jusqu'à 500 livraisons/mois",
             "3 livreurs",
@@ -235,12 +272,88 @@
         }
       }
     },
+    "whatsappAssistant": {
+      "badge": "Nouveau",
+      "title": "Assistant WhatsApp intégré",
+      "subtitle": "Connectez votre WhatsApp, associez vos groupes aux partenaires et laissez Delivoo créer automatiquement les livraisons.",
+      "kicker": "Automatisation instantanée",
+      "cardTitle": "Transformez un message WhatsApp en livraison",
+      "step1": "Liez votre compte WhatsApp en toute sécurité.",
+      "step2": "Mappez chaque groupe à un partenaire.",
+      "step3": "Les commandes partagées deviennent des livraisons instantanées.",
+      "step4": "Les statuts sont renvoyés dans le groupe automatiquement.",
+      "ctaPrimary": "Découvrir l’assistant",
+      "ctaSecondary": "Voir une démo",
+      "quickTitle": "En un clin d’œil",
+      "quickSubtitle": "Un workflow 100% fluide",
+      "flowTitle": "Ce qui se passe ensuite",
+      "flow1": "Message du partenaire dans le groupe de travail → Analyse automatique",
+      "flow2": "Création de livraison → Assignation au livreur",
+      "flow3": "Notifications en temps réel dans WhatsApp",
+      "highlight": "Réduisez les appels, accélérez la prise de commande et gardez vos partenaires informés en continu."
+    },
+    "mobileApps": {
+      "badge": "Apps mobiles",
+      "title": "Delivoo dans votre poche",
+      "subtitle": "Téléchargez l'app pour vos équipes et suivez chaque livraison en temps réel, où que vous soyez.",
+      "kicker": "Disponible sur iOS et Android",
+      "cardTitle": "Téléchargez et démarrez",
+      "feature1": "Notifications instantanées pour chaque étape.",
+      "feature2": "Suivi live et navigation vers le client.",
+      "feature3": "Preuves de livraison et signatures rapides.",
+      "feature4": "Mode connecté avec synchronisation automatique.",
+      "appStore": "Télécharger sur l’App Store",
+      "playStore": "Télécharger sur Google Play",
+      "previewKicker": "Aperçu mobile",
+      "previewTitle": "Suivi clair, même en déplacement",
+      "previewSubtitle": "Vue en direct",
+      "previewHeadline": "Vos livraisons toujours visibles",
+      "previewItems": [
+        {
+          "title": "Suivi précis",
+          "description": "Localisez les livreurs et l'ETA en un instant."
+        },
+        {
+          "title": "Alertes intelligentes",
+          "description": "Recevez les mises à jour sans ouvrir le tableau de bord."
+        },
+        {
+          "title": "Pilotage rapide",
+          "description": "Acceptez, assignez et clôturez en quelques tap."
+        }
+      ],
+      "stat1": {
+        "value": "60s",
+        "label": "Pour activer un livreur"
+      },
+      "stat2": {
+        "value": "+25%",
+        "label": "Gain de productivité"
+      },
+      "stat3": {
+        "value": "24/7",
+        "label": "Visibilité des courses"
+      },
+      "stat4": {
+        "value": "0€",
+        "label": "Inclus dans le plan"
+      },
+      "installLabel": "Installer",
+      "deviceKicker": "Multiplateforme",
+      "deviceTitle": "Un seul compte, plusieurs appareils",
+      "deviceSubtitle": "Téléphone, tablette ou scanner dédié.",
+      "securityKicker": "Sécurité",
+      "securityTitle": "Données protégées",
+      "securitySubtitle": "Chiffrement et accès contrôlés.",
+      "learnMore": "En savoir plus",
+      "highlight": "L'app mobile est incluse dans votre plan, sans coût supplémentaire."
+    },
     "faq": {
       "title": "Questions fréquentes",
       "items": {
         "1": {
           "question": "Comment fonctionne l'essai gratuit ?",
-          "answer": "Vous pouvez essayer Deliverly gratuitement pendant 14 jours. Aucune carte de crédit requise."
+          "answer": "Vous pouvez essayer Delivoo gratuitement pendant 14 jours. Aucune carte de crédit requise."
         },
         "2": {
           "question": "Puis-je changer de plan à tout moment ?",
@@ -248,7 +361,7 @@
         },
         "3": {
           "question": "Proposez-vous une API ?",
-          "answer": "Oui, notre API REST permet d'intégrer Deliverly à vos systèmes existants."
+          "answer": "Oui, notre API REST permet d'intégrer Delivoo à vos systèmes existants."
         },
         "4": {
           "question": "Comment fonctionne le support ?",
@@ -258,7 +371,7 @@
     },
     "cta": {
       "title": "Prêt à transformer vos livraisons ?",
-      "subtitle": "Rejoignez des milliers d'entreprises qui utilisent Deliverly",
+      "subtitle": "Rejoignez des milliers d'entreprises qui utilisent Delivoo",
       "button": "Démarrer gratuitement"
     },
     "footer": {
@@ -277,10 +390,20 @@
       "rights": "Tous droits réservés."
     }
   },
+  "pwa": {
+    "title": "Installer Delivoo",
+    "subtitle": "Installez l'app pour un accès rapide et des notifications instantanées.",
+    "benefit": "Une fois installée, l'app se lance comme une application native.",
+    "iosStep1": "Touchez Partager dans Safari.",
+    "iosStep2": "Choisissez « Sur l’écran d’accueil ».",
+    "later": "Plus tard",
+    "install": "Installer"
+  },
   "auth": {
     "login": {
       "title": "Connexion",
       "subtitle": "Connectez-vous à votre compte",
+      "success": "Connexion réussie.",
       "email": "Email",
       "password": "Mot de passe",
       "rememberMe": "Se souvenir de moi",
@@ -293,7 +416,7 @@
     },
     "register": {
       "title": "Inscription",
-      "subtitle": "Créez votre compte Deliverly",
+      "subtitle": "Créez votre compte Delivoo",
       "firstName": "Prénom",
       "lastName": "Nom",
       "email": "Email",
@@ -323,9 +446,176 @@
     }
   },
   "dashboard": {
+    "campaigns": {
+      "title": "Campagnes email",
+      "subtitle": "Envoyez des campagnes email à vos utilisateurs et partenaires via Mailjet.",
+      "fields": {
+        "subject": "Objet",
+        "html": "Contenu HTML",
+        "text": "Version texte (optionnel)"
+      },
+      "placeholders": {
+        "subject": "Annonce, promotion, info importante...",
+        "html": "<h1>Bonjour</h1><p>Votre contenu ici...</p>",
+        "text": "Version texte si besoin.",
+        "link": "https://exemple.com",
+        "image": "https://exemple.com/image.jpg"
+      },
+      "htmlHint": "Astuce: laissez la version texte vide, elle sera générée automatiquement.",
+      "variablesHint": "Variables disponibles: {name}, {companyName}, {email}",
+      "audience": {
+        "title": "Audience",
+        "all": "Tous (utilisateurs + partenaires)",
+        "users": "Tous les utilisateurs",
+        "drivers": "Livreurs",
+        "partners": "Partenaires",
+        "admins": "Admins",
+        "managers": "Managers",
+        "companies": "Entreprises (propriétaires)",
+        "import": "Importer une liste"
+      },
+      "templates": {
+        "title": "Templates email",
+        "standard": "Standard",
+        "promo": "Promotion",
+        "newsletter": "Newsletter"
+      },
+      "ai": {
+        "title": "Rédaction assistée par IA",
+        "placeholder": "Ex: Annoncer une nouvelle fonctionnalité aux entreprises.",
+        "tone": "Ton (ex: professionnel, chaleureux)",
+        "generate": "Générer avec l'IA",
+        "generating": "Génération...",
+        "validation": "Veuillez décrire l'objectif de l'email."
+      },
+      "summary": {
+        "audience": "Audience",
+        "recipients": "Destinataires"
+      },
+      "companies": {
+        "title": "Sélectionner les entreprises",
+        "search": "Rechercher une entreprise"
+      },
+      "import": {
+        "title": "Importer une liste d'emails",
+        "placeholder": "email1@exemple.com, email2@exemple.com",
+        "hint": "Séparez les emails par une virgule, un point-virgule ou un saut de ligne.",
+        "count": "{{count}} contacts importés"
+      },
+      "validation": {
+        "required": "Veuillez renseigner l'objet et le contenu HTML."
+      },
+      "actions": {
+        "link": "Lien",
+        "image": "Image"
+      },
+      "success": "Campagne envoyée à {{count}} destinataires.",
+      "queued": "Campagne mise en file pour {{count}} destinataires.",
+      "status": {
+        "draft": "Brouillon",
+        "queued": "En file",
+        "sending": "Envoi",
+        "sent": "Envoyée",
+        "failed": "Échec"
+      },
+      "recipientStatus": {
+        "pending": "En attente",
+        "sent": "Envoyé",
+        "failed": "Échec"
+      },
+      "history": {
+        "title": "Historique des campagnes",
+        "empty": "Aucune campagne pour le moment."
+      },
+      "stats": {
+        "sent": "Envoyés",
+        "failed": "Échecs",
+        "total": "Total"
+      },
+      "send": "Envoyer la campagne",
+      "sending": "Envoi en cours..."
+    },
+    "billing": {
+      "title": "Facturation",
+      "subtitle": "Gérez votre abonnement et vos paiements.",
+      "currentPlan": "Plan actuel",
+      "trialEnds": "Fin d'essai le",
+      "periodStart": "Date de début",
+      "periodEnd": "Date de fin",
+      "notice": {
+        "info": "Votre plan se termine dans {{days}} jours.",
+        "warning": "Plus que {{days}} jours avant le renouvellement.",
+        "critical": "Urgent : {{days}} jours avant l'expiration."
+      },
+      "status": {
+        "trial": "Essai",
+        "active": "Actif",
+        "inactive": "Inactif",
+        "paid": "Payé",
+        "pending": "En attente",
+        "failed": "Échoué",
+        "refunded": "Remboursé"
+      },
+      "monthly": "Mensuel",
+      "yearly": "Annuel",
+      "yearlyDiscount": "Réduction annuelle",
+      "noDescription": "Aucune description",
+      "chooseMonthly": "Choisir mensuel",
+      "chooseYearly": "Choisir annuel",
+      "choosePlan": "Choisir le plan",
+      "popular": "Le plus populaire",
+      "usage": {
+        "partners": "Partenaires",
+        "drivers": "Livreurs",
+        "users": "Utilisateurs"
+      },
+      "features": {
+        "tracking": "Suivi en temps réel",
+        "noTracking": "Sans suivi",
+        "financialReports": "Rapports financiers",
+        "noFinancialReports": "Sans rapports financiers",
+        "whatsapp": "Assistant WhatsApp",
+        "noWhatsapp": "Sans assistant WhatsApp"
+      },
+      "enterprise": {
+        "title": "Plan Entreprise",
+        "subtitle": "Besoin de plus que les deux premiers plans ? Contactez-nous pour une offre sur mesure.",
+        "plan": "Offre Entreprise :",
+        "feature1": "Tout dans Professional",
+        "feature2": "Livreurs & partenaires illimités",
+        "feature3": "Support dédié",
+        "contact": "Contacter le commercial"
+      },
+      "history": {
+        "title": "Historique des paiements",
+        "empty": "Aucun paiement pour l'instant."
+      },
+      "interval": {
+        "month": "Mensuel",
+        "year": "Annuel"
+      }
+    },
     "overview": {
       "title": "Tableau de bord",
       "subtitle": "Vue d'ensemble de vos opérations",
+      "superAdmin": {
+        "title": "Vue d'ensemble plateforme",
+        "subtitle": "Suivi global des activités, finances et performance",
+        "stats": {
+          "totalCompanies": "Entreprises totales",
+          "activeCompanies": "Entreprises actives",
+          "totalUsers": "Utilisateurs",
+          "totalPartners": "Partenaires",
+          "totalDrivers": "Livreurs",
+          "totalDeliveries": "Total des livraisons",
+          "amountCollected": "Montant collecté",
+          "totalCommissions": "Commissions totales",
+          "totalExpenses": "Dépenses internes"
+        },
+        "charts": {
+          "topCompanies": "Top entreprises"
+        }
+      },
       "filters": {
         "today": "Aujourd'hui",
         "week": "Cette semaine",
@@ -495,7 +785,9 @@
       },
       "card": {
         "amountShort": "Montant",
-        "feeShort": "Frais"
+        "feeShort": "Frais",
+        "copyId": "Copier l'identifiant",
+        "call": "Appeler"
       },
       "validation": {
         "required": "Veuillez renseigner les champs requis.",
@@ -775,6 +1067,13 @@
     "reports": {
       "title": "Rapports",
       "subtitle": "Analyse complète des opérations, finances et performances",
+      "subtitles": {
+        "deliveries": "Suivi détaillé des livraisons, statuts et performance terrain",
+        "financial": "Analyse des flux financiers, commissions et dépenses",
+        "driver": "Performance des livreurs et efficacité des courses",
+        "inventory": "Analyse des stocks, entrées, sorties et niveaux critiques",
+        "partner": "Vue d'ensemble des partenaires, volumes et rentabilité"
+      },
       "types": {
         "deliveries": "Rapport de livraisons",
         "financial": "Rapport financier",
@@ -1040,7 +1339,7 @@
     },
     "whatsappAssistant": {
       "title": "Assistant WhatsApp",
-      "subtitle": "Liez WhatsApp, mappez vos groupes aux partenaires et automatisez la création des livraisons",
+      "subtitle": "Connectez votre compte WhatsApp, associez chaque groupe à un partenaire, puis les commandes envoyées dans ces groupes créent automatiquement des livraisons.",
       "connectionStatus": "Statut de connexion",
       "groupsMapped": "Groupes mappés",
       "totalGroups": "{{count}} groupes détectés",
@@ -1052,6 +1351,14 @@
       "disconnected": "Assistant WhatsApp déconnecté.",
       "groupSyncStarted": "Synchronisation des groupes lancée.",
       "scanQrHelp": "Scannez ce QR code dans WhatsApp (Appareils connectés).",
+      "scanQrStepsTitle": "Étapes pour scanner le QR code",
+      "scanQrSteps": [
+        "Ouvrez WhatsApp sur votre téléphone.",
+        "Allez dans Paramètres → Appareils connectés.",
+        "Appuyez sur « Connecter un appareil ».",
+        "Scannez le QR code affiché ici."
+      ],
+      "scanQrHint": "Le QR code expire rapidement. Si besoin, cliquez sur « Synchroniser les groupes » pour relancer.",
       "groupBindings": "Liaison groupes → partenaires",
       "partner": "Partenaire",
       "unmapped": "Non mappé",
@@ -1342,5 +1649,102 @@
       "REMITTANCE_NOT_FOUND": "Reversement introuvable.",
       "REMITTANCE_EXCEEDS_BALANCE": "Le montant dépasse le solde à reverser."
     }
+  }
+  ,
+  "superadmin": {
+    "billingPlans": {
+      "title": "Plans de facturation",
+      "subtitle": "Définissez les limites et fonctionnalités de chaque offre.",
+      "create": "Créer un plan",
+      "edit": "Modifier le plan",
+      "search": "Rechercher un plan",
+      "empty": "Aucun plan de facturation pour l'instant.",
+      "active": "Actif",
+      "inactive": "Inactif",
+      "monthly": "Prix mensuel",
+      "yearlyDiscount": "Réduction annuelle",
+      "yearlyPrice": "Prix annuel",
+      "noDescription": "Aucune description",
+      "fields": {
+        "name": "Nom du plan",
+        "description": "Description",
+        "priceUsd": "Montant en dollars",
+        "yearlyDiscount": "Réduction annuelle (%)",
+        "yearlyPrice": "Prix annuel estimé",
+        "partners": "Partenaires",
+        "drivers": "Livreurs",
+        "users": "Utilisateurs",
+        "tracking": "Accès au suivi",
+        "trackingHint": "Active l'écran de suivi en temps réel.",
+        "financialReports": "Rapports financiers",
+        "financialReportsHint": "Active l'accès aux rapports financiers.",
+        "whatsapp": "Assistant WhatsApp",
+        "whatsappHint": "Active l'assistant WhatsApp.",
+        "isActive": "Plan actif",
+        "isActiveHint": "Disponible pour les nouvelles souscriptions."
+      },
+      "placeholders": {
+        "name": "Starter, Growth, Enterprise...",
+        "description": "Résumé rapide du plan..."
+      },
+      "feature": {
+        "tracking": "Suivi inclus",
+        "noTracking": "Sans suivi",
+        "financialReports": "Rapports financiers inclus",
+        "noFinancialReports": "Sans rapports financiers",
+        "whatsapp": "WhatsApp inclus",
+        "noWhatsapp": "Sans WhatsApp"
+      },
+      "delete": {
+        "title": "Supprimer ce plan ?",
+        "description": "Ce plan sera désactivé et retiré de la liste."
+      },
+      "success": {
+        "created": "Plan créé avec succès.",
+        "updated": "Plan mis à jour avec succès.",
+        "deleted": "Plan supprimé avec succès."
+      }
+    },
+    "companies": {
+      "title": "Entreprises",
+      "subtitle": "Listez et inspectez les entreprises de la plateforme.",
+      "search": "Rechercher une entreprise",
+      "empty": "Aucune entreprise trouvée.",
+      "noPlan": "Plan non défini",
+      "noAddress": "Adresse non renseignée",
+      "subscriptionStart": "Date d'abonnement",
+      "subscriptionEnd": "Date de fin",
+      "createdAt": "Créée le {{date}}",
+      "plan": "Plan",
+      "status": "Statut",
+      "detailsTitle": "Détails de l'entreprise",
+      "statuses": {
+        "trialing": "Essai",
+        "active": "Actif",
+        "past_due": "Paiement en retard",
+        "canceled": "Annulé",
+        "inactive": "Inactif"
+      },
+      "stats": {
+        "users": "Utilisateurs",
+        "drivers": "Livreurs",
+        "partners": "Partenaires",
+        "deliveries": "Livraisons"
+      },
+      "pagination": {
+        "previous": "Précédent",
+        "next": "Suivant",
+        "page": "Page {{page}} / {{totalPages}}",
+        "summary": "{{from}}-{{to}} sur {{total}}",
+        "empty": "0 résultat"
+      }
+    }
+  }
+  ,
+  "subscriptionExpired": {
+    "title": "Abonnement expiré",
+    "subtitle": "L’abonnement de votre entreprise est expiré. Veuillez contacter votre administrateur pour rétablir l’accès.",
+    "contactAdmin": "Aller à la facturation",
+    "logout": "Déconnexion"
   }
 }

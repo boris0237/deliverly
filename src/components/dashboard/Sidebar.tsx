@@ -12,6 +12,7 @@ import {
   HandCoins,
   MapPin,
   MessageCircle,
+  CreditCard,
   Settings,
   UserCog,
   ChevronLeft,
@@ -19,7 +20,8 @@ import {
   LogOut,
   Package2
 } from 'lucide-react';
-import { useAuthStore, useUIStore } from '@/store';
+import { useAuthStore, useThemeStore, useUIStore } from '@/store';
+import { getAllowedPathsForRole, getDefaultPathForRole } from '@/lib/auth/access';
 import { cn } from '@/lib/utils';
 
 interface SidebarProps {
@@ -32,10 +34,13 @@ const Sidebar = ({ isOpen, onToggle }: SidebarProps) => {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuthStore();
+  const { isDark } = useThemeStore();
   const { setCurrentPage, showToast } = useUIStore();
-  const isDriver = user?.role === 'driver';
+  const allowedPaths = getAllowedPathsForRole(user?.role);
+  const defaultPath = getDefaultPathForRole(user?.role);
 
   const mainNavItems = [
+    { path: '/superadmin/overview', icon: LayoutDashboard, label: t('common.superAdminOverview') },
     { path: '/dashboard', icon: LayoutDashboard, label: t('common.dashboard') },
     { path: '/dashboard/deliveries', icon: Package, label: t('common.deliveries') },
     { path: '/dashboard/drivers', icon: Users, label: t('common.drivers') },
@@ -50,12 +55,15 @@ const Sidebar = ({ isOpen, onToggle }: SidebarProps) => {
 
   const adminNavItems = [
     { path: '/dashboard/users', icon: UserCog, label: t('common.users') },
+    { path: '/dashboard/billing', icon: CreditCard, label: t('common.billing') },
     { path: '/dashboard/settings', icon: Settings, label: t('common.settings') },
   ];
-  const visibleMainNavItems = isDriver
-    ? mainNavItems.filter((item) => item.path === '/dashboard/deliveries' || item.path === '/dashboard/reports')
-    : mainNavItems;
-  const visibleAdminNavItems = isDriver ? [] : adminNavItems;
+  const visibleMainNavItems = mainNavItems.filter((item) =>
+    allowedPaths.some((path) => item.path === path || item.path.startsWith(`${path}/`))
+  );
+  const visibleAdminNavItems = adminNavItems.filter((item) =>
+    allowedPaths.some((path) => item.path === path || item.path.startsWith(`${path}/`))
+  );
 
   const handleNavClick = (label: string) => {
     setCurrentPage(label);
@@ -82,13 +90,16 @@ const Sidebar = ({ isOpen, onToggle }: SidebarProps) => {
     >
       {/* Logo */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-white/5">
-        <Link href="/dashboard" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
-            <Package2 className="w-5 h-5 text-white" />
+        <Link href={defaultPath} className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-white/5 border border-white/10">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={'/img/icon.svg'}
+              alt="Delivoo"
+              className={'w-10 h-10 object-contain'}
+            />
           </div>
-          {isOpen && (
-            <span className="text-xl font-bold text-white">Deliverly</span>
-          )}
+          {isOpen && <span className="text-xl font-bold text-white"><img src={isDark ? "/img/delivoo_wordmark_dark.svg" : "/img/delivoo_wordmark_light.svg"} alt="Delivoo" className="h-10 object-contain" /></span>}
         </Link>
         <button
           onClick={onToggle}
@@ -112,7 +123,7 @@ const Sidebar = ({ isOpen, onToggle }: SidebarProps) => {
               href={item.path}
               onClick={() => handleNavClick(item.label)}
               className={cn(
-                'flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group',
+                'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group',
                 isActive(item.path)
                   ? 'bg-white/10 text-white border-l-2 border-orange-500'
                   : 'text-white/60 hover:bg-white/5 hover:text-white'
@@ -123,7 +134,14 @@ const Sidebar = ({ isOpen, onToggle }: SidebarProps) => {
                 isActive(item.path) ? 'text-orange-500' : 'group-hover:text-orange-400'
               )} />
               {isOpen && (
-                <span className="text-sm font-medium truncate">{item.label}</span>
+                <span className="text-sm font-medium truncate flex items-center gap-2">
+                  {item.label}
+                  {item.path === '/dashboard/whatsapp-assistant' && (
+                    <span className="text-[10px] uppercase tracking-wide px-2 py-0.5 text-bold rounded-full border border-[#25D366]/30 bg-[#25D366]/5 text-[#25D366]">
+                      New
+                    </span>
+                  )}
+                </span>
               )}
             </Link>
           ))}
@@ -142,7 +160,7 @@ const Sidebar = ({ isOpen, onToggle }: SidebarProps) => {
               href={item.path}
               onClick={() => handleNavClick(item.label)}
               className={cn(
-                'flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group',
+                'flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 group',
                 isActive(item.path)
                   ? 'bg-white/10 text-white border-l-2 border-orange-500'
                   : 'text-white/60 hover:bg-white/5 hover:text-white'

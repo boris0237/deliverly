@@ -114,7 +114,7 @@ export async function POST(request: Request) {
 
     const existing = await WhatsAppConnectionModel.findOne({ companyId: resolved.company.id }).lean();
     const connectionId = existing?.id || randomToken(12);
-    const displayName = parsed.data.displayName || resolved.company.name || 'Deliverly Assistant';
+    const displayName = parsed.data.displayName || resolved.company.name || 'Delivoo Assistant';
     if (!existing) {
       await WhatsAppConnectionModel.create({
         id: connectionId,

@@ -2,9 +2,11 @@ import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import { Package, Twitter, Linkedin, Github, Instagram } from 'lucide-react';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { useThemeStore } from '@/store';
 
 const FooterSection = () => {
   const { t } = useTranslation();
+  const { isDark } = useThemeStore();
 
   const footerLinks = {
     product: [
@@ -38,11 +40,10 @@ const FooterSection = () => {
           {/* Brand */}
           <div className="col-span-2 md:col-span-4 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-purple-600 rounded-xl flex items-center justify-center">
-                <Package className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-white">Deliverly</span>
-            </Link>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+             <img src="/img/icon.svg" alt="Delivoo" className="w-10 h-10 object-contain" />
+              <span className="text-xl font-bold text-white"> <img src={isDark ? "/img/delivoo_wordmark_dark.svg" : "/img/delivoo_wordmark_light.svg"} alt="Delivoo" className="h-10 object-contain" />
+            </span></Link>
             <p className="text-sm text-white/50 mb-6 max-w-xs">
               {t('landing.hero.subtitle')}
             </p>
@@ -129,7 +130,7 @@ const FooterSection = () => {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-white/40">
-            © 2024 Deliverly. {t('landing.footer.rights')}
+            © {new Date().getFullYear()} Delivoo. {t('landing.footer.rights')}
           </p>
           <div className="flex items-center gap-6">
             <Link href="/auth/login" className="text-sm text-white/50 hover:text-white transition-colors">

@@ -156,6 +156,7 @@ export async function GET(request: Request) {
           },
         };
       });
+      // @ts-ignore
       await DeliveryModel.bulkWrite(ops, { ordered: false });
       for (const delivery of rescheduledDeliveries) {
         emitDeliveryRealtimeEvent({ companyId: company.id, deliveryId: delivery.id, type: 'updated' });

@@ -149,10 +149,95 @@ const companySchema = new Schema(
       ],
       default: [],
     },
+    billing: {
+      planId: { type: String, default: '' },
+      planName: { type: String, default: '' },
+      status: { type: String, enum: ['trialing', 'active', 'past_due', 'canceled', 'inactive'], default: 'trialing' },
+      interval: { type: String, enum: ['trial', 'month', 'year'], default: 'trial' },
+      trialEndsAt: { type: Date, default: null },
+      currentPeriodStart: { type: Date, default: null },
+      currentPeriodEnd: { type: Date, default: null },
+      lastNoticeDays: { type: Number, default: null },
+      lastNoticeAt: { type: Date, default: null },
+      stripeCustomerId: { type: String, default: '' },
+      stripeSubscriptionId: { type: String, default: '' },
+    },
     isActive: { type: Boolean, default: true },
   },
   { timestamps: true }
 );
+
+const billingPlanSchema = new Schema(
+  {
+    id: { type: String, required: true, unique: true, index: true },
+    name: { type: String, required: true, index: true },
+    description: { type: String, default: '' },
+    priceUsd: { type: Number, required: true, min: 0 },
+    yearlyDiscountPercent: { type: Number, required: true, min: 0, max: 100, default: 0 },
+    limits: {
+      partners: { type: Number, required: true, min: 0, default: 0 },
+      drivers: { type: Number, required: true, min: 0, default: 0 },
+      users: { type: Number, required: true, min: 0, default: 0 },
+    },
+    features: {
+      tracking: { type: Boolean, required: true, default: true },
+      financialReports: { type: Boolean, required: true, default: true },
+      whatsappAssistant: { type: Boolean, required: true, default: false },
+    },
+    isActive: { type: Boolean, default: true, index: true },
+  },
+  { timestamps: true }
+);
+
+const billingHistorySchema = new Schema(
+  {
+    id: { type: String, required: true, unique: true, index: true },
+    companyId: { type: String, required: true, index: true },
+    planId: { type: String, default: '' },
+    planName: { type: String, default: '' },
+    amount: { type: Number, required: true, min: 0 },
+    currency: { type: String, default: 'USD' },
+    interval: { type: String, enum: ['month', 'year'], default: 'month' },
+    status: { type: String, enum: ['pending', 'paid', 'failed', 'refunded'], default: 'pending' },
+    stripeSessionId: { type: String, default: '', index: true },
+    stripePaymentIntentId: { type: String, default: '' },
+    paidAt: { type: Date, default: null },
+    createdBy: { type: String, default: '' },
+  },
+  { timestamps: true }
+);
+
+const campaignSchema = new Schema(
+  {
+    id: { type: String, required: true, unique: true, index: true },
+    createdBy: { type: String, required: true, index: true },
+    audienceType: { type: String, enum: ['all', 'users', 'drivers', 'partners', 'admins', 'managers', 'companies', 'import'], required: true },
+    subject: { type: String, required: true },
+    html: { type: String, required: true },
+    text: { type: String, default: '' },
+    status: { type: String, enum: ['draft', 'queued', 'sending', 'sent', 'failed'], default: 'draft', index: true },
+    totalRecipients: { type: Number, default: 0 },
+    sentCount: { type: Number, default: 0 },
+    failedCount: { type: Number, default: 0 },
+    templateId: { type: String, default: '' },
+  },
+  { timestamps: true }
+);
+
+const campaignRecipientSchema = new Schema(
+  {
+    id: { type: String, required: true, unique: true, index: true },
+    campaignId: { type: String, required: true, index: true },
+    email: { type: String, required: true, index: true },
+    name: { type: String, default: '' },
+    companyName: { type: String, default: '' },
+    companyId: { type: String, default: '' },
+    status: { type: String, enum: ['pending', 'sent', 'failed'], default: 'pending', index: true },
+    errorMessage: { type: String, default: '' },
+  },
+  { timestamps: true }
+);
+campaignRecipientSchema.index({ campaignId: 1, email: 1 }, { unique: true });
 
 const companyMemberSchema = new Schema(
   {
@@ -409,6 +494,10 @@ whatsappInboundMessageSchema.index({ companyId: 1, connectionId: 1, messageId: 1
 
 export type UserDoc = InferSchemaType<typeof userSchema>;
 export type CompanyDoc = InferSchemaType<typeof companySchema>;
+export type BillingPlanDoc = InferSchemaType<typeof billingPlanSchema>;
+export type BillingHistoryDoc = InferSchemaType<typeof billingHistorySchema>;
+export type CampaignDoc = InferSchemaType<typeof campaignSchema>;
+export type CampaignRecipientDoc = InferSchemaType<typeof campaignRecipientSchema>;
 export type CompanyMemberDoc = InferSchemaType<typeof companyMemberSchema>;
 export type PartnerDoc = InferSchemaType<typeof partnerSchema>;
 export type DeliveryDoc = InferSchemaType<typeof deliverySchema>;
@@ -428,6 +517,31 @@ export const UserModel: Model<UserDoc> =
 
 export const CompanyModel: Model<CompanyDoc> =
   (mongoose.models.Company as Model<CompanyDoc>) || mongoose.model<CompanyDoc>('Company', companySchema);
+
+export const BillingPlanModel: Model<BillingPlanDoc> =
+  (mongoose.models.BillingPlan as Model<BillingPlanDoc>) || mongoose.model<BillingPlanDoc>('BillingPlan', billingPlanSchema);
+
+export const BillingHistoryModel: Model<BillingHistoryDoc> =
+  (mongoose.models.BillingHistory as Model<BillingHistoryDoc>) ||
+  mongoose.model<BillingHistoryDoc>('BillingHistory', billingHistorySchema);
+
+const existingCampaignModel = mongoose.models.Campaign as Model<CampaignDoc> | undefined;
+if (existingCampaignModel) {
+  //@ts-ignore
+  const statusEnum = (existingCampaignModel.schema.path('status')?.enumValues || []) as string[];
+  //@ts-ignore
+  const audienceEnum = (existingCampaignModel.schema.path('audienceType')?.enumValues || []) as string[];
+  if (!statusEnum.includes('queued') || !audienceEnum.includes('all')) {
+    delete mongoose.models.Campaign;
+  }
+}
+
+export const CampaignModel: Model<CampaignDoc> =
+  (mongoose.models.Campaign as Model<CampaignDoc>) || mongoose.model<CampaignDoc>('Campaign', campaignSchema);
+
+export const CampaignRecipientModel: Model<CampaignRecipientDoc> =
+  (mongoose.models.CampaignRecipient as Model<CampaignRecipientDoc>) ||
+  mongoose.model<CampaignRecipientDoc>('CampaignRecipient', campaignRecipientSchema);
 
 export const CompanyMemberModel: Model<CompanyMemberDoc> =
   (mongoose.models.CompanyMember as Model<CompanyMemberDoc>) || mongoose.model<CompanyMemberDoc>('CompanyMember', companyMemberSchema);

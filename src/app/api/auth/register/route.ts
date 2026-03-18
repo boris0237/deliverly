@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { hashPassword, randomToken } from '@/lib/auth/crypto';
-import { CompanyMemberModel, CompanyModel, connectDb, UserModel } from '@/lib/auth/db';
+import { BillingPlanModel, CompanyMemberModel, CompanyModel, connectDb, UserModel } from '@/lib/auth/db';
 import { createAuthToken } from '@/lib/auth/tokens';
 import { buildVerifyEmailTemplate } from '@/lib/auth/email-templates';
 import { sendMailWithMailjet } from '@/lib/auth/mailjet';
@@ -42,6 +42,9 @@ export async function POST(request: Request) {
 
     const companyId = randomToken(12);
     const userId = randomToken(12);
+    const now = new Date();
+    const trialEndsAt = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
+    const starterPlan = await BillingPlanModel.findOne({ isActive: true, name: /starter/i }).lean();
 
     await CompanyModel.create({
       id: companyId,
@@ -53,6 +56,15 @@ export async function POST(request: Request) {
         open: '09:00',
         close: '18:00',
         days: [1, 2, 3, 4, 5],
+      },
+      billing: {
+        planId: starterPlan?.id || '',
+        planName: starterPlan?.name || 'Starter',
+        status: 'trialing',
+        interval: 'trial',
+        trialEndsAt,
+        currentPeriodStart: now,
+        currentPeriodEnd: trialEndsAt,
       },
       isActive: true,
     });

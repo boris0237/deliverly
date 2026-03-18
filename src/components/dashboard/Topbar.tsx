@@ -23,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { canAccessPath } from '@/lib/auth/access';
 
 interface TopbarProps {
   sidebarOpen?: boolean;
@@ -46,6 +47,7 @@ const Topbar = ({ onSidebarToggle }: TopbarProps) => {
   const { notifications, unreadNotificationsCount, setNotifications, addNotification, markNotificationAsRead, markAllNotificationsAsRead } =
     useDashboardStore();
   const { user } = useAuthStore();
+  const canAccessSettings = canAccessPath(user?.role, '/dashboard/settings');
   const [searchQuery, setSearchQuery] = useState('');
   const audioContextRef = useRef<AudioContext | null>(null);
   const notificationAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -413,10 +415,12 @@ const Topbar = ({ onSidebarToggle }: TopbarProps) => {
               <User className="w-4 h-4 mr-2" />
               {t('common.profile')}
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer hover:bg-white/5" onSelect={() => router.push('/dashboard/settings')}>
-              <Check className="w-4 h-4 mr-2" />
-              {t('common.settings')}
-            </DropdownMenuItem>
+            {canAccessSettings ? (
+              <DropdownMenuItem className="cursor-pointer hover:bg-white/5" onSelect={() => router.push('/dashboard/settings')}>
+                <Check className="w-4 h-4 mr-2" />
+                {t('common.settings')}
+              </DropdownMenuItem>
+            ) : null}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

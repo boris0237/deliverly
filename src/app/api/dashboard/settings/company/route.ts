@@ -134,6 +134,8 @@ async function resolveCurrentCompany(userId: string): Promise<ResolvedCompany | 
   // Backward-compatibility for legacy users without companyId.
   const companyId = randomToken(12);
   const companyName = `${user.firstName}'s Company`;
+  const now = new Date();
+  const trialEndsAt = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
 
   await CompanyModel.create({
     id: companyId,
@@ -142,6 +144,15 @@ async function resolveCurrentCompany(userId: string): Promise<ResolvedCompany | 
     logo: '',
     address: '',
     businessHours: { open: '09:00', close: '18:00', days: [1, 2, 3, 4, 5] },
+    billing: {
+      planId: '',
+      planName: 'Starter',
+      status: 'trialing',
+      interval: 'trial',
+      trialEndsAt,
+      currentPeriodStart: now,
+      currentPeriodEnd: trialEndsAt,
+    },
     isActive: true,
   });
 

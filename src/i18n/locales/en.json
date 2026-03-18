@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Deliverly",
+    "appName": "Delivoo",
     "loading": "Loading...",
     "save": "Save",
     "saved": "Settings saved successfully.",
@@ -14,6 +14,7 @@
     "import": "Import",
     "close": "Close",
     "confirm": "Confirm",
+    "copied": "Copied to clipboard.",
     "back": "Back",
     "next": "Next",
     "submit": "Submit",
@@ -57,16 +58,21 @@
     "forgotPassword": "Forgot Password",
     "resetPassword": "Reset Password",
     "verifyEmail": "Verify Email",
+    "superAdminOverview": "Platform overview",
+    "billingPlans": "Billing plans",
+    "companies": "Companies",
     "dashboard": "Dashboard",
     "deliveries": "Deliveries",
     "drivers": "Drivers",
     "partners": "Partners",
     "inventory": "Inventory",
     "expenses": "Expenses",
+    "billing": "Billing",
     "remittances": "Remittances",
     "reports": "Reports",
     "tracking": "Tracking",
     "whatsappAssistant": "WhatsApp Assistant",
+    "campaigns": "Email campaigns",
     "users": "Users",
     "analytics": "Analytics",
     "support": "Support",
@@ -144,7 +150,7 @@
       "subtitle": "Discover our powerful and easy-to-use dashboard"
     },
     "benefits": {
-      "title": "Why Choose Deliverly?",
+      "title": "Why Choose Delivoo?",
       "subtitle": "The advantages that make the difference",
       "items": {
         "time": {
@@ -170,7 +176,7 @@
       "subtitle": "Companies that trust us",
       "items": {
         "1": {
-          "quote": "Deliverly has transformed how we manage deliveries. We've gained 30% time and reduced costs by 20%.",
+          "quote": "Delivoo has transformed how we manage deliveries. We've gained 30% time and reduced costs by 20%.",
           "author": "Marie Dupont",
           "role": "Operations Director, FoodExpress"
         },
@@ -180,7 +186,7 @@
           "role": "CEO, RapidLivraison"
         },
         "3": {
-          "quote": "The interface is intuitive and the support team is excellent. I highly recommend Deliverly.",
+          "quote": "The interface is intuitive and the support team is excellent. I highly recommend Delivoo.",
           "author": "Sophie Bernard",
           "role": "Logistics Manager, PharmaPlus"
         }
@@ -189,12 +195,43 @@
     "pricing": {
       "title": "Simple and Transparent Pricing",
       "subtitle": "Choose the plan that fits your needs",
+      "period": "/month",
+      "contactPrice": "Custom",
+      "defaultDescription": "A plan tailored to your growth.",
+      "cta": {
+        "start": "Get started",
+        "contact": "Contact us"
+      },
+      "features": {
+        "unlimited": "Unlimited",
+        "partners": "{{count}} partners",
+        "drivers": "{{count}} drivers",
+        "users": "{{count}} users",
+        "tracking": "Real-time tracking",
+        "financialReports": "Financial reports",
+        "whatsappAssistant": "WhatsApp assistant"
+      },
+      "billing": {
+        "monthly": "Monthly",
+        "yearly": "Yearly",
+        "discount": "-{{percent}}%",
+        "note": "Save up to {{percent}}% with yearly billing."
+      },
+      "highlight": {
+        "label": "Selected plan",
+        "title": "What you get",
+        "ctaLabel": "Ready to move",
+        "cta": "Get started"
+      },
+      "faq": {
+        "label": "Questions?",
+        "link": "Check our FAQ"
+      },
       "plans": {
         "starter": {
           "name": "Starter",
           "description": "Perfect for small businesses",
           "price": "$29",
-          "period": "/month",
           "features": [
             "Up to 500 deliveries/month",
             "3 drivers",
@@ -235,12 +272,88 @@
         }
       }
     },
+    "whatsappAssistant": {
+      "badge": "New",
+      "title": "WhatsApp assistant built in",
+      "subtitle": "Connect your WhatsApp, map groups to partners, and let Delivoo create deliveries automatically.",
+      "kicker": "Instant automation",
+      "cardTitle": "Turn a WhatsApp message into a delivery",
+      "step1": "Securely connect your WhatsApp account.",
+      "step2": "Map each group to a partner.",
+      "step3": "Orders shared in groups become deliveries instantly.",
+      "step4": "Statuses are posted back to the group automatically.",
+      "ctaPrimary": "Explore the assistant",
+      "ctaSecondary": "Watch a demo",
+      "quickTitle": "At a glance",
+      "quickSubtitle": "A seamless workflow",
+      "flowTitle": "What happens next",
+      "flow1": "Partner messages → Auto parsing",
+      "flow2": "Delivery creation + assignment",
+      "flow3": "Real-time updates inside WhatsApp",
+      "highlight": "Reduce calls, speed up order capture, and keep partners informed at all times."
+    },
+    "mobileApps": {
+      "badge": "Mobile apps",
+      "title": "Delivoo in your pocket",
+      "subtitle": "Download the app for your teams and track every delivery in real time, wherever you are.",
+      "kicker": "Available on iOS and Android",
+      "cardTitle": "Download and get started",
+      "feature1": "Instant notifications for every milestone.",
+      "feature2": "Live tracking and turn-by-turn directions.",
+      "feature3": "Proof of delivery and quick signatures.",
+      "feature4": "Offline-friendly with auto sync.",
+      "appStore": "Download on the App Store",
+      "playStore": "Get it on Google Play",
+      "previewKicker": "Mobile preview",
+      "previewTitle": "Clear tracking on the go",
+      "previewSubtitle": "Live view",
+      "previewHeadline": "Deliveries always in sight",
+      "previewItems": [
+        {
+          "title": "Precise tracking",
+          "description": "Locate drivers and ETA in a glance."
+        },
+        {
+          "title": "Smart alerts",
+          "description": "Receive updates without opening the dashboard."
+        },
+        {
+          "title": "Fast control",
+          "description": "Accept, assign, and close out in a few taps."
+        }
+      ],
+      "stat1": {
+        "value": "60s",
+        "label": "To activate a driver"
+      },
+      "stat2": {
+        "value": "+25%",
+        "label": "Productivity gain"
+      },
+      "stat3": {
+        "value": "24/7",
+        "label": "Live visibility"
+      },
+      "stat4": {
+        "value": "$0",
+        "label": "Included in plan"
+      },
+      "installLabel": "Install",
+      "deviceKicker": "Multi-platform",
+      "deviceTitle": "One account, multiple devices",
+      "deviceSubtitle": "Phone, tablet, or dedicated scanner.",
+      "securityKicker": "Security",
+      "securityTitle": "Protected data",
+      "securitySubtitle": "Encryption and controlled access.",
+      "learnMore": "Learn more",
+      "highlight": "The mobile app is included in your plan at no extra cost."
+    },
     "faq": {
       "title": "Frequently Asked Questions",
       "items": {
         "1": {
           "question": "How does the free trial work?",
-          "answer": "You can try Deliverly free for 14 days. No credit card required."
+          "answer": "You can try Delivoo free for 14 days. No credit card required."
         },
         "2": {
           "question": "Can I change plans anytime?",
@@ -248,7 +361,7 @@
         },
         "3": {
           "question": "Do you offer an API?",
-          "answer": "Yes, our REST API allows you to integrate Deliverly with your existing systems."
+          "answer": "Yes, our REST API allows you to integrate Delivoo with your existing systems."
         },
         "4": {
           "question": "How does support work?",
@@ -258,7 +371,7 @@
     },
     "cta": {
       "title": "Ready to transform your deliveries?",
-      "subtitle": "Join thousands of companies using Deliverly",
+      "subtitle": "Join thousands of companies using Delivoo",
       "button": "Start Free Trial"
     },
     "footer": {
@@ -277,10 +390,20 @@
       "rights": "All rights reserved."
     }
   },
+  "pwa": {
+    "title": "Install Delivoo",
+    "subtitle": "Install the app for quick access and instant notifications.",
+    "benefit": "Once installed, it launches like a native app.",
+    "iosStep1": "Tap Share in Safari.",
+    "iosStep2": "Choose “Add to Home Screen”.",
+    "later": "Later",
+    "install": "Install"
+  },
   "auth": {
     "login": {
       "title": "Login",
       "subtitle": "Sign in to your account",
+      "success": "Login successful.",
       "email": "Email",
       "password": "Password",
       "rememberMe": "Remember me",
@@ -293,7 +416,7 @@
     },
     "register": {
       "title": "Register",
-      "subtitle": "Create your Deliverly account",
+      "subtitle": "Create your Delivoo account",
       "firstName": "First Name",
       "lastName": "Last Name",
       "email": "Email",
@@ -323,9 +446,176 @@
     }
   },
   "dashboard": {
+    "campaigns": {
+      "title": "Email campaigns",
+      "subtitle": "Send bulk email campaigns to your users and partners via Mailjet.",
+      "fields": {
+        "subject": "Subject",
+        "html": "HTML content",
+        "text": "Text version (optional)"
+      },
+      "placeholders": {
+        "subject": "Announcement, promo, important update...",
+        "html": "<h1>Hello</h1><p>Your content here...</p>",
+        "text": "Text version if needed.",
+        "link": "https://example.com",
+        "image": "https://example.com/image.jpg"
+      },
+      "htmlHint": "Tip: leave the text version empty, it will be generated automatically.",
+      "variablesHint": "Available variables: {name}, {companyName}, {email}",
+      "audience": {
+        "title": "Audience",
+        "all": "All (users + partners)",
+        "users": "All users",
+        "drivers": "Drivers",
+        "partners": "Partners",
+        "admins": "Admins",
+        "managers": "Managers",
+        "companies": "Companies (owners)",
+        "import": "Import a list"
+      },
+      "templates": {
+        "title": "Email templates",
+        "standard": "Standard",
+        "promo": "Promotion",
+        "newsletter": "Newsletter"
+      },
+      "ai": {
+        "title": "AI-assisted drafting",
+        "placeholder": "e.g. Announce a new feature to companies.",
+        "tone": "Tone (e.g. professional, warm)",
+        "generate": "Generate with AI",
+        "generating": "Generating...",
+        "validation": "Please describe the email goal."
+      },
+      "summary": {
+        "audience": "Audience",
+        "recipients": "Recipients"
+      },
+      "companies": {
+        "title": "Select companies",
+        "search": "Search a company"
+      },
+      "import": {
+        "title": "Import email list",
+        "placeholder": "email1@example.com, email2@example.com",
+        "hint": "Separate emails with commas, semicolons, or new lines.",
+        "count": "{{count}} contacts imported"
+      },
+      "validation": {
+        "required": "Please provide a subject and HTML content."
+      },
+      "actions": {
+        "link": "Link",
+        "image": "Image"
+      },
+      "success": "Campaign sent to {{count}} recipients.",
+      "queued": "Campaign queued for {{count}} recipients.",
+      "status": {
+        "draft": "Draft",
+        "queued": "Queued",
+        "sending": "Sending",
+        "sent": "Sent",
+        "failed": "Failed"
+      },
+      "recipientStatus": {
+        "pending": "Pending",
+        "sent": "Sent",
+        "failed": "Failed"
+      },
+      "history": {
+        "title": "Campaign history",
+        "empty": "No campaigns yet."
+      },
+      "stats": {
+        "sent": "Sent",
+        "failed": "Failed",
+        "total": "Total"
+      },
+      "send": "Send campaign",
+      "sending": "Sending..."
+    },
+    "billing": {
+      "title": "Billing",
+      "subtitle": "Manage your subscription and payments.",
+      "currentPlan": "Current plan",
+      "trialEnds": "Trial ends on",
+      "periodStart": "Start date",
+      "periodEnd": "End date",
+      "notice": {
+        "info": "Your plan ends in {{days}} days.",
+        "warning": "Only {{days}} days left before renewal.",
+        "critical": "Urgent: {{days}} days left before expiration."
+      },
+      "status": {
+        "trial": "Trial",
+        "active": "Active",
+        "inactive": "Inactive",
+        "paid": "Paid",
+        "pending": "Pending",
+        "failed": "Failed",
+        "refunded": "Refunded"
+      },
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "yearlyDiscount": "Yearly discount",
+      "noDescription": "No description",
+      "chooseMonthly": "Choose monthly",
+      "chooseYearly": "Choose yearly",
+      "choosePlan": "Choose plan",
+      "popular": "Most popular",
+      "usage": {
+        "partners": "Partners",
+        "drivers": "Drivers",
+        "users": "Users"
+      },
+      "features": {
+        "tracking": "Real-time tracking",
+        "noTracking": "No tracking",
+        "financialReports": "Financial reports",
+        "noFinancialReports": "No financial reports",
+        "whatsapp": "WhatsApp assistant",
+        "noWhatsapp": "No WhatsApp assistant"
+      },
+      "enterprise": {
+        "title": "Enterprise plan",
+        "subtitle": "Need more than the first two plans? Contact us for a tailored offer.",
+        "plan": "Enterprise tier:",
+        "feature1": "Everything in Professional",
+        "feature2": "Unlimited drivers & partners",
+        "feature3": "Dedicated support",
+        "contact": "Contact sales"
+      },
+      "history": {
+        "title": "Payment history",
+        "empty": "No payments yet."
+      },
+      "interval": {
+        "month": "Monthly",
+        "year": "Yearly"
+      }
+    },
     "overview": {
       "title": "Dashboard",
       "subtitle": "Overview of your operations",
+      "superAdmin": {
+        "title": "Platform overview",
+        "subtitle": "Global view of activity, finance, and performance",
+        "stats": {
+          "totalCompanies": "Total companies",
+          "activeCompanies": "Active companies",
+          "totalUsers": "Users",
+          "totalPartners": "Partners",
+          "totalDrivers": "Drivers",
+          "totalDeliveries": "Total deliveries",
+          "amountCollected": "Amount collected",
+          "totalCommissions": "Total commissions",
+          "totalExpenses": "Internal expenses"
+        },
+        "charts": {
+          "topCompanies": "Top companies"
+        }
+      },
       "filters": {
         "today": "Today",
         "week": "This week",
@@ -495,7 +785,9 @@
       },
       "card": {
         "amountShort": "Amount",
-        "feeShort": "Fee"
+        "feeShort": "Fee",
+        "copyId": "Copy ID",
+        "call": "Call"
       },
       "validation": {
         "required": "Please fill in the required fields.",
@@ -775,6 +1067,13 @@
     "reports": {
       "title": "Reports",
       "subtitle": "Complete analysis of operations, finance, and performance",
+      "subtitles": {
+        "deliveries": "Detailed tracking of deliveries, statuses, and field performance",
+        "financial": "Analysis of financial flows, commissions, and expenses",
+        "driver": "Driver performance and delivery efficiency",
+        "inventory": "Stock analysis, entries, exits, and critical levels",
+        "partner": "Partner overview, volumes, and profitability"
+      },
       "types": {
         "deliveries": "Delivery Report",
         "financial": "Financial Report",
@@ -1040,7 +1339,7 @@
     },
     "whatsappAssistant": {
       "title": "WhatsApp Assistant",
-      "subtitle": "Connect WhatsApp, map groups to partners, and automate delivery creation",
+      "subtitle": "Connect your WhatsApp account, link each group to a partner, then orders posted in those groups automatically create deliveries.",
       "connectionStatus": "Connection status",
       "groupsMapped": "Mapped groups",
       "totalGroups": "{{count}} groups detected",
@@ -1052,6 +1351,14 @@
       "disconnected": "WhatsApp assistant disconnected.",
       "groupSyncStarted": "Group synchronization started.",
       "scanQrHelp": "Scan this QR code from WhatsApp (Linked devices).",
+      "scanQrStepsTitle": "Steps to scan the QR code",
+      "scanQrSteps": [
+        "Open WhatsApp on your phone.",
+        "Go to Settings → Linked devices.",
+        "Tap “Link a device”.",
+        "Scan the QR code shown here."
+      ],
+      "scanQrHint": "The QR code expires quickly. If needed, click “Sync groups” to refresh.",
       "groupBindings": "Group → partner mapping",
       "partner": "Partner",
       "unmapped": "Unmapped",
@@ -1342,5 +1649,102 @@
       "REMITTANCE_NOT_FOUND": "Remittance not found.",
       "REMITTANCE_EXCEEDS_BALANCE": "Amount exceeds outstanding balance."
     }
+  }
+  ,
+  "superadmin": {
+    "billingPlans": {
+      "title": "Billing plans",
+      "subtitle": "Define limits and features for each subscription tier.",
+      "create": "Create plan",
+      "edit": "Edit plan",
+      "search": "Search plans",
+      "empty": "No billing plans yet.",
+      "active": "Active",
+      "inactive": "Inactive",
+      "monthly": "Monthly price",
+      "yearlyDiscount": "Yearly discount",
+      "yearlyPrice": "Yearly price",
+      "noDescription": "No description",
+      "fields": {
+        "name": "Plan name",
+        "description": "Description",
+        "priceUsd": "Price in USD",
+        "yearlyDiscount": "Annual discount (%)",
+        "yearlyPrice": "Estimated yearly price",
+        "partners": "Partners",
+        "drivers": "Drivers",
+        "users": "Users",
+        "tracking": "Tracking access",
+        "trackingHint": "Enable live tracking dashboard.",
+        "financialReports": "Financial reports",
+        "financialReportsHint": "Enable financial reports access.",
+        "whatsapp": "WhatsApp assistant",
+        "whatsappHint": "Enable WhatsApp group assistant.",
+        "isActive": "Plan active",
+        "isActiveHint": "Available for new subscriptions."
+      },
+      "placeholders": {
+        "name": "Starter, Growth, Enterprise...",
+        "description": "Short plan summary..."
+      },
+      "feature": {
+        "tracking": "Tracking included",
+        "noTracking": "No tracking",
+        "financialReports": "Financial reports included",
+        "noFinancialReports": "No financial reports",
+        "whatsapp": "WhatsApp included",
+        "noWhatsapp": "No WhatsApp"
+      },
+      "delete": {
+        "title": "Delete this plan?",
+        "description": "This plan will be deactivated and removed from the list."
+      },
+      "success": {
+        "created": "Plan created successfully.",
+        "updated": "Plan updated successfully.",
+        "deleted": "Plan deleted successfully."
+      }
+    },
+    "companies": {
+      "title": "Companies",
+      "subtitle": "List and inspect companies on the platform.",
+      "search": "Search a company",
+      "empty": "No companies found.",
+      "noPlan": "No plan set",
+      "noAddress": "No address provided",
+      "subscriptionStart": "Subscription start",
+      "subscriptionEnd": "Subscription end",
+      "createdAt": "Created on {{date}}",
+      "plan": "Plan",
+      "status": "Status",
+      "detailsTitle": "Company details",
+      "statuses": {
+        "trialing": "Trial",
+        "active": "Active",
+        "past_due": "Past due",
+        "canceled": "Canceled",
+        "inactive": "Inactive"
+      },
+      "stats": {
+        "users": "Users",
+        "drivers": "Drivers",
+        "partners": "Partners",
+        "deliveries": "Deliveries"
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {{page}} / {{totalPages}}",
+        "summary": "{{from}}-{{to}} of {{total}}",
+        "empty": "0 result"
+      }
+    }
+  }
+  ,
+  "subscriptionExpired": {
+    "title": "Subscription expired",
+    "subtitle": "Your company subscription has expired. Please contact your administrator to renew access.",
+    "contactAdmin": "Go to billing",
+    "logout": "Log out"
   }
 }

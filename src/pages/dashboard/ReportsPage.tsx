@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { useAuthStore, useUIStore } from '@/store';
 import { getLocalizedApiError } from '@/lib/auth/error-message';
 import { buildSimplePdf } from '@/lib/pdf/simple-pdf';
+import { getAllowedReportTypes } from '@/lib/auth/access';
 
 type ReportType = 'deliveries' | 'financial' | 'driver' | 'inventory' | 'partner';
 
@@ -64,9 +65,18 @@ const ReportsPage = () => {
   const [status, setStatus] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<ReportResponse | null>(null);
-  const currentReportType: ReportType = isDriver ? 'deliveries' : selectedReport;
+  const allowedReportTypes = getAllowedReportTypes(user?.role);
+  const fallbackReportType = (allowedReportTypes[0] || 'deliveries') as ReportType;
+  const baseReportType: ReportType = isDriver ? 'deliveries' : selectedReport;
+  const currentReportType: ReportType = allowedReportTypes.includes(baseReportType) ? baseReportType : fallbackReportType;
   const currentDriverFilter = isDriver ? currentUserId : driverId;
-  const visibleReportTypes = isDriver ? reportTypes.filter((report) => report.key === 'deliveries') : reportTypes;
+  const visibleReportTypes = reportTypes.filter((report) => allowedReportTypes.includes(report.key));
+  const showReportTabs = visibleReportTypes.length > 1;
+  const reportSubtitle = (() => {
+    const specificKey = `dashboard.reports.subtitles.${currentReportType}`;
+    const resolved = t(specificKey);
+    return resolved !== specificKey ? resolved : t('dashboard.reports.subtitle');
+  })();
 
   const formatMoney = useCallback(
     (value: number) => {
@@ -118,10 +128,10 @@ const ReportsPage = () => {
   }, [loadReport]);
 
   useEffect(() => {
-    if (isDriver && selectedReport !== 'deliveries') {
-      setSelectedReport('deliveries');
+    if (!allowedReportTypes.includes(selectedReport)) {
+      setSelectedReport(fallbackReportType);
     }
-  }, [isDriver, selectedReport]);
+  }, [allowedReportTypes, fallbackReportType, selectedReport]);
 
   const summaryConfig = useMemo(() => {
     if (currentReportType === 'deliveries') {
@@ -276,7 +286,7 @@ const ReportsPage = () => {
       const settingsRes = await fetch('/api/dashboard/settings/company', { cache: 'no-store' });
       const settingsData = await settingsRes.json();
       const company = settingsData?.company || {};
-      const companyName = String(company?.name || 'Deliverly');
+      const companyName = String(company?.name || 'Delivoo');
       const companyAddress = String(company?.address || '');
 
       const escapeHtml = (value: unknown) =>
@@ -444,7 +454,7 @@ const ReportsPage = () => {
       `
         : `<div class="empty">${escapeHtml(t('dashboard.reports.pdf.noData'))}</div>`
     }
-    <div class="foot">Deliverly · ${escapeHtml(t('dashboard.reports.title'))}</div>
+    <div class="foot">Delivoo · ${escapeHtml(t('dashboard.reports.title'))}</div>
   </div>
   <script>
     window.addEventListener('load', () => {
@@ -538,7 +548,7 @@ const ReportsPage = () => {
         try {
           await navigator.share({
             title: t('dashboard.reports.title'),
-            text: t('dashboard.reports.subtitle'),
+            text: reportSubtitle,
             files: [file],
           });
           return;
@@ -562,7 +572,7 @@ const ReportsPage = () => {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white">{t('dashboard.reports.title')}</h1>
-          <p className="text-white/50">{t('dashboard.reports.subtitle')}</p>
+          <p className="text-white/50">{reportSubtitle}</p>
         </div>
         <div className="flex gap-2">
           <Button type="button" variant="outline" className="bg-white/5 border-white/10 hover:bg-white/10 text-white gap-2" onClick={handleExportPdf}>
@@ -576,21 +586,23 @@ const ReportsPage = () => {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        {visibleReportTypes.map((report) => (
-          <button
-            key={report.key}
-            type="button"
-            onClick={() => setSelectedReport(report.key)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
-              currentReportType === report.key ? 'bg-orange-500 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'
-            }`}
-          >
-            <report.icon className="w-4 h-4" />
-            <span className="text-sm font-medium">{t(`dashboard.reports.types.${report.key}`)}</span>
-          </button>
-        ))}
-      </div>
+      {showReportTabs ? (
+        <div className="flex flex-wrap gap-2">
+          {visibleReportTypes.map((report) => (
+            <button
+              key={report.key}
+              type="button"
+              onClick={() => setSelectedReport(report.key)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
+                currentReportType === report.key ? 'bg-orange-500 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <report.icon className="w-4 h-4" />
+              <span className="text-sm font-medium">{t(`dashboard.reports.types.${report.key}`)}</span>
+            </button>
+          ))}
+        </div>
+      ) : null}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
         <div className="relative">

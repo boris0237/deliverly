@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { connectDb, UserModel } from '@/lib/auth/db';
 import { createSession, setSessionCookie } from '@/lib/auth/session';
 import { consumeAuthToken } from '@/lib/auth/tokens';
+import { toPublicUser } from '@/lib/auth/user';
 
 const schema = z.object({ token: z.string().min(20) });
 
@@ -33,10 +34,16 @@ export async function POST(request: Request) {
       }
     );
 
+    const updatedUser = await UserModel.findOne({ id: consumed.userId }).lean();
+
     const { token, expiresAt } = await createSession(consumed.userId);
     await setSessionCookie(token, expiresAt);
 
-    return NextResponse.json({ message: 'Email verified successfully.', redirectTo: '/dashboard' });
+    return NextResponse.json({
+      message: 'Email verified successfully.',
+      redirectTo: '/dashboard',
+      user: updatedUser ? toPublicUser(updatedUser) : null,
+    });
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to verify email', code: 'VERIFY_EMAIL_FAILED' },

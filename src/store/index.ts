@@ -12,6 +12,11 @@ import type {
   ThemeState
 } from '@/types';
 
+type BeforeInstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
+};
+
 // Auth Store
 interface AuthStore extends AuthState {
   login: (user: User, token: string | null) => void;
@@ -62,6 +67,31 @@ export const useThemeStore = create<ThemeStore>()(
     }
   )
 );
+
+// PWA Install Store
+interface PwaInstallStore {
+  deferredPrompt: BeforeInstallPromptEvent | null;
+  isInstallable: boolean;
+  isInstalled: boolean;
+  isPromptOpen: boolean;
+  setDeferredPrompt: (prompt: BeforeInstallPromptEvent | null) => void;
+  setInstallable: (installable: boolean) => void;
+  setInstalled: (installed: boolean) => void;
+  openPrompt: () => void;
+  closePrompt: () => void;
+}
+
+export const usePwaInstallStore = create<PwaInstallStore>((set) => ({
+  deferredPrompt: null,
+  isInstallable: false,
+  isInstalled: false,
+  isPromptOpen: false,
+  setDeferredPrompt: (prompt) => set({ deferredPrompt: prompt }),
+  setInstallable: (installable) => set({ isInstallable: installable }),
+  setInstalled: (installed) => set({ isInstalled: installed }),
+  openPrompt: () => set({ isPromptOpen: true }),
+  closePrompt: () => set({ isPromptOpen: false }),
+}));
 
 // Dashboard Store
 interface DashboardStore {

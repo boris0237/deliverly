@@ -8,6 +8,7 @@ import * as THREE from 'three';
 import { Button } from '@/components/ui/button';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
+import { useThemeStore } from '@/store';
 
 // Animated 3D Shapes
 const FloatingShapes = () => {
@@ -56,6 +57,7 @@ const FloatingShapes = () => {
 const HeroSection = () => {
   const { t } = useTranslation();
   const sectionRef = useRef<HTMLElement>(null);
+  const { isDark } = useThemeStore();
 
   return (
     <section ref={sectionRef} className="relative min-h-screen overflow-hidden">
@@ -74,13 +76,12 @@ const HeroSection = () => {
       <div className="relative z-10 min-h-screen flex flex-col">
         {/* Header */}
         <header className="w-full px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-purple-600 rounded-xl flex items-center justify-center">
-              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-              </svg>
-            </div>
-            <span className="text-xl font-bold text-white">Deliverly</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/img/icon.svg" alt="Delivoo" className="w-10 h-10 object-contain" />
+              <span className="text-xl font-bold text-white"> <img src={isDark ? "/img/delivoo_wordmark_dark.svg" : "/img/delivoo_wordmark_light.svg"} alt="Delivoo" className="h-10 object-contain" />
+            </span>
           </Link>
           
           <nav className="hidden md:flex items-center gap-8">
@@ -88,7 +89,7 @@ const HeroSection = () => {
             <a href="#how-it-works" className="text-sm text-white/70 hover:text-white transition-colors">{t('landing.footer.documentation')}</a>
             <a href="#pricing" className="text-sm text-white/70 hover:text-white transition-colors">{t('landing.footer.pricing')}</a>
           </nav>
-          
+          </div>
           <div className="flex items-center gap-4">
             <ThemeSwitcher />
             <LanguageSwitcher />
@@ -98,7 +99,7 @@ const HeroSection = () => {
               </Button>
             </Link>
             <Link href="/auth/register" className="hidden sm:block">
-              <Button className="bg-orange-500 hover:bg-orange-600 text-white">
+              <Button className="btn-primary">
                 {t('common.register')}
               </Button>
             </Link>

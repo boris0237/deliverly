@@ -942,19 +942,7 @@ const PartnersPage = () => {
                   )}
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
-                  {renderPartnerPricing(partner)}
-                  <div className="text-center">
-                    <div className="flex items-center justify-center gap-1 text-green-400">
-                      <Wallet className="w-4 h-4" />
-                      <span className="text-lg font-bold">
-                        {getCurrencySymbol(partner.pricing?.currency || pricingContext?.currency || 'XAF')}
-                        {partner.balance.toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="text-xs text-white/40">{t('dashboard.partners.fields.balance')}</div>
-                  </div>
-                </div>
+                <div className="pt-4 border-t border-white/5" />
               </div>
             ))}
           </div>

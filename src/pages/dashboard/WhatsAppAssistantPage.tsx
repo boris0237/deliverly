@@ -268,13 +268,27 @@ const WhatsAppAssistantPage = () => {
         {connection?.status === 'qr' && connection?.qrCode ? (
           <div className="rounded-xl border border-border bg-card/70 p-4">
             <p className="text-sm text-muted-foreground mb-3">{t('dashboard.whatsappAssistant.scanQrHelp')}</p>
-            <div className="bg-white rounded-lg p-4 inline-flex">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                alt="WhatsApp QR"
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(connection.qrCode)}`}
-                className="w-56 h-56 object-contain"
-              />
+            <div className="grid md:grid-cols-[auto,1fr] gap-6 items-center">
+              <div className="bg-white rounded-lg p-4 inline-flex">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  alt="WhatsApp QR"
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(connection.qrCode)}`}
+                  className="w-56 h-56 object-contain"
+                />
+              </div>
+              <div className="space-y-3">
+                <h3 className="text-base font-semibold text-foreground">
+                  {t('dashboard.whatsappAssistant.scanQrStepsTitle')}
+                </h3>
+                <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
+                  <li>{t('dashboard.whatsappAssistant.scanQrSteps.0')}</li>
+                  <li>{t('dashboard.whatsappAssistant.scanQrSteps.1')}</li>
+                  <li>{t('dashboard.whatsappAssistant.scanQrSteps.2')}</li>
+                  <li>{t('dashboard.whatsappAssistant.scanQrSteps.3')}</li>
+                </ol>
+                <p className="text-xs text-muted-foreground">{t('dashboard.whatsappAssistant.scanQrHint')}</p>
+              </div>
             </div>
           </div>
         ) : null}

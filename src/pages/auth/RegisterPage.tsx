@@ -242,29 +242,6 @@ const RegisterPage = () => {
         </Button>
       </form>
 
-      {/* Divider */}
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-white/10" />
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-4 bg-[#0D0D0D] text-white/40">
-            {t('auth.register.or')}
-          </span>
-        </div>
-      </div>
-
-      {/* Google Register */}
-      <Button
-        type="button"
-        variant="outline"
-        className="w-full bg-white/5 border-white/10 hover:bg-white/10 text-white"
-        onClick={handleGoogleRegister}
-        disabled={isLoading}
-      >
-        <Chrome className="w-5 h-5 mr-2" />
-        {t('auth.register.google')}
-      </Button>
 
       {/* Login Link */}
       <p className="text-center text-sm text-white/50">

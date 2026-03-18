@@ -269,7 +269,7 @@ export async function connectWhatsAppConnection(input: { companyId: string; conn
     auth: state,
     version,
     printQRInTerminal: false,
-    browser: ['Deliverly Assistant', 'Chrome', '1.0.0'],
+    browser: ['Delivoo Assistant', 'Chrome', '1.0.0'],
     syncFullHistory: false,
   });
   sockets.set(input.connectionId, { socket, connectionId: input.connectionId, companyId: input.companyId });

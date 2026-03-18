@@ -3,9 +3,11 @@ import { Package, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
+import { useThemeStore } from '@/store';
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   const { t } = useTranslation();
+  const { isDark } = useThemeStore();
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -32,7 +34,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
         
         {/* Footer */}
         <div className="p-6 text-center text-sm text-white/40">
-          <p>&copy; 2024 Deliverly. {t('landing.footer.rights')}</p>
+          <p>&copy; {new Date().getFullYear()} Delivoo. {t('landing.footer.rights')}</p>
         </div>
       </div>
       
@@ -50,12 +52,13 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
         
         {/* Content */}
         <div className="relative z-10 flex flex-col items-center justify-center p-12 text-center">
-          <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-purple-600 rounded-2xl flex items-center justify-center mb-8 shadow-2xl shadow-orange-500/30">
-            <Package className="w-10 h-10 text-white" />
+          <div className="w-20 h-20 bg-white/5 rounded-2xl flex items-center justify-center mb-8 shadow-2xl shadow-orange-500/30 border border-white/10">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/img/icon.svg" alt="Delivoo" className="w-20 h-20 object-contain" />
           </div>
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Deliverly
-          </h2>
+          <div className="flex items-center justify-center">
+            <img src={isDark ? "/img/delivoo_wordmark_dark.svg" : "/img/delivoo_wordmark_light.svg"} alt="Delivoo" className="h-10 ml-10" />
+          </div>
           <p className="text-lg text-white/70 max-w-md">
             {t('landing.hero.subtitle')}
           </p>

@@ -30,7 +30,7 @@ export async function searchGooglePlaces(query: string, options: SearchOptions =
   const q = query.trim();
   if (q.length < 2) return [];
 
-  const userAgent = process.env.OSM_USER_AGENT || 'Deliverly/1.0 (contact: support@deliverly.app)';
+  const userAgent = process.env.OSM_USER_AGENT || 'Delivoo/1.0 (contact: support@deliverly.app)';
   const contactEmail = process.env.OSM_CONTACT_EMAIL;
 
   const params = new URLSearchParams({
@@ -89,7 +89,7 @@ export async function resolveCountryCodeFromAddress(address: string): Promise<st
   const q = address.trim();
   if (!q) return null;
 
-  const userAgent = process.env.OSM_USER_AGENT || 'Deliverly/1.0 (contact: support@deliverly.app)';
+  const userAgent = process.env.OSM_USER_AGENT || 'Delivoo/1.0 (contact: support@deliverly.app)';
   const contactEmail = process.env.OSM_CONTACT_EMAIL;
 
   const params = new URLSearchParams({

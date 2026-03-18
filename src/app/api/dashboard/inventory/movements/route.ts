@@ -24,6 +24,8 @@ async function resolveCurrentCompany(userId: string): Promise<ResolvedCompany | 
 
   const companyId = randomToken(12);
   const companyName = `${user.firstName}'s Company`;
+  const now = new Date();
+  const trialEndsAt = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
 
   await CompanyModel.create({
     id: companyId,
@@ -38,6 +40,15 @@ async function resolveCurrentCompany(userId: string): Promise<ResolvedCompany | 
       package: { enabled: false, plans: [] },
       percentage: { enabled: false, value: 0 },
       zone: { enabled: false, zones: [] },
+    },
+    billing: {
+      planId: '',
+      planName: 'Starter',
+      status: 'trialing',
+      interval: 'trial',
+      trialEndsAt,
+      currentPeriodStart: now,
+      currentPeriodEnd: trialEndsAt,
     },
     isActive: true,
   });

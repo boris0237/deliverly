@@ -6,6 +6,7 @@ import { Eye, EyeOff, Mail, Lock, Chrome } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuthStore, useUIStore } from '@/store';
 import { getLocalizedApiError } from '@/lib/auth/error-message';
+import { getDefaultPathForRole } from '@/lib/auth/access';
 
 const LoginPage = () => {
   const { t } = useTranslation();
@@ -40,7 +41,7 @@ const LoginPage = () => {
 
       login(data.user, null);
       showToast(t('auth.login.success') || 'Login successful', 'success');
-      router.push('/dashboard');
+      router.push(getDefaultPathForRole(data.user?.role));
     } catch {
       showToast(t('errors.network'), 'error');
     } finally {
@@ -142,29 +143,7 @@ const LoginPage = () => {
         </Button>
       </form>
 
-      {/* Divider */}
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-white/10" />
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-4 bg-[#0D0D0D] text-white/40">
-            {t('auth.login.or')}
-          </span>
-        </div>
-      </div>
-
-      {/* Google Login */}
-      <Button
-        type="button"
-        variant="outline"
-        className="w-full bg-white/5 border-white/10 hover:bg-white/10 text-white"
-        onClick={handleGoogleLogin}
-        disabled={isLoading}
-      >
-        <Chrome className="w-5 h-5 mr-2" />
-        {t('auth.login.google')}
-      </Button>
+   
 
       {/* Register Link */}
       <p className="text-center text-sm text-white/50">

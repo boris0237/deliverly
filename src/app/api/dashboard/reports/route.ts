@@ -10,6 +10,8 @@ import {
   connectDb,
 } from '@/lib/auth/db';
 import { getCurrentSessionUserId } from '@/lib/auth/session';
+import { getAllowedReportTypes } from '@/lib/auth/access';
+import type { UserRole } from '@/types';
 
 type ReportType = 'deliveries' | 'financial' | 'driver' | 'inventory' | 'partner';
 
@@ -77,7 +79,9 @@ export async function GET(request: Request) {
     const requestedType: ReportType = ['deliveries', 'financial', 'driver', 'inventory', 'partner'].includes(reportType)
       ? reportType
       : 'deliveries';
-    const type: ReportType = actor.role === 'driver' ? 'deliveries' : requestedType;
+    const allowedTypes = getAllowedReportTypes(actor.role as UserRole);
+    const fallbackType = (allowedTypes[0] || 'deliveries') as ReportType;
+    const type: ReportType = allowedTypes.includes(requestedType) ? requestedType : fallbackType;
     const dateRange = parseDateRange(request);
     const partnerId = (searchParams.get('partnerId') || '').trim();
     const driverId = actor.role === 'driver' ? currentUserId : (searchParams.get('driverId') || '').trim();

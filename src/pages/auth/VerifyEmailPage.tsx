@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useUIStore } from '@/store';
+import { useAuthStore, useUIStore } from '@/store';
 import { getLocalizedApiError } from '@/lib/auth/error-message';
 
 const VerifyEmailPage = () => {
@@ -12,10 +12,13 @@ const VerifyEmailPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { showToast } = useUIStore();
+  const { login } = useAuthStore();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState(t('errors.auth.VERIFYING_EMAIL'));
+  const hasVerifiedRef = useRef(false);
 
   useEffect(() => {
+    if (hasVerifiedRef.current) return;
     const token = searchParams?.get('token');
 
     if (!token) {
@@ -36,6 +39,7 @@ const VerifyEmailPage = () => {
     }
 
     const verify = async () => {
+      hasVerifiedRef.current = true;
       try {
         const response = await fetch('/api/auth/verify-email', {
           method: 'POST',
@@ -57,6 +61,9 @@ const VerifyEmailPage = () => {
         setMessage(successMessage);
         showToast(successMessage, 'success');
         if (typeof window !== 'undefined') sessionStorage.setItem(verificationKey, 'success');
+        if (data?.user) {
+          login(data.user, null);
+        }
         router.replace(data?.redirectTo || '/dashboard');
       } catch {
         const errorMessage = t('errors.network');

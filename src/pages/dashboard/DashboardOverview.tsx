@@ -18,6 +18,7 @@ import {
 } from 'recharts';
 import { Button } from '@/components/ui/button';
 import { useAuthStore, useUIStore } from '@/store';
+import { canAccessPath, getDefaultPathForRole } from '@/lib/auth/access';
 import { getLocalizedApiError } from '@/lib/auth/error-message';
 
 type Period = 'today' | 'week' | 'month' | 'custom';
@@ -41,6 +42,7 @@ type OverviewResponse = {
   topDrivers?: Array<{ driverId: string; name: string; completed: number; failed: number }>;
   currency: string;
 };
+
 
 const toIsoDate = (date: Date) => date.toISOString().slice(0, 10);
 
@@ -70,7 +72,10 @@ const DashboardOverview = () => {
   const authUser = useAuthStore((state) => state.user);
   const { showToast } = useUIStore();
   const initialMonthRange = useMemo(() => getMonthRange(), []);
+  const canAccessDashboard = canAccessPath(authUser?.role, '/dashboard');
   const isDriverUser = authUser?.role === 'driver';
+  const isSuperAdmin = authUser?.role === 'superAdmin';
+  const defaultPath = getDefaultPathForRole(authUser?.role);
 
   const [period, setPeriod] = useState<Period>('month');
   const [dateFrom, setDateFrom] = useState(initialMonthRange.dateFrom);
@@ -117,7 +122,7 @@ const DashboardOverview = () => {
   );
 
   const loadOverview = useCallback(async () => {
-    if (isDriverUser) return;
+    if (!canAccessDashboard || isDriverUser) return;
     setIsLoading(true);
     try {
       const params = new URLSearchParams();
@@ -154,14 +159,14 @@ const DashboardOverview = () => {
   }, [dateFrom, dateTo, showToast, t]);
 
   useEffect(() => {
-    if (isDriverUser) {
-      router.replace('/dashboard/deliveries');
+    if (!canAccessDashboard || isDriverUser || isSuperAdmin) {
+      router.replace(defaultPath);
       return;
     }
     void loadOverview();
-  }, [isDriverUser, loadOverview, router]);
+  }, [canAccessDashboard, defaultPath, isDriverUser, isSuperAdmin, loadOverview, router]);
 
-  if (isDriverUser) {
+  if (!canAccessDashboard || isDriverUser || isSuperAdmin) {
     return null;
   }
 
@@ -400,7 +405,9 @@ const DashboardOverview = () => {
 
       <div className="grid lg:grid-cols-2 gap-6">
         <div className="glass-card p-6">
-          <h3 className="text-lg font-semibold text-white mb-6">{t('dashboard.overview.charts.driverPerformance')}</h3>
+          <h3 className="text-lg font-semibold text-white mb-6">
+            {t('dashboard.overview.charts.driverPerformance')}
+          </h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={topDrivers} layout="vertical">

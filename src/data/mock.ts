@@ -36,7 +36,7 @@ export const mockUser: User = {
 
 export const mockCompany: Company = {
   id: '1',
-  name: 'Deliverly Demo',
+  name: 'Delivoo Demo',
   logo: '/logo.svg',
   address: '123 Rue de Paris, 75001 Paris',
   phone: '+33 1 23 45 67 89',
