@@ -17,6 +17,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Table, Tbody, Td, Th, Thead, Tr } from 'react-super-responsive-table';
 import {
   Dialog,
   DialogContent,
@@ -679,24 +680,23 @@ const UsersPage = () => {
         />
       </div>
 
-      <div className="glass-card overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="text-left text-sm text-white/50 border-b border-white/5">
-                <th className="p-4 font-medium">{t('dashboard.users.table.user')}</th>
-                <th className="p-4 font-medium">{t('dashboard.users.fields.role')}</th>
-                <th className="p-4 font-medium">{t('dashboard.users.fields.status')}</th>
-                <th className="p-4 font-medium text-right">{t('common.actions')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => (
-                <tr key={user.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                  <td className="p-4">
-                    <div className="flex items-center gap-3">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+      <div className="glass-card">
+        <Table className="responsiveTable text-sm">
+          <Thead>
+            <Tr className="text-left text-white/50 border-b border-white/5">
+              <Th className="p-4 font-medium">{t('dashboard.users.table.user')}</Th>
+              <Th className="p-4 font-medium">{t('dashboard.users.fields.role')}</Th>
+              <Th className="p-4 font-medium">{t('dashboard.users.fields.status')}</Th>
+              <Th className="p-4 font-medium text-right">{t('common.actions')}</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {users.map((user) => (
+              <Tr key={user.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                <Td data-label={t('dashboard.users.table.user')} className="p-4">
+                  <div className="flex items-center gap-3">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
                         src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user.email)}`}
                         alt={`${user.firstName} ${user.lastName}`}
                         className="w-10 h-10 rounded-full bg-white/10"
@@ -711,24 +711,24 @@ const UsersPage = () => {
                         </div>
                       </div>
                     </div>
-                  </td>
-                  <td className="p-4">
-                    <span className={`px-2 py-1 rounded-full text-xs ${roleColors[user.role] || 'bg-white/10 text-white/60'}`}>
-                      {t(`dashboard.users.roles.${user.role}`)}
-                    </span>
-                  </td>
-                  <td className="p-4">
-                    <span className={`flex items-center gap-1 text-sm ${user.isActive ? 'text-green-400' : 'text-gray-400'}`}>
-                      {user.isActive ? <UserCheck className="w-4 h-4" /> : <UserX className="w-4 h-4" />}
-                      {user.isActive ? t('common.active') : t('common.inactive')}
-                    </span>
-                  </td>
-                  <td className="p-4 text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-white/50 hover:text-white hover:bg-white/10">
-                          <MoreVertical className="w-4 h-4" />
-                        </Button>
+                </Td>
+                <Td data-label={t('dashboard.users.fields.role')} className="p-4">
+                  <span className={`px-2 py-1 rounded-full text-xs ${roleColors[user.role] || 'bg-white/10 text-white/60'}`}>
+                    {t(`dashboard.users.roles.${user.role}`)}
+                  </span>
+                </Td>
+                <Td data-label={t('dashboard.users.fields.status')} className="p-4">
+                  <span className={`flex items-center gap-1 text-sm ${user.isActive ? 'text-green-400' : 'text-gray-400'}`}>
+                    {user.isActive ? <UserCheck className="w-4 h-4" /> : <UserX className="w-4 h-4" />}
+                    {user.isActive ? t('common.active') : t('common.inactive')}
+                  </span>
+                </Td>
+                <Td data-label={t('common.actions')} className="p-4 text-right">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="text-white/50 hover:text-white hover:bg-white/10">
+                        <MoreVertical className="w-4 h-4" />
+                      </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="bg-card border-border">
                         <DropdownMenuItem className="cursor-pointer hover:bg-white/5" onClick={() => openEdit(user)}>
@@ -743,15 +743,14 @@ const UsersPage = () => {
                         <DropdownMenuItem className="cursor-pointer text-red-400 hover:bg-red-500/10" onClick={() => setDeleteUser(user)}>
                           <Trash2 className="w-4 h-4 mr-2" />
                           {t('common.delete')}
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
 
         {!isLoading && users.length === 0 && (
           <div className="p-12 text-center">
@@ -769,9 +768,9 @@ const UsersPage = () => {
             total: totalItems,
           })}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <select
-            className="input-glass py-2 px-3 w-[90px]"
+            className="input-glass py-2 px-3 w-full sm:w-[90px]"
             value={pageSize}
             onChange={(e) => {
               setPageSize(Number(e.target.value));
@@ -785,19 +784,19 @@ const UsersPage = () => {
           <Button
             type="button"
             variant="outline"
-            className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
+            className="bg-white/5 border-white/10 hover:bg-white/10 text-white w-full sm:w-auto"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={isLoading || page <= 1}
           >
             {t('dashboard.users.pagination.previous')}
           </Button>
-          <div className="text-sm text-white/70 min-w-[80px] text-center">
+          <div className="text-sm text-white/70 min-w-[80px] text-center w-full sm:w-auto">
             {t('dashboard.users.pagination.page', { page, totalPages })}
           </div>
           <Button
             type="button"
             variant="outline"
-            className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
+            className="bg-white/5 border-white/10 hover:bg-white/10 text-white w-full sm:w-auto"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={isLoading || page >= totalPages}
           >

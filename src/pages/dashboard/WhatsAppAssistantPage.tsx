@@ -379,14 +379,14 @@ const WhatsAppAssistantPage = () => {
               total: pagination.total,
             })}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <select
               value={pageSize}
               onChange={(event) => {
                 setPageSize(Number(event.target.value));
                 setPage(1);
               }}
-              className="input-glass h-9 px-3 text-sm w-[84px]"
+              className="input-glass h-9 px-3 text-sm w-full sm:w-[84px]"
             >
               {[10, 20, 50].map((size) => (
                 <option key={size} value={size}>
@@ -394,10 +394,10 @@ const WhatsAppAssistantPage = () => {
                 </option>
               ))}
             </select>
-            <Button type="button" variant="outline" size="sm" onClick={() => setPage((value) => Math.max(1, value - 1))} disabled={pagination.page <= 1}>
+            <Button type="button" variant="outline" size="sm" className="w-full sm:w-auto" onClick={() => setPage((value) => Math.max(1, value - 1))} disabled={pagination.page <= 1}>
               {t('dashboard.whatsappAssistant.pagination.previous')}
             </Button>
-            <span className="text-xs text-muted-foreground min-w-[92px] text-center">
+            <span className="text-xs text-muted-foreground min-w-[92px] text-center w-full sm:w-auto">
               {t('dashboard.whatsappAssistant.pagination.page', {
                 page: pagination.page,
                 totalPages: pagination.totalPages,
@@ -407,6 +407,7 @@ const WhatsAppAssistantPage = () => {
               type="button"
               variant="outline"
               size="sm"
+              className="w-full sm:w-auto"
               onClick={() => setPage((value) => value + 1)}
               disabled={pagination.page >= pagination.totalPages}
             >

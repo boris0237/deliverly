@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HandCoins, Plus, Search, Trash2, Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Table, Tbody, Td, Th, Thead, Tr } from 'react-super-responsive-table';
 import {
   Dialog,
   DialogContent,
@@ -388,51 +389,57 @@ const RemittancesPage = () => {
           </div>
         </div>
 
-        <div className="overflow-auto rounded-xl border border-white/10">
-          <table className="w-full min-w-[760px] text-sm">
-            <thead className="bg-white/5">
-              <tr>
-                <th className="px-3 py-2 text-left text-white/70">{t('dashboard.remittances.fields.date')}</th>
-                <th className="px-3 py-2 text-left text-white/70">{t('dashboard.remittances.fields.partner')}</th>
-                <th className="px-3 py-2 text-left text-white/70">{t('dashboard.remittances.fields.amount')}</th>
-                <th className="px-3 py-2 text-left text-white/70">{t('dashboard.remittances.fields.note')}</th>
-                <th className="px-3 py-2 text-left text-white/70">{t('common.actions')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {history.map((item) => (
-                <tr key={item.id} className="border-t border-white/5 hover:bg-white/5">
-                  <td className="px-3 py-2 text-white/90">{new Date(item.remittanceDate).toLocaleDateString(i18n.language || 'fr')}</td>
-                  <td className="px-3 py-2 text-white/90">{item.partnerName}</td>
-                  <td className="px-3 py-2 text-white/90">{formatMoney(item.amount)}</td>
-                  <td className="px-3 py-2 text-white/70">{item.note || '-'}</td>
-                  <td className="px-3 py-2">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                      onClick={() => setDeleteItem(item)}
-                    >
-                      <Trash2 className="w-4 h-4 mr-1" />
-                      {t('common.delete')}
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-              {!isLoading && history.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-3 py-6 text-center text-white/50">
-                    {t('dashboard.remittances.history.empty')}
-                  </td>
-                </tr>
-              ) : null}
-            </tbody>
-          </table>
-        </div>
+        <Table className="responsiveTable text-sm rounded-xl border border-white/10">
+          <Thead className="bg-white/5">
+            <Tr>
+              <Th className="px-3 py-2 text-left text-white/70">{t('dashboard.remittances.fields.date')}</Th>
+              <Th className="px-3 py-2 text-left text-white/70">{t('dashboard.remittances.fields.partner')}</Th>
+              <Th className="px-3 py-2 text-left text-white/70">{t('dashboard.remittances.fields.amount')}</Th>
+              <Th className="px-3 py-2 text-left text-white/70">{t('dashboard.remittances.fields.note')}</Th>
+              <Th className="px-3 py-2 text-left text-white/70">{t('common.actions')}</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {history.map((item) => (
+              <Tr key={item.id} className="border-t border-white/5 hover:bg-white/5">
+                <Td data-label={t('dashboard.remittances.fields.date')} className="px-3 py-2 text-white/90">
+                  {new Date(item.remittanceDate).toLocaleDateString(i18n.language || 'fr')}
+                </Td>
+                <Td data-label={t('dashboard.remittances.fields.partner')} className="px-3 py-2 text-white/90">
+                  {item.partnerName}
+                </Td>
+                <Td data-label={t('dashboard.remittances.fields.amount')} className="px-3 py-2 text-white/90">
+                  {formatMoney(item.amount)}
+                </Td>
+                <Td data-label={t('dashboard.remittances.fields.note')} className="px-3 py-2 text-white/70">
+                  {item.note || '-'}
+                </Td>
+                <Td data-label={t('common.actions')} className="px-3 py-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                    onClick={() => setDeleteItem(item)}
+                  >
+                    <Trash2 className="w-4 h-4 mr-1" />
+                    {t('common.delete')}
+                  </Button>
+                </Td>
+              </Tr>
+            ))}
+            {!isLoading && history.length === 0 ? (
+              <Tr>
+                <Td colSpan={5} className="px-3 py-6 text-center text-white/50">
+                  {t('dashboard.remittances.history.empty')}
+                </Td>
+              </Tr>
+            ) : null}
+          </Tbody>
+        </Table>
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <select
-            className="input-glass py-2 px-3 w-[90px]"
+            className="input-glass py-2 px-3 w-full md:w-[90px]"
             value={pageSize}
             onChange={(e) => {
               setPageSize(Number(e.target.value));
@@ -443,23 +450,23 @@ const RemittancesPage = () => {
             <option value={20}>20</option>
             <option value={50}>50</option>
           </select>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button
               type="button"
               variant="outline"
-              className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
+              className="bg-white/5 border-white/10 hover:bg-white/10 text-white w-full sm:w-auto"
               onClick={() => setPage((prev) => Math.max(1, prev - 1))}
               disabled={isLoading || page <= 1}
             >
               {t('dashboard.remittances.pagination.previous')}
             </Button>
-            <div className="text-sm text-white/70 min-w-[90px] text-center">
+            <div className="text-sm text-white/70 min-w-[90px] text-center w-full sm:w-auto">
               {t('dashboard.remittances.pagination.page', { page, totalPages })}
             </div>
             <Button
               type="button"
               variant="outline"
-              className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
+              className="bg-white/5 border-white/10 hover:bg-white/10 text-white w-full sm:w-auto"
               onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
               disabled={isLoading || page >= totalPages}
             >
@@ -495,4 +502,3 @@ const RemittancesPage = () => {
 };
 
 export default RemittancesPage;
-

@@ -71,6 +71,7 @@
     "react-i18next": "^16.5.4",
     "react-phone-number-input": "^3.4.16",
     "react-resizable-panels": "^4.2.2",
+    "react-super-responsive-table": "^6.0.2",
     "recharts": "^2.15.4",
     "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3",

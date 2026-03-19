@@ -435,14 +435,14 @@ const TrackingPage = () => {
                 total: data?.pagination?.total || 0,
               })}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <select
                 value={pageSize}
                 onChange={(event) => {
                   setPageSize(Number(event.target.value));
                   setPage(1);
                 }}
-                className="input-glass h-9 px-3 text-sm w-[84px]"
+                className="input-glass h-9 px-3 text-sm w-full sm:w-[84px]"
               >
                 {[6, 12, 24].map((size) => (
                   <option key={size} value={size}>
@@ -450,10 +450,10 @@ const TrackingPage = () => {
                   </option>
                 ))}
               </select>
-              <Button type="button" variant="outline" size="sm" onClick={() => setPage((value) => Math.max(1, value - 1))} disabled={(data?.pagination?.page || 1) <= 1}>
+              <Button type="button" variant="outline" size="sm" className="w-full sm:w-auto" onClick={() => setPage((value) => Math.max(1, value - 1))} disabled={(data?.pagination?.page || 1) <= 1}>
                 {t('dashboard.tracking.pagination.previous')}
               </Button>
-              <span className="text-xs text-muted-foreground min-w-[92px] text-center">
+              <span className="text-xs text-muted-foreground min-w-[92px] text-center w-full sm:w-auto">
                 {t('dashboard.tracking.pagination.page', {
                   page: data?.pagination?.page || 1,
                   totalPages: data?.pagination?.totalPages || 1,
@@ -463,6 +463,7 @@ const TrackingPage = () => {
                 type="button"
                 variant="outline"
                 size="sm"
+                className="w-full sm:w-auto"
                 onClick={() => setPage((value) => value + 1)}
                 disabled={(data?.pagination?.page || 1) >= (data?.pagination?.totalPages || 1)}
               >

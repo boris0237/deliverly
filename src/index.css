@@ -1,6 +1,63 @@
+@import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.table-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-scroll > table {
+  min-width: 720px;
+}
+
+@media (max-width: 640px) {
+  .table-scroll > table {
+    min-width: 0;
+    table-layout: fixed;
+  }
+  .table-scroll th,
+  .table-scroll td {
+    white-space: normal;
+    word-break: break-word;
+  }
+}
+
+@media (min-width: 1024px) {
+  .table-scroll > table {
+    min-width: 0;
+  }
+}
+
+.responsiveTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.responsiveTable thead th {
+  color: inherit;
+}
+
+.responsiveTable td,
+.responsiveTable th {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+html:not(.dark) .responsiveTable td,
+html:not(.dark) .responsiveTable th {
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
+@media (max-width: 640px) {
+  .responsiveTable td {
+    padding: 0.6rem 0.75rem;
+  }
+}
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 

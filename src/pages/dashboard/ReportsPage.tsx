@@ -16,6 +16,7 @@ import {
   YAxis,
 } from 'recharts';
 import { Button } from '@/components/ui/button';
+import { Table, Tbody, Td, Th, Thead, Tr } from 'react-super-responsive-table';
 import { useAuthStore, useUIStore } from '@/store';
 import { getLocalizedApiError } from '@/lib/auth/error-message';
 import { buildSimplePdf } from '@/lib/pdf/simple-pdf';
@@ -731,30 +732,32 @@ const ReportsPage = () => {
         {isLoading ? <div className="text-white/60">{t('common.loading')}</div> : null}
         {!isLoading && !data?.rows?.length ? <div className="text-white/50">{t('dashboard.reports.empty')}</div> : null}
         {data?.rows?.length ? (
-          <div className="overflow-auto rounded-xl border border-white/10">
-            <table className="w-full min-w-[900px] text-sm">
-              <thead className="bg-white/5">
-                <tr>
-                  {tableColumns.map((column) => (
-                    <th key={column} className="text-left text-muted-foreground font-medium px-3 py-2">
-                      {t(`dashboard.reports.columns.${column}`)}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {data.rows.map((row, index) => (
-                  <tr key={index} className="border-t border-white/5 hover:bg-white/5">
-                    {tableColumns.map((column) => (
-                      <td key={column} className="px-3 py-2 text-foreground whitespace-nowrap">
-                        {formatCell(column, row[column])}
-                      </td>
-                    ))}
-                  </tr>
+          <Table className="responsiveTable text-sm rounded-xl border border-white/10">
+            <Thead className="bg-white/5">
+              <Tr>
+                {tableColumns.map((column) => (
+                  <Th key={column} className="text-left text-muted-foreground font-medium px-3 py-2">
+                    {t(`dashboard.reports.columns.${column}`)}
+                  </Th>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {data.rows.map((row, index) => (
+                <Tr key={index} className="border-t border-white/5 hover:bg-white/5">
+                  {tableColumns.map((column) => (
+                    <Td
+                      key={column}
+                      data-label={t(`dashboard.reports.columns.${column}`)}
+                      className="px-3 py-2 text-foreground"
+                    >
+                      {formatCell(column, row[column])}
+                    </Td>
+                  ))}
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
         ) : null}
       </div>
     </div>

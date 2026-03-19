@@ -962,9 +962,9 @@ const PartnersPage = () => {
                 total: totalItems,
               })}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <select
-                className="input-glass py-2 px-3 w-[90px]"
+                className="input-glass py-2 px-3 w-full sm:w-[90px]"
                 value={pageSize}
                 onChange={(e) => {
                   setPageSize(Number(e.target.value));
@@ -978,19 +978,19 @@ const PartnersPage = () => {
               <Button
                 type="button"
                 variant="outline"
-                className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
+                className="bg-white/5 border-white/10 hover:bg-white/10 text-white w-full sm:w-auto"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={isLoading || page <= 1}
               >
                 {t('dashboard.partners.pagination.previous')}
               </Button>
-              <div className="text-sm text-white/70 min-w-[90px] text-center">
+              <div className="text-sm text-white/70 min-w-[90px] text-center w-full sm:w-auto">
                 {t('dashboard.partners.pagination.page', { page, totalPages })}
               </div>
               <Button
                 type="button"
                 variant="outline"
-                className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
+                className="bg-white/5 border-white/10 hover:bg-white/10 text-white w-full sm:w-auto"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={isLoading || page >= totalPages}
               >

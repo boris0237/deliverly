@@ -43,7 +43,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         <Topbar sidebarOpen={sidebarOpen} onSidebarToggle={() => setSidebarOpen(!sidebarOpen)} />
 
         {/* Page Content */}
-        <main className="flex-1 p-4 md:p-6 overflow-auto custom-scrollbar">
+        <main className="flex-1 p-4 md:p-6 overflow-y-auto overflow-x-hidden custom-scrollbar">
           {children}
         </main>
       </div>

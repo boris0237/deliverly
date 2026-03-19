@@ -28,6 +28,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Table, Tbody, Td, Th, Thead, Tr } from 'react-super-responsive-table';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -527,7 +528,7 @@ const InventoryPage = () => {
 
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="btn-primary gap-2">
+            <Button className="btn-primary gap-2 w-full sm:w-auto px-4 sm:px-6 text-sm sm:text-base whitespace-normal sm:whitespace-nowrap text-center">
               <Plus className="w-4 h-4" />
               {t('dashboard.inventory.create')}
             </Button>
@@ -795,38 +796,46 @@ const InventoryPage = () => {
               </select>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="text-left text-sm text-white/50 border-b border-white/5">
-                    <th className="p-3 font-medium">{t('dashboard.inventory.history.date')}</th>
-                    <th className="p-3 font-medium">{t('dashboard.inventory.history.type')}</th>
-                    <th className="p-3 font-medium">{t('dashboard.inventory.history.quantity')}</th>
-                    <th className="p-3 font-medium">{t('dashboard.inventory.history.previous')}</th>
-                    <th className="p-3 font-medium">{t('dashboard.inventory.history.new')}</th>
-                    <th className="p-3 font-medium">{t('dashboard.inventory.history.reason')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {movements.map((movement) => (
-                    <tr key={movement.id} className="border-b border-white/5">
-                      <td className="p-3 text-sm text-white/70">{formatDateTime(movement.createdAt)}</td>
-                      <td className="p-3 text-sm">
-                        <span className={movement.type === 'entry' ? 'text-green-400' : 'text-red-400'}>
-                          {movement.type === 'entry'
-                            ? t('dashboard.inventory.history.entry')
-                            : t('dashboard.inventory.history.exit')}
-                        </span>
-                      </td>
-                      <td className="p-3 text-sm text-white">{movement.quantity}</td>
-                      <td className="p-3 text-sm text-white/70">{movement.previousStock}</td>
-                      <td className="p-3 text-sm text-white/70">{movement.newStock}</td>
-                      <td className="p-3 text-sm text-white/60">{formatMovementReason(movement.reason)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <Table className="responsiveTable text-sm">
+              <Thead>
+                <Tr className="text-left text-white/50 border-b border-white/5">
+                  <Th className="p-3 font-medium">{t('dashboard.inventory.history.date')}</Th>
+                  <Th className="p-3 font-medium">{t('dashboard.inventory.history.type')}</Th>
+                  <Th className="p-3 font-medium">{t('dashboard.inventory.history.quantity')}</Th>
+                  <Th className="p-3 font-medium">{t('dashboard.inventory.history.previous')}</Th>
+                  <Th className="p-3 font-medium">{t('dashboard.inventory.history.new')}</Th>
+                  <Th className="p-3 font-medium">{t('dashboard.inventory.history.reason')}</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {movements.map((movement) => (
+                  <Tr key={movement.id} className="border-b border-white/5">
+                    <Td data-label={t('dashboard.inventory.history.date')} className="p-3 text-sm text-white/70">
+                      {formatDateTime(movement.createdAt)}
+                    </Td>
+                    <Td data-label={t('dashboard.inventory.history.type')} className="p-3 text-sm">
+                      <span className={movement.type === 'entry' ? 'text-green-400' : 'text-red-400'}>
+                        {movement.type === 'entry'
+                          ? t('dashboard.inventory.history.entry')
+                          : t('dashboard.inventory.history.exit')}
+                      </span>
+                    </Td>
+                    <Td data-label={t('dashboard.inventory.history.quantity')} className="p-3 text-sm text-white">
+                      {movement.quantity}
+                    </Td>
+                    <Td data-label={t('dashboard.inventory.history.previous')} className="p-3 text-sm text-white/70">
+                      {movement.previousStock}
+                    </Td>
+                    <Td data-label={t('dashboard.inventory.history.new')} className="p-3 text-sm text-white/70">
+                      {movement.newStock}
+                    </Td>
+                    <Td data-label={t('dashboard.inventory.history.reason')} className="p-3 text-sm text-white/60">
+                      {formatMovementReason(movement.reason)}
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
 
             {!isMovementsLoading && movements.length === 0 && (
               <div className="text-sm text-white/50 text-center py-2">{t('dashboard.inventory.history.empty')}</div>
@@ -840,23 +849,23 @@ const InventoryPage = () => {
                   total: movementTotalItems,
                 })}
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <Button
                   type="button"
                   variant="outline"
-                  className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
+                  className="bg-white/5 border-white/10 hover:bg-white/10 text-white w-full sm:w-auto"
                   onClick={() => setMovementPage((p) => Math.max(1, p - 1))}
                   disabled={isMovementsLoading || movementPage <= 1}
                 >
                   {t('dashboard.inventory.pagination.previous')}
                 </Button>
-                <div className="text-sm text-white/70 min-w-[80px] text-center">
+                <div className="text-sm text-white/70 min-w-[80px] text-center w-full sm:w-auto">
                   {t('dashboard.inventory.pagination.page', { page: movementPage, totalPages: movementTotalPages })}
                 </div>
                 <Button
                   type="button"
                   variant="outline"
-                  className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
+                  className="bg-white/5 border-white/10 hover:bg-white/10 text-white w-full sm:w-auto"
                   onClick={() => setMovementPage((p) => Math.min(movementTotalPages, p + 1))}
                   disabled={isMovementsLoading || movementPage >= movementTotalPages}
                 >
@@ -949,23 +958,22 @@ const InventoryPage = () => {
         </select>
       </div>
 
-      <div className="glass-card overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="text-left text-sm text-white/50 border-b border-white/5">
-                <th className="p-4 font-medium">{t('dashboard.inventory.table.product')}</th>
-                <th className="p-4 font-medium">{t('dashboard.inventory.table.sku')}</th>
-                <th className="p-4 font-medium">{t('dashboard.inventory.table.stock')}</th>
-                <th className="p-4 font-medium">{t('dashboard.inventory.table.price')}</th>
-                <th className="p-4 font-medium">{t('dashboard.inventory.table.movement')}</th>
-                <th className="p-4 font-medium text-right">{t('dashboard.inventory.table.actions')}</th>
-              </tr>
-            </thead>
-            <tbody>
+      <div className="glass-card">
+        <Table className="responsiveTable text-sm">
+          <Thead>
+            <Tr className="text-left text-white/50 border-b border-white/5">
+              <Th className="p-4 font-medium">{t('dashboard.inventory.table.product')}</Th>
+              <Th className="p-4 font-medium">{t('dashboard.inventory.table.sku')}</Th>
+              <Th className="p-4 font-medium">{t('dashboard.inventory.table.stock')}</Th>
+              <Th className="p-4 font-medium">{t('dashboard.inventory.table.price')}</Th>
+              <Th className="p-4 font-medium">{t('dashboard.inventory.table.movement')}</Th>
+              <Th className="p-4 font-medium text-right">{t('dashboard.inventory.table.actions')}</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
               {products.map((product) => (
-                <tr key={product.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                  <td className="p-4">
+                <Tr key={product.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                  <Td data-label={t('dashboard.inventory.table.product')} className="p-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden">
                         {product.image ? (
@@ -982,9 +990,11 @@ const InventoryPage = () => {
                         )}
                       </div>
                     </div>
-                  </td>
-                  <td className="p-4 text-sm text-white/70">{product.sku}</td>
-                  <td className="p-4">
+                  </Td>
+                  <Td data-label={t('dashboard.inventory.table.sku')} className="p-4 text-sm text-white/70">
+                    {product.sku}
+                  </Td>
+                  <Td data-label={t('dashboard.inventory.table.stock')} className="p-4">
                     <div className="flex items-center gap-2">
                       <span
                         className={`text-sm font-medium ${
@@ -997,15 +1007,15 @@ const InventoryPage = () => {
                         <TrendingDown className="w-4 h-4 text-yellow-400" />
                       )}
                     </div>
-                  </td>
-                  <td className="p-4 text-sm text-white">
+                  </Td>
+                  <Td data-label={t('dashboard.inventory.table.price')} className="p-4 text-sm text-white">
                     {new Intl.NumberFormat(i18n.language || 'fr', {
                       style: 'currency',
                       currency,
                       maximumFractionDigits: 2,
                     }).format(product.price)}
-                  </td>
-                  <td className="p-4">
+                  </Td>
+                  <Td data-label={t('dashboard.inventory.table.movement')} className="p-4">
                     <Button
                       type="button"
                       variant="outline"
@@ -1014,8 +1024,8 @@ const InventoryPage = () => {
                     >
                       {t('dashboard.inventory.history.viewMovement')}
                     </Button>
-                  </td>
-                  <td className="p-4 text-right">
+                  </Td>
+                  <Td data-label={t('dashboard.inventory.table.actions')} className="p-4 text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
@@ -1041,12 +1051,11 @@ const InventoryPage = () => {
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  </td>
-                </tr>
+                  </Td>
+                </Tr>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </Tbody>
+        </Table>
 
         {!isLoading && products.length === 0 && (
           <div className="p-12 text-center">
@@ -1064,9 +1073,9 @@ const InventoryPage = () => {
             total: totalItems,
           })}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <select
-            className="input-glass py-2 px-3 w-[90px]"
+            className="input-glass py-2 px-3 w-full sm:w-[90px]"
             value={pageSize}
             onChange={(e) => {
               setPageSize(Number(e.target.value));
@@ -1080,19 +1089,19 @@ const InventoryPage = () => {
           <Button
             type="button"
             variant="outline"
-            className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
+            className="bg-white/5 border-white/10 hover:bg-white/10 text-white w-full sm:w-auto"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={isLoading || page <= 1}
           >
             {t('dashboard.inventory.pagination.previous')}
           </Button>
-          <div className="text-sm text-white/70 min-w-[80px] text-center">
+          <div className="text-sm text-white/70 min-w-[80px] text-center w-full sm:w-auto">
             {t('dashboard.inventory.pagination.page', { page, totalPages })}
           </div>
           <Button
             type="button"
             variant="outline"
-            className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
+            className="bg-white/5 border-white/10 hover:bg-white/10 text-white w-full sm:w-auto"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={isLoading || page >= totalPages}
           >
