@@ -18,6 +18,7 @@ let bootstrapPromise: Promise<void> | null = null;
 
 type FsPromisesModule = {
   mkdir: (path: string, options?: { recursive?: boolean }) => Promise<void>;
+  rm: (path: string, options?: { recursive?: boolean; force?: boolean }) => Promise<void>;
 };
 
 type PathModule = {
@@ -25,6 +26,8 @@ type PathModule = {
 };
 
 const require = createRequire(import.meta.url);
+const reconnectTimers = new Map<string, NodeJS.Timeout>();
+const manualDisconnects = new Set<string>();
 
 function getFsPromises(): FsPromisesModule {
   return require('node:fs/promises') as FsPromisesModule;
@@ -35,12 +38,60 @@ function getPathModule(): PathModule {
 }
 
 function authDirFor(connectionId: string) {
-  return getPathModule().join(process.cwd(), '.baileys-auth', connectionId);
+  const baseDir = process.env.WHATSAPP_AUTH_DIR || getPathModule().join(process.cwd(), '.baileys-auth');
+  return getPathModule().join(baseDir, connectionId);
 }
 
 async function loadBaileys(): Promise<any> {
   const importer = new Function('m', 'return import(m);') as (m: string) => Promise<any>;
   return importer('baileys');
+}
+
+function getDisconnectStatusCode(update: any): number {
+  return Number(
+    update?.lastDisconnect?.error?.output?.statusCode ||
+      update?.lastDisconnect?.error?.statusCode ||
+      update?.lastDisconnect?.error?.data?.statusCode ||
+      0
+  );
+}
+
+async function clearAuthDir(connectionId: string) {
+  await getFsPromises().rm(authDirFor(connectionId), { recursive: true, force: true });
+}
+
+function scheduleReconnect(input: { companyId: string; connectionId: string; forceNewSession?: boolean; delayMs?: number }) {
+  const key = input.connectionId;
+  const existingTimer = reconnectTimers.get(key);
+  if (existingTimer) clearTimeout(existingTimer);
+
+  const timer = setTimeout(() => {
+    reconnectTimers.delete(key);
+    void connectWhatsAppConnection({
+      companyId: input.companyId,
+      connectionId: input.connectionId,
+      forceNewSession: input.forceNewSession,
+    }).catch(async (error) => {
+      await WhatsAppConnectionModel.updateOne(
+        { id: input.connectionId, companyId: input.companyId },
+        {
+          $inc: { reconnectAttempts: 1 },
+          $set: {
+            status: 'error',
+            lastError: error instanceof Error ? error.message : 'WhatsApp reconnect failed',
+            updatedAt: new Date(),
+          },
+        }
+      );
+      emitWhatsAppRealtimeEvent({
+        companyId: input.companyId,
+        connectionId: input.connectionId,
+        type: 'connection',
+      });
+    });
+  }, input.delayMs ?? 3000);
+
+  reconnectTimers.set(key, timer);
 }
 
 function extractTextFromMessageContent(message: any): string {
@@ -243,13 +294,31 @@ async function handleInboundGroupMessage(input: {
   }
 }
 
-export async function connectWhatsAppConnection(input: { companyId: string; connectionId: string }) {
+export async function connectWhatsAppConnection(input: { companyId: string; connectionId: string; forceNewSession?: boolean }) {
   const existing = sockets.get(input.connectionId);
-  if (existing) return;
+  if (existing && !input.forceNewSession) return;
+  if (existing?.socket) {
+    try {
+      existing.socket.end?.();
+    } catch {
+      // ignore stale socket close errors
+    }
+    sockets.delete(input.connectionId);
+  }
+
+  const existingTimer = reconnectTimers.get(input.connectionId);
+  if (existingTimer) {
+    clearTimeout(existingTimer);
+    reconnectTimers.delete(input.connectionId);
+  }
+
+  if (input.forceNewSession) {
+    await clearAuthDir(input.connectionId);
+  }
 
   await getFsPromises().mkdir(authDirFor(input.connectionId), { recursive: true });
   const baileys = await loadBaileys();
-  const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion } = baileys;
+  const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason } = baileys;
   const { state, saveCreds } = await useMultiFileAuthState(authDirFor(input.connectionId));
   const { version } = await fetchLatestBaileysVersion();
 
@@ -258,7 +327,7 @@ export async function connectWhatsAppConnection(input: { companyId: string; conn
     {
       $set: {
         status: 'connecting',
-        lastError: '',
+        lastError: input.forceNewSession ? 'Nouvelle session WhatsApp demandée. Scannez le QR code.' : '',
         reconnectAttempts: 0,
         updatedAt: new Date(),
       },
@@ -295,6 +364,7 @@ export async function connectWhatsAppConnection(input: { companyId: string; conn
       });
     }
     if (update?.connection === 'open') {
+      manualDisconnects.delete(input.connectionId);
       await WhatsAppConnectionModel.updateOne(
         { id: input.connectionId, companyId: input.companyId },
         {
@@ -333,14 +403,41 @@ export async function connectWhatsAppConnection(input: { companyId: string; conn
       }
     }
     if (update?.connection === 'close') {
+      const statusCode = getDisconnectStatusCode(update);
+      const isManualDisconnect = manualDisconnects.has(input.connectionId);
+      const isLoggedOut =
+        statusCode === DisconnectReason?.loggedOut ||
+        statusCode === 401 ||
+        String(update?.lastDisconnect?.error?.message || '').toLowerCase().includes('logged out');
+      const shouldReconnect = !isManualDisconnect;
+      const reconnectAttempts = Number(
+        (await WhatsAppConnectionModel.findOne({ id: input.connectionId, companyId: input.companyId })
+          .select({ reconnectAttempts: 1 })
+          .lean())?.reconnectAttempts || 0
+      );
+      const nextDelay = Math.min(60000, 2000 * Math.max(1, reconnectAttempts + 1));
+
+      const updatePayload: Record<string, unknown> = {
+        $set: {
+          status: isManualDisconnect ? 'disconnected' : 'connecting',
+          lastError: isLoggedOut
+            ? 'WhatsApp a déconnecté cette session. Un nouveau QR code va être généré.'
+            : isManualDisconnect
+            ? ''
+            : 'Connexion WhatsApp interrompue. Reconnexion en cours.',
+          updatedAt: new Date(),
+        },
+      };
+      if (isLoggedOut) {
+        (updatePayload.$set as Record<string, unknown>).qrCode = '';
+      }
+      if (shouldReconnect) {
+        updatePayload.$inc = { reconnectAttempts: 1 };
+      }
+
       await WhatsAppConnectionModel.updateOne(
         { id: input.connectionId, companyId: input.companyId },
-        {
-          $set: {
-            status: 'disconnected',
-            updatedAt: new Date(),
-          },
-        }
+        updatePayload
       );
       sockets.delete(input.connectionId);
       emitWhatsAppRealtimeEvent({
@@ -348,6 +445,16 @@ export async function connectWhatsAppConnection(input: { companyId: string; conn
         connectionId: input.connectionId,
         type: 'connection',
       });
+      if (isManualDisconnect) {
+        manualDisconnects.delete(input.connectionId);
+        return;
+      }
+      if (isLoggedOut) {
+        await clearAuthDir(input.connectionId);
+        scheduleReconnect({ companyId: input.companyId, connectionId: input.connectionId, forceNewSession: true, delayMs: 1000 });
+        return;
+      }
+      scheduleReconnect({ companyId: input.companyId, connectionId: input.connectionId, delayMs: nextDelay });
     }
   });
 
@@ -373,7 +480,17 @@ export async function connectWhatsAppConnection(input: { companyId: string; conn
   });
 }
 
+export function isWhatsAppConnectionRunning(connectionId: string) {
+  return sockets.has(connectionId);
+}
+
 export async function disconnectWhatsAppConnection(input: { companyId: string; connectionId: string }) {
+  manualDisconnects.add(input.connectionId);
+  const existingTimer = reconnectTimers.get(input.connectionId);
+  if (existingTimer) {
+    clearTimeout(existingTimer);
+    reconnectTimers.delete(input.connectionId);
+  }
   const context = sockets.get(input.connectionId);
   if (context?.socket) {
     try {
@@ -398,6 +515,41 @@ export async function disconnectWhatsAppConnection(input: { companyId: string; c
     connectionId: input.connectionId,
     type: 'connection',
   });
+}
+
+export async function resetWhatsAppConnection(input: { companyId: string; connectionId: string }) {
+  const existingTimer = reconnectTimers.get(input.connectionId);
+  if (existingTimer) {
+    clearTimeout(existingTimer);
+    reconnectTimers.delete(input.connectionId);
+  }
+  const context = sockets.get(input.connectionId);
+  if (context?.socket) {
+    try {
+      context.socket.end?.();
+    } catch {
+      // ignore
+    }
+    sockets.delete(input.connectionId);
+  }
+  await clearAuthDir(input.connectionId);
+  await WhatsAppConnectionModel.updateOne(
+    { id: input.connectionId, companyId: input.companyId },
+    {
+      $set: {
+        status: 'connecting',
+        qrCode: '',
+        lastError: 'Session réinitialisée. Un nouveau QR code va être généré.',
+        updatedAt: new Date(),
+      },
+    }
+  );
+  emitWhatsAppRealtimeEvent({
+    companyId: input.companyId,
+    connectionId: input.connectionId,
+    type: 'connection',
+  });
+  await connectWhatsAppConnection({ companyId: input.companyId, connectionId: input.connectionId, forceNewSession: true });
 }
 
 export async function sendWhatsAppGroupMessage(input: {

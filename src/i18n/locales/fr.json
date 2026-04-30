@@ -231,7 +231,7 @@
         "starter": {
           "name": "Starter",
           "description": "Parfait pour les petites entreprises",
-          "price": "29€",
+          "price": "$10",
           "features": [
             "Jusqu'à 500 livraisons/mois",
             "3 livreurs",
@@ -243,7 +243,7 @@
         "professional": {
           "name": "Professional",
           "description": "Pour les entreprises en croissance",
-          "price": "79€",
+          "price": "$19",
           "period": "/mois",
           "popular": "Le plus populaire",
           "features": [
@@ -545,7 +545,9 @@
       "notice": {
         "info": "Votre plan se termine dans {{days}} jours.",
         "warning": "Plus que {{days}} jours avant le renouvellement.",
-        "critical": "Urgent : {{days}} jours avant l'expiration."
+        "critical": "Urgent : votre abonnement expire dans {{days}} jours.",
+        "today": "Urgent : votre abonnement expire aujourd'hui.",
+        "expired": "Votre abonnement a expiré depuis {{days}} jours. Veuillez renouveler votre plan pour continuer à utiliser Delivoo."
       },
       "status": {
         "trial": "Essai",
@@ -1346,9 +1348,11 @@
       "lastSeen": "Dernière activité",
       "connect": "Lier WhatsApp",
       "disconnect": "Déconnecter",
+      "resetQr": "Regénérer le QR",
       "syncGroups": "Synchroniser les groupes",
       "connectionStarted": "Connexion WhatsApp lancée.",
       "disconnected": "Assistant WhatsApp déconnecté.",
+      "resetStarted": "Session WhatsApp réinitialisée. Un nouveau QR code va apparaître.",
       "groupSyncStarted": "Synchronisation des groupes lancée.",
       "scanQrHelp": "Scannez ce QR code dans WhatsApp (Appareils connectés).",
       "scanQrStepsTitle": "Étapes pour scanner le QR code",
@@ -1358,13 +1362,18 @@
         "Appuyez sur « Connecter un appareil ».",
         "Scannez le QR code affiché ici."
       ],
-      "scanQrHint": "Le QR code expire rapidement. Si besoin, cliquez sur « Synchroniser les groupes » pour relancer.",
+      "scanQrHint": "Le QR code expire rapidement. Si WhatsApp a déconnecté l'appareil, cliquez sur « Regénérer le QR » puis scannez à nouveau.",
       "groupBindings": "Liaison groupes → partenaires",
       "partner": "Partenaire",
       "unmapped": "Non mappé",
       "notifyStatus": "Notifier les statuts dans le groupe",
       "noGroups": "Aucun groupe disponible. Lancez une synchronisation après connexion.",
       "searchPlaceholder": "Rechercher par nom du groupe ou JID...",
+      "filters": {
+        "all": "Tous les groupes",
+        "mapped": "Groupes mappés",
+        "unmapped": "Groupes non mappés"
+      },
       "pagination": {
         "previous": "Précédent",
         "next": "Suivant",

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store';
@@ -12,6 +12,26 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   const { isAuthenticated, isLoading, user } = useAuthStore();
   const [billingChecked, setBillingChecked] = useState(false);
   const [billingExpired, setBillingExpired] = useState(false);
+  const checkBilling = useCallback(async () => {
+    if (!isAuthenticated || !user || user.role === 'superAdmin') {
+      setBillingExpired(false);
+      setBillingChecked(true);
+      return;
+    }
+
+    setBillingChecked(false);
+    try {
+      const response = await fetch('/api/dashboard/billing/status', { cache: 'no-store' });
+      const payload = await response.json();
+      if (response.ok) {
+        setBillingExpired(Boolean(payload?.expired));
+      }
+    } catch {
+      // ignore billing check errors
+    } finally {
+      setBillingChecked(true);
+    }
+  }, [isAuthenticated, user]);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -24,25 +44,17 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   }, [isAuthenticated, isLoading, pathname, router, user]);
 
   useEffect(() => {
-    if (!isAuthenticated || !user || user.role === 'superAdmin') {
-      setBillingChecked(true);
-      return;
-    }
-    const checkBilling = async () => {
-      try {
-        const response = await fetch('/api/dashboard/billing/status', { cache: 'no-store' });
-        const payload = await response.json();
-        if (response.ok) {
-          setBillingExpired(Boolean(payload?.expired));
-        }
-      } catch {
-        // ignore billing check errors
-      } finally {
-        setBillingChecked(true);
-      }
-    };
     void checkBilling();
-  }, [isAuthenticated, user]);
+  }, [checkBilling]);
+
+  useEffect(() => {
+    const handleBillingStatusChanged = () => {
+      void checkBilling();
+    };
+
+    window.addEventListener('billing-status-changed', handleBillingStatusChanged);
+    return () => window.removeEventListener('billing-status-changed', handleBillingStatusChanged);
+  }, [checkBilling]);
 
   if (isLoading && !user) {
     return (

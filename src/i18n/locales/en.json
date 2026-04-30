@@ -231,7 +231,7 @@
         "starter": {
           "name": "Starter",
           "description": "Perfect for small businesses",
-          "price": "$29",
+          "price": "$10",
           "features": [
             "Up to 500 deliveries/month",
             "3 drivers",
@@ -243,7 +243,7 @@
         "professional": {
           "name": "Professional",
           "description": "For growing businesses",
-          "price": "$79",
+          "price": "$19",
           "period": "/month",
           "popular": "Most Popular",
           "features": [
@@ -545,7 +545,9 @@
       "notice": {
         "info": "Your plan ends in {{days}} days.",
         "warning": "Only {{days}} days left before renewal.",
-        "critical": "Urgent: {{days}} days left before expiration."
+        "critical": "Urgent: your subscription expires in {{days}} days.",
+        "today": "Urgent: your subscription expires today.",
+        "expired": "Your subscription expired {{days}} days ago. Please renew your plan to keep using Delivoo."
       },
       "status": {
         "trial": "Trial",
@@ -1346,9 +1348,11 @@
       "lastSeen": "Last activity",
       "connect": "Connect WhatsApp",
       "disconnect": "Disconnect",
+      "resetQr": "Regenerate QR",
       "syncGroups": "Sync groups",
       "connectionStarted": "WhatsApp connection started.",
       "disconnected": "WhatsApp assistant disconnected.",
+      "resetStarted": "WhatsApp session reset. A new QR code will appear.",
       "groupSyncStarted": "Group synchronization started.",
       "scanQrHelp": "Scan this QR code from WhatsApp (Linked devices).",
       "scanQrStepsTitle": "Steps to scan the QR code",
@@ -1358,13 +1362,18 @@
         "Tap “Link a device”.",
         "Scan the QR code shown here."
       ],
-      "scanQrHint": "The QR code expires quickly. If needed, click “Sync groups” to refresh.",
+      "scanQrHint": "The QR code expires quickly. If WhatsApp disconnected the device, click “Regenerate QR” and scan again.",
       "groupBindings": "Group → partner mapping",
       "partner": "Partner",
       "unmapped": "Unmapped",
       "notifyStatus": "Notify delivery statuses in group",
       "noGroups": "No groups available. Sync groups after connection.",
       "searchPlaceholder": "Search by group name or JID...",
+      "filters": {
+        "all": "All groups",
+        "mapped": "Mapped groups",
+        "unmapped": "Unmapped groups"
+      },
       "pagination": {
         "previous": "Previous",
         "next": "Next",

@@ -152,8 +152,8 @@ const PricingSection = () => {
         id: 'starter',
         name: t('landing.pricing.plans.starter.name'),
         description: t('landing.pricing.plans.starter.description'),
-        priceUsd: Number(t('landing.pricing.plans.starter.price').replace(/[^0-9]/g, '')) || 29,
-        yearlyDiscountPercent: 20,
+        priceUsd: Number(t('landing.pricing.plans.starter.price').replace(/[^0-9]/g, '')) || 10,
+        yearlyDiscountPercent: 17,
         limits: { partners: 3, drivers: 3, users: 5 },
         features: { tracking: true, financialReports: true, whatsappAssistant: false },
       },
@@ -161,8 +161,8 @@ const PricingSection = () => {
         id: 'professional',
         name: t('landing.pricing.plans.professional.name'),
         description: t('landing.pricing.plans.professional.description'),
-        priceUsd: Number(t('landing.pricing.plans.professional.price').replace(/[^0-9]/g, '')) || 79,
-        yearlyDiscountPercent: 20,
+        priceUsd: Number(t('landing.pricing.plans.professional.price').replace(/[^0-9]/g, '')) || 19,
+        yearlyDiscountPercent: 17,
         limits: { partners: 15, drivers: 15, users: 30 },
         features: { tracking: true, financialReports: true, whatsappAssistant: true },
       },
@@ -367,9 +367,9 @@ const PricingSection = () => {
                     return (
                       <li key={featureIndex} className="flex items-start gap-3">
                         <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                          plan.popular ? 'bg-orange-500/20' : 'bg-white/10'
+                          plan.popular ? 'bg-orange-500/20' : 'bg-muted'
                         }`}>
-                          <Check className={`w-3 h-3 ${plan.popular ? 'text-orange-400' : 'text-white/60'}`} />
+                          <Check className={`w-3 h-3 ${plan.popular ? 'text-orange-500 dark:text-orange-400' : 'text-muted-foreground'}`} />
                         </div>
                         <span className="text-sm text-muted-foreground">{feature}</span>
                       </li>

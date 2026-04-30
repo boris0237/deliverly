@@ -95,6 +95,7 @@ const BillingPage = () => {
         // ignore refresh errors
       } finally {
         void loadBilling();
+        window.dispatchEvent(new Event('billing-status-changed'));
       }
     };
     void refresh();
@@ -148,6 +149,8 @@ const BillingPage = () => {
     const now = new Date();
     const diffDays = Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
     if (Number.isNaN(diffDays)) return null;
+    if (diffDays < 0) return { level: 'expired', days: Math.abs(diffDays) };
+    if (diffDays === 0) return { level: 'today', days: 0 };
     if (diffDays <= 3) return { level: 'critical', days: diffDays };
     if (diffDays <= 7) return { level: 'warning', days: diffDays };
     if (diffDays <= 14) return { level: 'info', days: diffDays };
@@ -216,7 +219,11 @@ const BillingPage = () => {
             {renewalNotice ? (
               <div
                 className={`rounded-xl border px-4 py-3 text-sm flex items-start gap-3 ${
-                  renewalNotice.level === 'critical'
+                  renewalNotice.level === 'expired'
+                    ? 'border-red-600/40 bg-red-600/15 text-red-700 dark:text-red-200'
+                    : renewalNotice.level === 'today'
+                    ? 'border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-200'
+                    : renewalNotice.level === 'critical'
                     ? 'border-red-500/30 bg-red-500/10 text-red-700'
                     : renewalNotice.level === 'warning'
                     ? 'border-amber-500/30 bg-amber-500/10 text-amber-700'
@@ -225,7 +232,11 @@ const BillingPage = () => {
               >
                 <AlertTriangle className="w-4 h-4 mt-0.5" />
                 <div>
-                  {renewalNotice.level === 'critical'
+                  {renewalNotice.level === 'expired'
+                    ? t('dashboard.billing.notice.expired', { days: renewalNotice.days })
+                    : renewalNotice.level === 'today'
+                    ? t('dashboard.billing.notice.today')
+                    : renewalNotice.level === 'critical'
                     ? t('dashboard.billing.notice.critical', { days: renewalNotice.days })
                     : renewalNotice.level === 'warning'
                     ? t('dashboard.billing.notice.warning', { days: renewalNotice.days })

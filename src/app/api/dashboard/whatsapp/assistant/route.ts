@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { randomToken } from '@/lib/auth/crypto';
 import { CompanyModel, PartnerModel, UserModel, WhatsAppConnectionModel, WhatsAppGroupBindingModel, connectDb } from '@/lib/auth/db';
 import { getCurrentSessionUserId } from '@/lib/auth/session';
-import { connectWhatsAppConnection, disconnectWhatsAppConnection } from '@/lib/whatsapp/manager';
+import { connectWhatsAppConnection, disconnectWhatsAppConnection, isWhatsAppConnectionRunning } from '@/lib/whatsapp/manager';
 
 const connectSchema = z.object({
   displayName: z.string().trim().max(120).optional(),
@@ -30,14 +30,36 @@ export async function GET(request: Request) {
     const queryPage = Math.max(1, Number(searchParams.get('page') || '1') || 1);
     const queryPageSize = Math.min(100, Math.max(1, Number(searchParams.get('pageSize') || '10') || 10));
     const search = (searchParams.get('search') || '').trim();
+    const mappingFilter = (searchParams.get('mapping') || 'all').trim();
 
     const groupQuery: Record<string, unknown> = { companyId: resolved.company.id };
+    if (mappingFilter === 'mapped') {
+      groupQuery.partnerId = { $exists: true, $nin: ['', null] };
+    }
+    if (mappingFilter === 'unmapped') {
+      groupQuery.$or = [{ partnerId: { $exists: false } }, { partnerId: { $in: ['', null] } }];
+    }
     if (search) {
       const regex = new RegExp(search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
-      groupQuery.$or = [{ groupName: regex }, { groupJid: regex }];
+      const searchOr = [{ groupName: regex }, { groupJid: regex }];
+      if (groupQuery.$or) {
+        groupQuery.$and = [{ $or: groupQuery.$or }, { $or: searchOr }];
+        delete groupQuery.$or;
+      } else {
+        groupQuery.$or = searchOr;
+      }
     }
 
-    const [connection, totalGroups, mappedGroups, activeMappedGroups, bindings, partners] = await Promise.all([
+    const connection = await WhatsAppConnectionModel.findOne({ companyId: resolved.company.id }).sort({ createdAt: -1 }).lean();
+    if (
+      connection &&
+      ['connected', 'connecting', 'qr'].includes(String(connection.status || '')) &&
+      !isWhatsAppConnectionRunning(String(connection.id))
+    ) {
+      await connectWhatsAppConnection({ companyId: resolved.company.id, connectionId: String(connection.id) });
+    }
+
+    const [freshConnection, totalGroups, mappedGroups, activeMappedGroups, bindings, partners] = await Promise.all([
       WhatsAppConnectionModel.findOne({ companyId: resolved.company.id }).sort({ createdAt: -1 }).lean(),
       WhatsAppGroupBindingModel.countDocuments(groupQuery),
       WhatsAppGroupBindingModel.countDocuments({
@@ -50,7 +72,7 @@ export async function GET(request: Request) {
         isActive: true,
       }),
       WhatsAppGroupBindingModel.find(groupQuery)
-        .sort({ updatedAt: -1 })
+        .sort({ groupName: 1, groupJid: 1 })
         .skip((queryPage - 1) * queryPageSize)
         .limit(queryPageSize)
         .lean(),
@@ -58,15 +80,15 @@ export async function GET(request: Request) {
     ]);
 
     return NextResponse.json({
-      connection: connection
+      connection: freshConnection
         ? {
-            id: connection.id,
-            displayName: connection.displayName || '',
-            phoneNumber: connection.phoneNumber || '',
-            status: connection.status || 'disconnected',
-            qrCode: connection.qrCode || '',
-            lastError: connection.lastError || '',
-            lastSeenAt: connection.lastSeenAt || null,
+            id: freshConnection.id,
+            displayName: freshConnection.displayName || '',
+            phoneNumber: freshConnection.phoneNumber || '',
+            status: freshConnection.status || 'disconnected',
+            qrCode: freshConnection.qrCode || '',
+            lastError: freshConnection.lastError || '',
+            lastSeenAt: freshConnection.lastSeenAt || null,
           }
         : null,
       groups: bindings.map((binding) => ({

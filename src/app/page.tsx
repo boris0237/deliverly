@@ -1,12 +1,12 @@
 'use client';
 
 import LandingLayout from '@/layouts/LandingLayout';
-import LandingPage from '@/pages/landing/LandingPage';
+import ModernLandingPage from '@/pages/landing/ModernLandingPage';
 
 export default function HomePage() {
   return (
     <LandingLayout>
-      <LandingPage />
+      <ModernLandingPage />
     </LandingLayout>
   );
 }

@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link2, QrCode, RefreshCw, Search, Unplug } from 'lucide-react';
+import { Link2, QrCode, RefreshCw, RotateCcw, Search, Unplug } from 'lucide-react';
 import { io, type Socket } from 'socket.io-client';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -56,9 +56,11 @@ const WhatsAppAssistantPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isConnecting, setIsConnecting] = useState(false);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
   const [isSyncingGroups, setIsSyncingGroups] = useState(false);
   const [search, setSearch] = useState('');
   const [searchInput, setSearchInput] = useState('');
+  const [mappingFilter, setMappingFilter] = useState<'all' | 'mapped' | 'unmapped'>('all');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [connection, setConnection] = useState<AssistantConnection | null>(null);
@@ -66,14 +68,17 @@ const WhatsAppAssistantPage = () => {
   const [partners, setPartners] = useState<Array<{ id: string; name: string }>>([]);
   const [mappedGroupsCount, setMappedGroupsCount] = useState(0);
   const [pagination, setPagination] = useState({ page: 1, pageSize: 10, total: 0, totalPages: 1 });
+  const editingUntilRef = useRef(0);
 
   const loadData = useCallback(
     async (opts?: { silent?: boolean }) => {
+      if (opts?.silent && Date.now() < editingUntilRef.current) return;
       if (!opts?.silent) setIsLoading(true);
       try {
         const params = new URLSearchParams();
         params.set('page', String(page));
         params.set('pageSize', String(pageSize));
+        params.set('mapping', mappingFilter);
         if (search.trim()) params.set('search', search.trim());
         const response = await fetch(`/api/dashboard/whatsapp/assistant?${params.toString()}`, { cache: 'no-store' });
         const data = (await response.json()) as AssistantResponse & { error?: string; code?: string };
@@ -97,7 +102,7 @@ const WhatsAppAssistantPage = () => {
         if (!opts?.silent) setIsLoading(false);
       }
     },
-    [page, pageSize, search, showToast, t]
+    [mappingFilter, page, pageSize, search, showToast, t]
   );
 
   useEffect(() => {
@@ -178,6 +183,24 @@ const WhatsAppAssistantPage = () => {
     }
   };
 
+  const resetConnection = async () => {
+    setIsResetting(true);
+    try {
+      const response = await fetch('/api/dashboard/whatsapp/assistant/reset', { method: 'POST' });
+      const data = await response.json();
+      if (!response.ok) {
+        showToast(getLocalizedApiError(t, data, response.status), 'error');
+        return;
+      }
+      showToast(t('dashboard.whatsappAssistant.resetStarted'), 'success');
+      await loadData();
+    } catch {
+      showToast(t('errors.network'), 'error');
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
   const syncGroups = async () => {
     setIsSyncingGroups(true);
     try {
@@ -197,6 +220,7 @@ const WhatsAppAssistantPage = () => {
   };
 
   const updateBinding = async (binding: GroupBinding, patch: Partial<GroupBinding>) => {
+    editingUntilRef.current = Date.now() + 2500;
     try {
       const response = await fetch('/api/dashboard/whatsapp/assistant/groups', {
         method: 'PATCH',
@@ -213,7 +237,12 @@ const WhatsAppAssistantPage = () => {
         showToast(getLocalizedApiError(t, data, response.status), 'error');
         return;
       }
-      setGroups((prev) => prev.map((row) => (row.id === binding.id ? { ...row, ...patch } : row)));
+      setGroups((prev) => {
+        const next = prev.map((row) => (row.id === binding.id ? { ...row, ...patch } : row));
+        if (mappingFilter === 'mapped') return next.filter((row) => row.partnerId);
+        if (mappingFilter === 'unmapped') return next.filter((row) => !row.partnerId);
+        return next;
+      });
       showToast(t('common.saved'), 'success');
     } catch {
       showToast(t('errors.network'), 'error');
@@ -258,6 +287,10 @@ const WhatsAppAssistantPage = () => {
           <Button type="button" variant="outline" className="gap-2" onClick={disconnect} disabled={isDisconnecting}>
             <Unplug className="w-4 h-4" />
             {isDisconnecting ? t('common.loading') : t('dashboard.whatsappAssistant.disconnect')}
+          </Button>
+          <Button type="button" variant="outline" className="gap-2" onClick={resetConnection} disabled={isResetting || !connection}>
+            <RotateCcw className={`w-4 h-4 ${isResetting ? 'animate-spin' : ''}`} />
+            {isResetting ? t('common.loading') : t('dashboard.whatsappAssistant.resetQr')}
           </Button>
           <Button type="button" variant="outline" className="gap-2" onClick={syncGroups} disabled={isSyncingGroups}>
             <RefreshCw className={`w-4 h-4 ${isSyncingGroups ? 'animate-spin' : ''}`} />
@@ -316,6 +349,18 @@ const WhatsAppAssistantPage = () => {
               }}
             />
           </div>
+          <select
+            className="input-glass  w-full md:w-52"
+            value={mappingFilter}
+            onChange={(event) => {
+              setPage(1);
+              setMappingFilter(event.target.value as 'all' | 'mapped' | 'unmapped');
+            }}
+          >
+            <option value="all">{t('dashboard.whatsappAssistant.filters.all')}</option>
+            <option value="mapped">{t('dashboard.whatsappAssistant.filters.mapped')}</option>
+            <option value="unmapped">{t('dashboard.whatsappAssistant.filters.unmapped')}</option>
+          </select>
           <Button
             type="button"
             variant="outline"

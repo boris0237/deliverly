@@ -486,6 +486,15 @@ html:not(.dark) .responsiveTable th {
   html:not(.dark) .text-white\/40 { color: hsl(var(--foreground) / 0.42) !important; }
   html:not(.dark) .text-white\/30 { color: hsl(var(--foreground) / 0.32) !important; }
   html:not(.dark) .hover\:text-white:hover { color: hsl(var(--foreground)) !important; }
+  html:not(.dark) .landing-dark-surface.text-white { color: #fff !important; }
+  html:not(.dark) .landing-dark-surface .text-white { color: #fff !important; }
+  html:not(.dark) .landing-dark-surface .text-white\/90 { color: rgba(255, 255, 255, 0.9) !important; }
+  html:not(.dark) .landing-dark-surface .text-white\/80 { color: rgba(255, 255, 255, 0.8) !important; }
+  html:not(.dark) .landing-dark-surface .text-white\/70 { color: rgba(255, 255, 255, 0.7) !important; }
+  html:not(.dark) .landing-dark-surface .text-white\/60 { color: rgba(255, 255, 255, 0.6) !important; }
+  html:not(.dark) .landing-dark-surface .text-white\/50 { color: rgba(255, 255, 255, 0.5) !important; }
+  html:not(.dark) .landing-dark-surface .text-white\/40 { color: rgba(255, 255, 255, 0.4) !important; }
+  html:not(.dark) .landing-dark-surface .text-white\/30 { color: rgba(255, 255, 255, 0.3) !important; }
   html:not(.dark) .text-orange-400 { color: rgb(194 65 12) !important; }
   html:not(.dark) .text-green-400 { color: rgb(21 128 61) !important; }
   html:not(.dark) .text-blue-400 { color: rgb(29 78 216) !important; }
