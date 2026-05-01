@@ -1228,7 +1228,10 @@
       "confirmDelete": "Do you really want to delete this remittance?",
       "kpi": {
         "collected": "Total collected amount",
+        "deliveryFees": "Delivery fees",
+        "extraCharges": "Extra charges",
         "remitted": "Total remitted amount",
+        "partnerExpenses": "Partner expenses",
         "balance": "Outstanding to remit"
       },
       "filters": {

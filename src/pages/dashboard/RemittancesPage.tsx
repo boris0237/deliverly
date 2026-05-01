@@ -27,7 +27,10 @@ type RemittancePartner = {
   partnerId: string;
   partnerName: string;
   collected: number;
+  deliveryFees: number;
+  extraCharges: number;
   due: number;
+  partnerExpenses: number;
   remitted: number;
   balance: number;
 };
@@ -353,6 +356,15 @@ const RemittancesPage = () => {
                   <div className="font-medium text-white">{partner.partnerName}</div>
                   <div className="text-xs text-white/70 mt-1">
                     {t('dashboard.remittances.kpi.collected')}: {formatMoney(partner.collected)}
+                  </div>
+                  <div className="text-xs text-white/70">
+                    {t('dashboard.remittances.kpi.deliveryFees')}: {formatMoney(partner.deliveryFees)}
+                  </div>
+                  <div className="text-xs text-white/70">
+                    {t('dashboard.remittances.kpi.extraCharges')}: {formatMoney(partner.extraCharges)}
+                  </div>
+                   <div className="text-xs text-red-400">
+                    {t('dashboard.remittances.kpi.partnerExpenses')}: {formatMoney(partner.partnerExpenses)}
                   </div>
                   <div className="text-xs text-white/70">
                     {t('dashboard.remittances.kpi.remitted')}: {formatMoney(partner.remitted)}

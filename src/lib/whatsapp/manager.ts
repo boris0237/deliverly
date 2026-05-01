@@ -208,9 +208,9 @@ async function handleInboundGroupMessage(input: {
     const parsed =
       (await parseWhatsAppOrderWithAI({
         text: normalizedText,
-        fallbackPhone,
+        fallbackPhone: '',
         language: 'fr',
-      })) || parseWhatsAppOrder(normalizedText, fallbackPhone);
+      })) || parseWhatsAppOrder(normalizedText,'');
       console.log(`Parsed order for message ${input.messageId}: ${parsed ? JSON.stringify(parsed) : 'none'}`);
     if (!parsed) {
       await WhatsAppInboundMessageModel.updateOne(

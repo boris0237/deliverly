@@ -152,7 +152,7 @@ export function parseWhatsAppOrder(text: string, fallbackPhone = ''): ParsedWhat
   if (!items.length) return null;
 
   return {
-    customerName: customerName || cleanedPhone || 'Client WhatsApp',
+    customerName: customerName || cleanedPhone || '',
     customerPhone: cleanedPhone,
     address,
     notes: notesParts.join(' ').trim(),

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { randomToken } from '@/lib/auth/crypto';
-import { CompanyModel, DeliveryModel, PartnerModel, RemittanceModel, UserModel, connectDb } from '@/lib/auth/db';
+import { CompanyModel, DeliveryModel, ExpenseModel, PartnerModel, RemittanceModel, UserModel, connectDb } from '@/lib/auth/db';
 import { getCurrentSessionUserId } from '@/lib/auth/session';
 
 const createSchema = z.object({
@@ -27,6 +27,8 @@ async function computePartnerBalances(companyId: string) {
       $group: {
         _id: '$partnerId',
         collected: { $sum: { $ifNull: ['$orderValue', 0] } },
+        deliveryFees: { $sum: { $ifNull: ['$deliveryFee', 0] } },
+        extraCharges: { $sum: { $ifNull: ['$partnerExtraCharge', 0] } },
         due: {
           $sum: {
             $max: [
@@ -47,22 +49,33 @@ async function computePartnerBalances(companyId: string) {
     { $match: { companyId } },
     { $group: { _id: '$partnerId', remitted: { $sum: '$amount' } } },
   ]);
+  const partnerExpenseRows = await ExpenseModel.aggregate([
+    { $match: { companyId, targetType: 'partner', targetId: { $ne: '' } } },
+    { $group: { _id: '$targetId', partnerExpenses: { $sum: '$amount' } } },
+  ]);
 
   const deliveryByPartner = new Map(deliveryRows.map((row) => [String(row._id || ''), row]));
   const remittedByPartner = new Map(remittanceRows.map((row) => [String(row._id || ''), Number(row.remitted || 0)]));
+  const expensesByPartner = new Map(partnerExpenseRows.map((row) => [String(row._id || ''), Number(row.partnerExpenses || 0)]));
 
   const partnerBalances = partners.map((partner) => {
     const key = String(partner.id || '');
     const d = deliveryByPartner.get(key);
     const collected = Number(d?.collected || 0);
+    const deliveryFees = Number(d?.deliveryFees || 0);
+    const extraCharges = Number(d?.extraCharges || 0);
     const due = Number(d?.due || 0);
+    const partnerExpenses = Number(expensesByPartner.get(key) || 0);
     const remitted = Number(remittedByPartner.get(key) || 0);
-    const balance = Math.max(0, due - remitted);
+    const balance = Math.max(0, due - partnerExpenses - remitted);
     return {
       partnerId: key,
       partnerName: String(partner.name || '-'),
       collected,
+      deliveryFees,
+      extraCharges,
       due,
+      partnerExpenses,
       remitted,
       balance,
     };
@@ -207,4 +220,3 @@ export async function POST(request: Request) {
     );
   }
 }
-

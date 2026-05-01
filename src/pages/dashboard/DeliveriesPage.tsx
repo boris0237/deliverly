@@ -1740,32 +1740,27 @@ const DeliveriesPage = () => {
             </div>
 
             <div className="space-y-2 text-sm text-white/70">
-              <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4" />
-                {delivery.customerPhone}
-              
               <div className="flex flex-wrap items-center gap-2 text-xs">
                 {delivery.customerPhone ? (
                   <>
                     <a
                       href={`tel:${normalizePhone(delivery.customerPhone)}`}
-                      className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 "
+                      className="inline-flex items-center gap-1 rounded-full border border-blue-400/30 bg-blue-400/10 px-2 py-0.5 text-blue-600 hover:bg-blue-400/20 dark:text-blue-300"
                     >
                       <Phone className="h-3 w-3" />
                       {t('dashboard.deliveries.card.call')}
                     </a>
-                    {/* <a
+                    <a
                       href={`https://wa.me/${normalizePhone(delivery.customerPhone)}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2 py-0.5 text-emerald-700 hover:bg-emerald-400/20"
+                      className="inline-flex items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2 py-0.5 text-emerald-700 hover:bg-emerald-400/20 dark:text-emerald-300"
                     >
                       <MessageCircle className="h-3 w-3" />
                       WhatsApp
-                    </a> */}
+                    </a>
                   </>
                 ) : null}
-              </div>
               </div>
               <div className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 mt-0.5" />
