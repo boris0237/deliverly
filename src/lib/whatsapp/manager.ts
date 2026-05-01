@@ -247,6 +247,8 @@ async function handleInboundGroupMessage(input: {
       order: parsed,
     });
 
+    console.log(`Created delivery ${created} from message ${input.messageId}`);
+
     await WhatsAppInboundMessageModel.updateOne(
       { id: logId },
       {
@@ -280,6 +282,7 @@ async function handleInboundGroupMessage(input: {
       type: 'inbound',
     });
   } catch (error) {
+    console.error(`Error processing inbound message:`, error);
     await WhatsAppInboundMessageModel.updateOne(
       { id: logId },
       {
