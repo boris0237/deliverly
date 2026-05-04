@@ -33,7 +33,6 @@ const LanguageSwitcher = () => {
         >
           <Globe className="w-4 h-4" />
           <span className="hidden sm:inline">{currentLanguage.flag}</span>
-          <span className="hidden md:inline text-sm">{currentLanguage.label}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48 bg-card border-border">

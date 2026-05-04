@@ -11,7 +11,7 @@ function normalizeParsedOrder(value: unknown, fallbackPhone = ''): ParsedWhatsAp
   if (!value || typeof value !== 'object') return null;
   const row = value as Record<string, unknown>;
   const customerPhone = sanitizePhone(String(row.customerPhone || ''), fallbackPhone);
-  const customerName = String(row.customerName || customerPhone || 'Client WhatsApp').trim() || customerPhone || 'Client WhatsApp';
+  const customerName = String(row.customerName || customerPhone).trim() || customerPhone;
   const address = String(row.address || '').trim();
   const notes = String(row.notes || '').trim();
   const orderTotalRaw = row.orderTotal ?? row.total ?? row.amount;
@@ -72,7 +72,7 @@ export async function parseWhatsAppOrderWithAI(input: { text: string; fallbackPh
     'Return ONLY valid JSON with shape:',
     '{"customerName":"string","customerPhone":"string","address":"string","notes":"string","orderTotal":12345,"items":[{"productName":"string","quantity":1}]}',
     'Rules:',
-    '- If customerName is missing, use "Client WhatsApp".',
+    '- Do not invent Phone numbers, names, addresses, products. If not explicitly mentioned in the message, leave them empty (for strings) or 0 (for numbers).',
     '- Use sender phone as fallback if provided and no phone in message.',
     '- Do not invent products. Items must come from message content.',
     '- quantity must be integer >= 1.',

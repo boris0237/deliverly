@@ -25,9 +25,11 @@ i18n
       escapeValue: false
     },
     detection: {
-      order: ['localStorage', 'navigator'],
+      order: ['localStorage'],
       caches: ['localStorage']
-    }
+    },
+    supportedLngs: ['fr', 'en'],
+    cleanCode: true
   });
 
 export default i18n;

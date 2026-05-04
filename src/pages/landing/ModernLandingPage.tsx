@@ -13,16 +13,32 @@ import {
   WalletCards,
   Zap,
 } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import PricingSection from '@/sections/landing/PricingSection';
 import { useThemeStore } from '@/store';
 
 const ModernLandingPage = () => {
   const { i18n } = useTranslation();
   const { isDark } = useThemeStore();
+  const [isDemoOpen, setIsDemoOpen] = useState(false);
   const isFr = (i18n.language || 'fr').startsWith('fr');
+  const demoEmbedUrl = useMemo(() => {
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const params = new URLSearchParams({
+      autoplay: '1',
+      mute: '1',
+      playsinline: '1',
+      rel: '0',
+      modestbranding: '1',
+      enablejsapi: '1',
+    });
+    if (origin) params.set('origin', origin);
+    return `https://www.youtube.com/embed/T4u4eOngjAA?${params.toString()}`;
+  }, []);
 
   const copy = isFr
     ? {
@@ -35,8 +51,9 @@ const ModernLandingPage = () => {
         title: 'Delivoo pilote vos livraisons sans friction.',
         subtitle:
           "Une plateforme moderne pour capturer les commandes, suivre les livreurs, gérer l'inventaire et calculer les reversements partenaires avec précision.",
-        start: 'Démarrer maintenant',
-        viewFlow: 'Voir le flux',
+        start: 'Commencer gratuitement',
+        viewFlow: 'Voir la démo',
+        demoTitle: 'Démo Delivoo',
         opsTag: 'Opérations',
         opsTitle: "Tout ce qui bouge dans l'entreprise devient mesurable.",
         whatsappTag: 'Assistant WhatsApp',
@@ -82,8 +99,9 @@ const ModernLandingPage = () => {
         title: 'Delivoo runs deliveries without friction.',
         subtitle:
           'A modern platform to capture orders, track drivers, manage inventory and calculate partner payouts with precision.',
-        start: 'Get started',
-        viewFlow: 'View workflow',
+        start: 'Get started for free',
+        viewFlow: 'View Demo',
+        demoTitle: 'Delivoo Demo',
         opsTag: 'Operations',
         opsTitle: 'Everything that moves in your business becomes measurable.',
         whatsappTag: 'WhatsApp Assistant',
@@ -169,10 +187,14 @@ const ModernLandingPage = () => {
                 {copy.start}
                 <ArrowRight className="h-5 w-5" />
               </a>
-              <a href="#demo" className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card px-6 py-3 text-base font-bold text-foreground transition hover:bg-muted">
+              <button
+                type="button"
+                onClick={() => setIsDemoOpen(true)}
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card px-6 py-3 text-base font-bold text-foreground transition hover:bg-muted"
+              >
                 <Play className="h-5 w-5" />
                 {copy.viewFlow}
-              </a>
+              </button>
             </div>
             <div className="mt-10 grid grid-cols-3 gap-3">
               {copy.stats.map((stat) => (
@@ -297,6 +319,39 @@ const ModernLandingPage = () => {
           </div>
         </div>
       </section>
+
+      <Dialog  open={isDemoOpen} onOpenChange={setIsDemoOpen}>
+        <DialogContent className="sm:max-w-[950px] border-border bg-card p-0 overflow-hidden">
+          <DialogHeader className="px-5 pt-5">
+            <DialogTitle className="text-foreground">{copy.demoTitle}</DialogTitle>
+          </DialogHeader>
+          <div className="px-5 pb-5">
+            <div className="landing-dark-surface overflow-hidden rounded-2xl border border-border bg-slate-950">
+              {isDemoOpen ? (
+             <iframe
+                className="aspect-video w-full border-0"
+                width="100%"
+                height="100%"
+                src="https://www.youtube.com/embed/T4u4eOngjAA?autoplay=1&playsinline=1&rel=0"
+                title={copy.demoTitle}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+              ) : null}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <a
+        href="https://wa.me/237621918555"
+        target="_blank"
+        rel="noreferrer"
+        aria-label="WhatsApp"
+        className="fixed bottom-5 right-5 z-50 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-2xl shadow-emerald-900/25 ring-4 ring-white/80 transition hover:scale-105 hover:bg-[#1ebe5d] dark:ring-slate-950/80"
+      >
+        <img src="/img/whatsapp.png" alt="WhatsApp"  />
+      </a>
     </main>
   );
 };
