@@ -1,3 +1,5 @@
+'use client';
+
 import {
   ArrowRight,
   BarChart3,
@@ -140,9 +142,68 @@ const ModernLandingPage = () => {
 
   const featureIcons = [PackageCheck, MapPinned, WalletCards, BarChart3, Smartphone, ClipboardList];
   const workflowIcons = [MessageCircle, Truck, ReceiptText];
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': 'https://delivoo.pro/#organization',
+        name: 'Delivoo',
+        url: 'https://delivoo.pro',
+        logo: 'https://delivoo.pro/img/icon.svg',
+        contactPoint: {
+          '@type': 'ContactPoint',
+          telephone: '+237621918555',
+          contactType: 'customer support',
+          availableLanguage: ['fr', 'en'],
+        },
+      },
+      {
+        '@type': 'SoftwareApplication',
+        '@id': 'https://delivoo.pro/#software',
+        name: 'Delivoo',
+        applicationCategory: 'BusinessApplication',
+        operatingSystem: 'Web, Android, iOS',
+        url: 'https://delivoo.pro',
+        description:
+          "Plateforme de gestion de livraisons avec suivi en temps réel, assistant WhatsApp, gestion des partenaires, stocks, dépenses et reversements.",
+        offers: {
+          '@type': 'Offer',
+          priceCurrency: 'USD',
+          availability: 'https://schema.org/InStock',
+        },
+        publisher: {
+          '@id': 'https://delivoo.pro/#organization',
+        },
+        featureList: [
+          'Gestion des livraisons',
+          'Suivi des livreurs en temps réel',
+          'Assistant WhatsApp',
+          'Gestion des partenaires',
+          'Gestion des stocks',
+          'Reversements partenaires',
+          'Rapports financiers',
+        ],
+      },
+      {
+        '@type': 'WebSite',
+        '@id': 'https://delivoo.pro/#website',
+        name: 'Delivoo',
+        url: 'https://delivoo.pro',
+        inLanguage: 'fr',
+        publisher: {
+          '@id': 'https://delivoo.pro/#organization',
+        },
+      },
+    ],
+  };
 
   return (
     <main className="min-h-screen bg-background text-foreground">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-card to-background">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 md:px-8">
           <a href="/" className="inline-flex items-center gap-3">

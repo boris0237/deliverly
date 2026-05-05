@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Delivoo',
     short_name: 'Delivoo',
-    description: 'Delivoo logistics dashboard',
+    description: 'Plateforme de gestion de livraisons, suivi livreurs, assistant WhatsApp, stocks et reversements partenaires.',
     start_url: '/',
     scope: '/',
     display: 'standalone',
