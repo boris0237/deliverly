@@ -6,6 +6,7 @@ import i18n from '@/i18n';
 import { useAuthStore, useThemeStore, usePwaInstallStore } from '@/store';
 import AppToaster from '@/components/ui/app-toaster';
 import PwaInstallPrompt from '@/components/PwaInstallPrompt';
+import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 
 export default function AppProviders({ children }: { children: React.ReactNode }) {
   const { isDark } = useThemeStore();
@@ -100,6 +101,7 @@ export default function AppProviders({ children }: { children: React.ReactNode }
   return (
     <I18nextProvider i18n={i18n}>
       {children}
+      <GoogleAnalytics />
       <PwaInstallPrompt />
       <AppToaster />
     </I18nextProvider>
