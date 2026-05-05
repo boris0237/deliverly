@@ -1269,7 +1269,7 @@
     "tracking": {
       "title": "Real-time Tracking",
       "subtitle": "Monitor drivers and deliveries live with operational filters",
-      "liveMap": "Live OpenStreetMap",
+      "liveMap": "Live map",
       "mapNoPoints": "No geolocated points available for this filter.",
       "routesLabel": "Links",
       "selectedDriverLabel": "Selected driver",

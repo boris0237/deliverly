@@ -1269,7 +1269,7 @@
     "tracking": {
       "title": "Suivi en temps réel",
       "subtitle": "Supervisez vos livreurs et livraisons en direct avec filtres opérationnels",
-      "liveMap": "Carte OpenStreetMap en direct",
+      "liveMap": "Carte en direct",
       "mapNoPoints": "Aucun point géolocalisé disponible pour ce filtre.",
       "routesLabel": "Liaisons",
       "selectedDriverLabel": "Livreur sélectionné",
