@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, ChevronLeft, ChevronRight, LogOut, Package2, User, CreditCard, Building2, Mail } from 'lucide-react';
 import { useAuthStore, useThemeStore, useUIStore } from '@/store';
 import { cn } from '@/lib/utils';
+import { fallbackAvatarUrl, getAvatarUrl } from '@/lib/avatar';
 
 interface SuperAdminSidebarProps {
   isOpen: boolean;
@@ -82,8 +83,12 @@ const SuperAdminSidebar = ({ isOpen, onToggle }: SuperAdminSidebarProps) => {
           <div className={cn('p-3 rounded-xl bg-white/5 border border-white/5', !isOpen && 'flex justify-center')}>
             <div className="flex items-center gap-3">
               <img
-                src={user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`}
+                src={getAvatarUrl(user)}
                 alt={user?.firstName}
+                referrerPolicy="no-referrer"
+                onError={(event) => {
+                  event.currentTarget.src = fallbackAvatarUrl(user?.email);
+                }}
                 className="w-10 h-10 rounded-full bg-white/10"
               />
               {isOpen && (

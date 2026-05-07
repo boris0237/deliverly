@@ -16,6 +16,7 @@ import { useDashboardStore, useAuthStore } from '@/store';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
 import { Button } from '@/components/ui/button';
+import { fallbackAvatarUrl, getAvatarUrl } from '@/lib/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -394,8 +395,12 @@ const Topbar = ({ onSidebarToggle }: TopbarProps) => {
               className="flex items-center gap-3 hover:bg-white/10"
             >
               <img
-                src={user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`}
+                src={getAvatarUrl(user)}
                 alt={user?.firstName}
+                referrerPolicy="no-referrer"
+                onError={(event) => {
+                  event.currentTarget.src = fallbackAvatarUrl(user?.email);
+                }}
                 className="w-8 h-8 rounded-full bg-white/10"
               />
               <div className="hidden md:block text-left">

@@ -1659,7 +1659,14 @@
       "REMITTANCE_CREATE_FAILED": "Unable to create remittance.",
       "REMITTANCE_DELETE_FAILED": "Unable to delete remittance.",
       "REMITTANCE_NOT_FOUND": "Remittance not found.",
-      "REMITTANCE_EXCEEDS_BALANCE": "Amount exceeds outstanding balance."
+      "REMITTANCE_EXCEEDS_BALANCE": "Amount exceeds outstanding balance.",
+      "GOOGLE_AUTH_NOT_CONFIGURED": "Google sign-in is not configured yet.",
+      "GOOGLE_AUTH_CANCELLED": "Google sign-in was cancelled.",
+      "GOOGLE_AUTH_INVALID_STATE": "Invalid Google session. Please try again.",
+      "GOOGLE_AUTH_TOKEN_FAILED": "Unable to validate Google sign-in.",
+      "GOOGLE_AUTH_EMAIL_NOT_VERIFIED": "Google email is not verified.",
+      "GOOGLE_AUTH_FAILED": "Google sign-in failed.",
+      "ACCOUNT_DISABLED": "This account is disabled."
     }
   }
   ,

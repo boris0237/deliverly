@@ -23,6 +23,7 @@ import {
 import { useAuthStore, useThemeStore, useUIStore } from '@/store';
 import { getAllowedPathsForRole, getDefaultPathForRole } from '@/lib/auth/access';
 import { cn } from '@/lib/utils';
+import { fallbackAvatarUrl, getAvatarUrl } from '@/lib/avatar';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -185,8 +186,12 @@ const Sidebar = ({ isOpen, onToggle }: SidebarProps) => {
           )}>
             <div className="flex items-center gap-3">
               <img
-                src={user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`}
+                src={getAvatarUrl(user)}
                 alt={user?.firstName}
+                referrerPolicy="no-referrer"
+                onError={(event) => {
+                  event.currentTarget.src = fallbackAvatarUrl(user?.email);
+                }}
                 className="w-10 h-10 rounded-full bg-white/10"
               />
               {isOpen && (

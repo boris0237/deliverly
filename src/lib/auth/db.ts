@@ -48,6 +48,8 @@ const userSchema = new Schema(
     id: { type: String, required: true, unique: true, index: true },
     email: { type: String, required: true, unique: true, index: true },
     passwordHash: { type: String, required: true },
+    authProvider: { type: String, enum: ['password', 'google'], default: 'password', index: true },
+    googleId: { type: String, default: '', index: true },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     phone: { type: String, default: '' },

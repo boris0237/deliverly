@@ -15,7 +15,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
       <div className="flex-1 flex flex-col">
         {/* Header */}
         <div className="p-6 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors">
+          <Link href="/" className="flex items-center gap-2 text-muted-foreground hover:text-orange-500 transition-colors">
             <ArrowLeft className="w-5 h-5" />
             <span className="text-sm">{t('common.back')}</span>
           </Link>
@@ -33,7 +33,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
         </div>
         
         {/* Footer */}
-        <div className="p-6 text-center text-sm text-white/40">
+        <div className="p-6 text-center text-sm text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} Delivoo. {t('landing.footer.rights')}</p>
         </div>
       </div>

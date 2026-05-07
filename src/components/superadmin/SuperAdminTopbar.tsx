@@ -6,6 +6,7 @@ import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { fallbackAvatarUrl, getAvatarUrl } from '@/lib/avatar';
 
 interface SuperAdminTopbarProps {
   onSidebarToggle: () => void;
@@ -31,8 +32,12 @@ const SuperAdminTopbar = ({ onSidebarToggle }: SuperAdminTopbarProps) => {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="flex items-center gap-2 hover:bg-white/10">
               <img
-                src={user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`}
+                src={getAvatarUrl(user)}
                 alt={user?.firstName}
+                referrerPolicy="no-referrer"
+                onError={(event) => {
+                  event.currentTarget.src = fallbackAvatarUrl(user?.email);
+                }}
                 className="w-8 h-8 rounded-full bg-white/10"
               />
               <span className="hidden md:inline text-sm text-white">{user?.firstName}</span>

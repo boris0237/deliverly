@@ -6,6 +6,8 @@ export interface AuthUserRecord {
   id: string;
   email: string;
   passwordHash: string;
+  authProvider?: 'password' | 'google';
+  googleId?: string;
   firstName: string;
   lastName: string;
   phone?: string;

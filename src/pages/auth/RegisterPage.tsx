@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Eye, EyeOff, Mail, Lock, User, Building2, Chrome } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import GoogleIcon from '@/components/icons/GoogleIcon';
 import { useUIStore } from '@/store';
 import { getLocalizedApiError } from '@/lib/auth/error-message';
 
@@ -76,17 +77,17 @@ const RegisterPage = () => {
   };
 
   const handleGoogleRegister = () => {
-    showToast('Google registration is not implemented yet.', 'info');
+    window.location.href = '/api/auth/google';
   };
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-white mb-2">
+        <h1 className="text-3xl font-bold text-foreground mb-2">
           {t('auth.register.title')}
         </h1>
-        <p className="text-white/50">
+        <p className="text-muted-foreground">
           {t('auth.register.subtitle')}
         </p>
       </div>
@@ -96,11 +97,11 @@ const RegisterPage = () => {
         {/* Name Row */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-sm text-white/70">
+            <label className="text-sm text-muted-foreground">
               {t('auth.register.firstName')}
             </label>
             <div className="relative">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <input
                 type="text"
                 name="firstName"
@@ -113,11 +114,11 @@ const RegisterPage = () => {
             </div>
           </div>
           <div className="space-y-2">
-            <label className="text-sm text-white/70">
+            <label className="text-sm text-muted-foreground">
               {t('auth.register.lastName')}
             </label>
             <div className="relative">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <input
                 type="text"
                 name="lastName"
@@ -133,11 +134,11 @@ const RegisterPage = () => {
 
         {/* Email */}
         <div className="space-y-2">
-          <label className="text-sm text-white/70">
+          <label className="text-sm text-muted-foreground">
             {t('auth.register.email')}
           </label>
           <div className="relative">
-            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
               type="email"
               name="email"
@@ -152,11 +153,11 @@ const RegisterPage = () => {
 
         {/* Company Name */}
         <div className="space-y-2">
-          <label className="text-sm text-white/70">
+          <label className="text-sm text-muted-foreground">
             {t('auth.register.companyName')}
           </label>
           <div className="relative">
-            <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+            <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
               type="text"
               name="companyName"
@@ -170,11 +171,11 @@ const RegisterPage = () => {
 
         {/* Password */}
         <div className="space-y-2">
-          <label className="text-sm text-white/70">
+          <label className="text-sm text-muted-foreground">
             {t('auth.register.password')}
           </label>
           <div className="relative">
-            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
               type={showPassword ? 'text' : 'password'}
               name="password"
@@ -188,7 +189,7 @@ const RegisterPage = () => {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
             >
               {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
@@ -197,11 +198,11 @@ const RegisterPage = () => {
 
         {/* Confirm Password */}
         <div className="space-y-2">
-          <label className="text-sm text-white/70">
+          <label className="text-sm text-muted-foreground">
             {t('auth.register.confirmPassword')}
           </label>
           <div className="relative">
-            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
               type={showPassword ? 'text' : 'password'}
               name="confirmPassword"
@@ -223,7 +224,7 @@ const RegisterPage = () => {
             className="w-4 h-4 mt-0.5 rounded border-white/20 bg-white/5 text-orange-500 focus:ring-orange-500/20"
             required
           />
-          <span className="text-sm text-white/60">
+          <span className="text-sm text-muted-foreground">
             {t('auth.register.acceptTerms')}
           </span>
         </label>
@@ -242,9 +243,29 @@ const RegisterPage = () => {
         </Button>
       </form>
 
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t border-border" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-4 font-semibold tracking-[0.18em] text-muted-foreground">
+            {t('auth.register.or')}
+          </span>
+        </div>
+      </div>
+
+      <Button
+        type="button"
+        variant="outline"
+        onClick={handleGoogleRegister}
+        className="h-14 w-full rounded-2xl border border-border bg-card text-base font-semibold text-foreground hover:text-foreground active:text-foreground focus-visible:text-foreground shadow-sm shadow-slate-950/5 hover:-translate-y-0.5 hover:bg-background hover:shadow-lg hover:shadow-slate-950/10 dark:border-white/10 dark:bg-white dark:text-slate-950 dark:hover:text-slate-950 dark:active:text-slate-950 dark:focus-visible:text-slate-950 dark:hover:bg-white/95"
+      >
+        <GoogleIcon className="mr-2 h-5 w-5" />
+        {t('auth.register.google')}
+      </Button>
 
       {/* Login Link */}
-      <p className="text-center text-sm text-white/50">
+      <p className="text-center text-sm text-muted-foreground">
         {t('auth.register.hasAccount')}{' '}
         <Link
           href="/auth/login"

@@ -1659,7 +1659,14 @@
       "REMITTANCE_CREATE_FAILED": "Impossible de créer le reversement.",
       "REMITTANCE_DELETE_FAILED": "Impossible de supprimer le reversement.",
       "REMITTANCE_NOT_FOUND": "Reversement introuvable.",
-      "REMITTANCE_EXCEEDS_BALANCE": "Le montant dépasse le solde à reverser."
+      "REMITTANCE_EXCEEDS_BALANCE": "Le montant dépasse le solde à reverser.",
+      "GOOGLE_AUTH_NOT_CONFIGURED": "La connexion Google n'est pas encore configurée.",
+      "GOOGLE_AUTH_CANCELLED": "Connexion Google annulée.",
+      "GOOGLE_AUTH_INVALID_STATE": "Session Google invalide. Réessayez.",
+      "GOOGLE_AUTH_TOKEN_FAILED": "Impossible de valider la connexion Google.",
+      "GOOGLE_AUTH_EMAIL_NOT_VERIFIED": "L'email Google n'est pas vérifié.",
+      "GOOGLE_AUTH_FAILED": "La connexion Google a échoué.",
+      "ACCOUNT_DISABLED": "Ce compte est désactivé."
     }
   }
   ,

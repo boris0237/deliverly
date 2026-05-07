@@ -6,6 +6,7 @@ import { Camera, Lock, Mail, Save, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuthStore, useUIStore } from '@/store';
 import { getLocalizedApiError } from '@/lib/auth/error-message';
+import { fallbackAvatarUrl, getAvatarUrl } from '@/lib/avatar';
 
 type ProfilePayload = {
   id: string;
@@ -177,8 +178,12 @@ const ProfilePage = () => {
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 to-purple-500 flex items-center justify-center text-white text-xl font-semibold overflow-hidden">
               {avatarPreviewUrl || profile?.avatar || user?.avatar ? (
                 <img
-                  src={avatarPreviewUrl || profile?.avatar || user?.avatar}
+                  src={avatarPreviewUrl || profile?.avatar || getAvatarUrl(user)}
                   alt={`${firstName || profile?.firstName || ''} ${lastName || profile?.lastName || ''}`}
+                  referrerPolicy="no-referrer"
+                  onError={(event) => {
+                    event.currentTarget.src = fallbackAvatarUrl(profile?.email || user?.email);
+                  }}
                   className="w-full h-full object-cover"
                 />
               ) : (

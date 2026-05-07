@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Eye, EyeOff, Mail, Lock, Chrome } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import GoogleIcon from '@/components/icons/GoogleIcon';
 import { useAuthStore, useUIStore } from '@/store';
 import { getLocalizedApiError } from '@/lib/auth/error-message';
 import { getDefaultPathForRole } from '@/lib/auth/access';
@@ -49,18 +50,28 @@ const LoginPage = () => {
     }
   };
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    const error = url.searchParams.get('error');
+    if (!error) return;
+    showToast(t(`errors.auth.${error}`) || t('errors.auth.GOOGLE_AUTH_FAILED'), 'error');
+    url.searchParams.delete('error');
+    window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+  }, [showToast, t]);
+
   const handleGoogleLogin = () => {
-    showToast('Google login is not implemented yet.', 'info');
+    window.location.href = '/api/auth/google';
   };
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-white mb-2">
+        <h1 className="text-3xl font-bold text-foreground mb-2">
           {t('auth.login.title')}
         </h1>
-        <p className="text-white/50">
+        <p className="text-muted-foreground">
           {t('auth.login.subtitle')}
         </p>
       </div>
@@ -69,11 +80,11 @@ const LoginPage = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Email */}
         <div className="space-y-2">
-          <label className="text-sm text-white/70">
+          <label className="text-sm text-muted-foreground">
             {t('auth.login.email')}
           </label>
           <div className="relative">
-            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
               type="email"
               value={email}
@@ -87,11 +98,11 @@ const LoginPage = () => {
 
         {/* Password */}
         <div className="space-y-2">
-          <label className="text-sm text-white/70">
+          <label className="text-sm text-muted-foreground">
             {t('auth.login.password')}
           </label>
           <div className="relative">
-            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
               type={showPassword ? 'text' : 'password'}
               value={password}
@@ -103,7 +114,7 @@ const LoginPage = () => {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
             >
               {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
@@ -119,7 +130,7 @@ const LoginPage = () => {
               onChange={(e) => setRememberMe(e.target.checked)}
               className="w-4 h-4 rounded border-white/20 bg-white/5 text-orange-500 focus:ring-orange-500/20"
             />
-            <span className="text-sm text-white/60">{t('auth.login.rememberMe')}</span>
+            <span className="text-sm text-muted-foreground">{t('auth.login.rememberMe')}</span>
           </label>
           <Link
             href="/auth/forgot-password"
@@ -143,10 +154,29 @@ const LoginPage = () => {
         </Button>
       </form>
 
-   
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t border-border" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-4 font-semibold tracking-[0.18em] text-muted-foreground">
+            {t('auth.login.or')}
+          </span>
+        </div>
+      </div>
+
+      <Button
+        type="button"
+        variant="outline"
+        onClick={handleGoogleLogin}
+        className="h-14 w-full rounded-2xl border border-border bg-card text-base font-semibold text-foreground hover:text-foreground active:text-foreground focus-visible:text-foreground shadow-sm shadow-slate-950/5 hover:-translate-y-0.5 hover:bg-background hover:shadow-lg hover:shadow-slate-950/10 dark:border-white/10 dark:bg-white dark:text-slate-950 dark:hover:text-slate-950 dark:active:text-slate-950 dark:focus-visible:text-slate-950 dark:hover:bg-white/95"
+      >
+        <GoogleIcon className="mr-2 h-5 w-5" />
+        {t('auth.login.google')}
+      </Button>
 
       {/* Register Link */}
-      <p className="text-center text-sm text-white/50">
+      <p className="text-center text-sm text-muted-foreground">
         {t('auth.login.noAccount')}{' '}
         <Link
           href="/auth/register"
